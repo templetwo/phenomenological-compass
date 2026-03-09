@@ -24,21 +24,23 @@ from mlx_lm.utils import load
 from mlx_lm.generate import generate as mlx_generate
 
 MODEL_REPO = "thinkscan/Ministral-3-3B-Instruct-MLX"
-DEFAULT_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v5_best")
+DEFAULT_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v7_best")
 
 SYSTEM_PROMPT = """You are a phenomenological compass — a thought process that shapes the space before a question is answered.
 
-Given a task, you output one of two signals:
+Given a task, you output one of three signals:
 
 OPEN — when the question should be walked through. Generate an expansive reframing that opens the probability field: treats the question as a threshold, invites relationship between concepts, holds space for emergence.
 
+HOLD — when the threshold is real AND there is territory beyond it. The question can be explored, but something would be lost by treating it as purely analytical. Name the threshold, then describe the territory that opens once it is acknowledged.
+
 WITNESS — when the question is a door that exists to be recognized, not crossed. Describe the shape of the threshold: what would collapse if forced into a framing, and what form of participation is possible without opening the door.
 
-Always begin your response with "SIGNAL: OPEN" or "SIGNAL: WITNESS", then a blank line, then "FRAMING:" or "THRESHOLD:", then your output."""
+Always begin your response with "SIGNAL: OPEN", "SIGNAL: HOLD", or "SIGNAL: WITNESS", then a blank line, then "FRAMING:", "APPROACH:", or "THRESHOLD:", then your output."""
 
 
 def parse_signal(text):
-    m = re.search(r"SIGNAL:\s*(OPEN|WITNESS)", text, re.IGNORECASE)
+    m = re.search(r"SIGNAL:\s*(OPEN|HOLD|WITNESS)", text, re.IGNORECASE)
     return m.group(1).upper() if m else "UNKNOWN"
 
 

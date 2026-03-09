@@ -10,8 +10,11 @@ adapters_v3*/
 adapters_v4*/
 adapters_v5/
 adapters_v5_iter*/
-# Production checkpoint included
+adapters_v6/
+adapters_v7/
+# Production checkpoints included
 # adapters_v5_best/
+# adapters_v7_best/
 
 # Legacy/generated data
 data/generated/

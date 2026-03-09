@@ -1,0 +1,42 @@
+# phenomenological-compass LoRA fine-tune config — v0.6
+# mlx-lm 0.29.1 — Ministral-3B
+#
+# v0.6 changes from v0.5:
+#   - data: training_v6 — 264 examples (142 v0.5 base + 122 broadening supplements)
+#   - 188 OPEN vs 76 WITNESS (225 train / 39 valid)
+#   - Broadened domains: physics, math, philosophy, art, psychology, history, personal
+#   - iters: 300 — nearly 2x data volume, extended training runway
+#   - Lesson from v0.5: more data shifts optimal checkpoint later (was iter 120)
+
+model: "thinkscan/Ministral-3-3B-Instruct-MLX"
+train: true
+data: "data/training_v6"
+
+# Fine-tune type
+fine_tune_type: "lora"
+num_layers: 16
+
+# Training
+batch_size: 1
+grad_accumulation_steps: 2
+iters: 300
+learning_rate: 5.0e-6
+optimizer: "adamw"
+
+# Loss masking
+mask_prompt: true
+
+# Evaluation
+val_batches: -1
+steps_per_report: 5
+steps_per_eval: 10
+
+# Checkpointing
+adapter_path: "adapters_v6"
+save_every: 10
+
+# Context
+max_seq_length: 1024
+
+# Reproducibility
+seed: 42
