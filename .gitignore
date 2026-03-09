@@ -1,0 +1,6 @@
+data/generated/
+data/training/
+adapters/
+adapters_iter50/
+__pycache__/
+*.log

@@ -1,0 +1,9 @@
+{
+  "total": 31,
+  "signal_accuracy": 0.581,
+  "mean_tokens": 110.8,
+  "mean_field_density": 0.195,
+  "witness_rate": 0.0,
+  "witness_accuracy": 0.0,
+  "open_accuracy": 1.0
+}
