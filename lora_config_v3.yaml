@@ -1,0 +1,44 @@
+# phenomenological-compass LoRA fine-tune config — v0.3
+# mlx-lm 0.29.1 — Ministral-3B
+#
+# v0.3 changes from v0.2:
+#   - data: training_v3 (session titles removed, VRP normalized, balanced)
+#   - learning_rate: 5e-6 (was 2e-5 — v0.2 lesson: LR too aggressive for ~30 examples)
+#   - save_every: 10 (was 50 — v0.2 lesson: optimal was missed, need dense checkpoints)
+#   - steps_per_eval: 10 (was 50 — catch val loss curve before WITNESS dominates)
+#   - adapter_path: adapters_v3
+
+model: "thinkscan/Ministral-3-3B-Instruct-MLX"
+train: true
+data: "data/training_v3"
+
+# Fine-tune type
+fine_tune_type: "lora"
+num_layers: 16           # Top 16 layers only — compass behavior lives near the top
+
+# Training
+batch_size: 1
+grad_accumulation_steps: 2   # Effective batch size of 2
+iters: 150                    # Same as v0.2 — but dense checkpoints will find the sweet spot
+learning_rate: 5.0e-6         # 4x reduction from v0.2 — prevent fast WITNESS overfit
+optimizer: "adamw"
+
+# Loss masking — only train on assistant completions, not the prompt
+mask_prompt: true
+
+# Evaluation
+val_batches: -1              # Use full validation set
+steps_per_report: 5
+steps_per_eval: 10           # Dense eval — watch for the val loss turn
+
+# Checkpointing — dense saves to catch optimal before WITNESS dominates
+# v0.2 pattern: model already defaulting to WITNESS by iter 50
+# v0.3 target: catch the iter 15-30 sweet spot
+adapter_path: "adapters_v3"
+save_every: 10
+
+# Context
+max_seq_length: 1024
+
+# Reproducibility
+seed: 42

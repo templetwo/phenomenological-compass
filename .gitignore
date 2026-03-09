@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# Model weights (large binary — tracked via LFS or excluded)
+adapters/
+adapters_iter50/
+adapters_v3*/
+adapters_v4*/
+adapters_v5/
+adapters_v5_iter*/
+# Production checkpoint included
+# adapters_v5_best/
+
+# Legacy/generated data
+data/generated/
+data/training/
+
+# Eval outputs (reproducible)
+data/eval/
+data/eval_v3/
+
+# Training logs (keep for history)
+# *.log
+
+# OS
+.DS_Store
