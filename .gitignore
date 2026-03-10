@@ -3,7 +3,10 @@ __pycache__/
 *.pyc
 .venv/
 
-# Model weights (large binary — tracked via LFS or excluded)
+# OS
+.DS_Store
+
+# Model weights — historical versions (large binary, not needed for reproduction)
 adapters/
 adapters_iter50/
 adapters_v3*/
@@ -12,20 +15,24 @@ adapters_v5/
 adapters_v5_iter*/
 adapters_v6/
 adapters_v7/
-# Production checkpoints included
-# adapters_v5_best/
-# adapters_v7_best/
+adapters_v7_d_backup/
+
+# Production adapters (v0.8) — included in repo
+# adapters_v8/ contains the trained LoRA weights
+# adapters_v5_best/ and adapters_v7_best/ kept for version history
 
 # Legacy/generated data
 data/generated/
 data/training/
-
-# Eval outputs (reproducible)
 data/eval/
 data/eval_v3/
 
-# Training logs (keep for history)
-# *.log
+# Eval results (reproducible via pipeline)
+eval/results/
+eval_v9/results/
 
-# OS
-.DS_Store
+# Logs (moved to logs/ — kept locally, not in git)
+logs/
+
+# Archived configs
+configs_archive/

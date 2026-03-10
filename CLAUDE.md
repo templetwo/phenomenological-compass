@@ -190,3 +190,66 @@ The compass doesn't preprocess — it **constructs the manifold** the response e
 - **Self-referential context building**: SHAPE tokens attend to prior SHAPE tokens; TONE attends to SHAPE + prior TONE. By SIGNAL, the 3B model has ~100 tokens of recursive self-attention — this is why v0.8 works and v7 didn't.
 - **Cross-architecture consensus**: 186 training examples from 6 different model architectures means the compass learned readings that sit at the *intersection* of how multiple models perceive semantic territory. More robust than any single model's classification.
 - **Separation of concerns**: Compass dedicates 3B parameters purely to field-reading. Qwen dedicates 9B purely to generation. Neither compromises. No single-model architecture can achieve this.
+
+---
+
+## Evaluation Framework
+
+### Primary: `eval/` (Mission Brief Pipeline)
+Streamlined A/B evaluation: compass-routed vs raw, LLM-as-judge, statistical report.
+
+```bash
+source ~/phenomenological-compass/.venv/bin/activate
+cd ~/phenomenological-compass
+
+# 1. Consolidate questions (already done — 105 questions ready)
+python3 eval/consolidate.py
+
+# 2. Generate responses (~52 min)
+HF_HOME=~/.cache/huggingface_local python3 eval/run_eval.py
+
+# 3. LLM judge (requires ANTHROPIC_API_KEY)
+ANTHROPIC_API_KEY=... python3 eval/judge.py
+
+# 4. Analyze + report
+python3 eval/analyze.py
+```
+
+| File | Purpose |
+|------|---------|
+| `eval/questions.jsonl` | 105 questions (35 OPEN / 35 PAUSE / 35 WITNESS) |
+| `eval/run_eval.py` | Generates compass-routed + raw responses |
+| `eval/judge.py` | Claude Sonnet judge, position-debiased, 3x self-consistency |
+| `eval/analyze.py` | Paired statistics, figures, markdown report |
+| `eval/rubrics.py` | 6-dimension scoring rubrics |
+| `eval/results/` | responses.jsonl, judgments.jsonl, report.md, figures |
+
+### Scoring Dimensions
+1. Epistemic Appropriateness — matches epistemological demands
+2. Emotional Attunement — reads and honors emotional weight
+3. Depth of Exploration — how far into the territory
+4. **Restraint Quality** — knows when NOT to answer (novel dimension)
+5. Intellectual Rigor — accurate, structured, substantive
+6. Authenticity — felt vs generated
+
+### Extended: `eval_v9/` (Research Framework)
+4-condition ablation with multi-model judge ensemble, entropy profiling, and deeper statistics.
+
+| File | Purpose |
+|------|---------|
+| `eval_v9/ablation_runner.py` | 4 conditions: full / raw / oracle / random |
+| `eval_v9/judge_ensemble.py` | Multi-model judge (Claude, GPT-4, Gemini) |
+| `eval_v9/statistics.py` | Bootstrap CIs, permutation tests, Cohen's d |
+| `eval_v9/entropy_profiler.py` | MTLD, Distinct-n, JSD, forking tokens |
+| `eval_v9/Makefile` | Full orchestration |
+| `data/eval_v9/` | Source questions from 5 models (347 total) |
+| `docs/intuition_thesis.md` | The compass as machine intuition |
+
+### Question Sources
+| Model | Questions | Format |
+|-------|-----------|--------|
+| Claude Opus | 105 | Base set — mission brief format with IDs |
+| DeepSeek | 102 | Extended with categories A-L, difficulty, notes |
+| Gemini | 20 | Dense, high-quality boundary questions |
+| GPT | 100 | Full coverage with rich notes |
+| Grok | 20 | Concise, targeted |

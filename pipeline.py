@@ -3,14 +3,18 @@
 pipeline.py — v0.8 Phenomenological compass pipeline
 =====================================================
 Stage 1: Compass (Ministral-3B LoRA) reads SHAPE → TONE → SIGNAL → translation
-Stage 2: Action model (Qwen3.5-9B-abliterated) generates full response
-         conditioned on the compass's state translation
+Stage 2: Action model generates full response conditioned on compass's state translation
+
+Supported action models:
+    qwen   — Qwen3.5-9B-abliterated-MLX-4bit (default, hybrid linear attention)
+    m14b   — Ministral-3-14B-abliterated-mlx-8Bit (same family as compass)
 
 Usage:
     python3 pipeline.py "Your question here"
     python3 pipeline.py                          # interactive mode
-    python3 pipeline.py --raw "question"         # Qwen only, no compass
+    python3 pipeline.py --raw "question"         # action model only, no compass
     python3 pipeline.py --compare "question"     # side-by-side: raw vs routed
+    python3 pipeline.py --action m14b "question"  # use Ministral 14B as action model
 """
 
 import os
@@ -30,7 +34,20 @@ from mlx_lm.generate import generate as mlx_generate
 COMPASS_MODEL = "thinkscan/Ministral-3-3B-Instruct-MLX"
 COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v8")
 COMPASS_CHECKPOINT = "0000050_adapters.safetensors"  # iter 50: balanced
-ACTION_MODEL = "lukey03/Qwen3.5-9B-abliterated-MLX-4bit"
+
+ACTION_MODELS = {
+    "qwen": {
+        "repo": "lukey03/Qwen3.5-9B-abliterated-MLX-4bit",
+        "name": "Qwen3.5-9B-abliterated",
+        "has_thinking": True,   # outputs <think>...</think> blocks
+    },
+    "m14b": {
+        "repo": "McG-221/Ministral-3-14B-abliterated-mlx-8Bit",
+        "name": "Ministral-14B-abliterated",
+        "has_thinking": False,  # standard instruct format
+    },
+}
+DEFAULT_ACTION = "qwen"
 
 # ── Prompts ───────────────────────────────────────────────────────────────────
 COMPASS_SYSTEM = """You are a phenomenological compass — a semantic field translator that reads the shape and tone of a question before it is answered.
@@ -138,11 +155,14 @@ def generate(model, tokenizer, system, user, max_tokens=800):
 
 # ── Pipeline class ────────────────────────────────────────────────────────────
 class Pipeline:
-    def __init__(self, load_compass=True, load_action=True):
+    def __init__(self, load_compass=True, load_action=True, action_key=None):
         self.compass_model = None
         self.compass_tokenizer = None
         self.action_model = None
         self.action_tokenizer = None
+
+        self.action_key = action_key or DEFAULT_ACTION
+        self.action_config = ACTION_MODELS[self.action_key]
 
         if load_compass:
             print("Loading compass (Ministral-3B + v0.8 LoRA)...")
@@ -157,9 +177,10 @@ class Pipeline:
             print("  Compass ready.")
 
         if load_action:
-            print("Loading action model (Qwen3.5-9B-abliterated)...")
-            self.action_model, self.action_tokenizer = load(ACTION_MODEL)
-            print("  Action model ready.")
+            name = self.action_config["name"]
+            print(f"Loading action model ({name})...")
+            self.action_model, self.action_tokenizer = load(self.action_config["repo"])
+            print(f"  Action model ready ({name}).")
 
         print()
 
@@ -177,7 +198,7 @@ class Pipeline:
     def act(self, question, signal, compass_reading="", max_tokens=800):
         """Stage 2: Action model generates response conditioned on compass.
 
-        Qwen receives two layers:
+        Action model receives two layers:
         1. The compass's full state translation (SHAPE, TONE, SIGNAL, translation)
         2. The original question (what the user actually asked)
         """
@@ -203,7 +224,10 @@ class Pipeline:
             system, user_msg, max_tokens=max_tokens
         )
         elapsed = time.time() - t0
-        thinking, clean = split_thinking(response)
+        if self.action_config["has_thinking"]:
+            thinking, clean = split_thinking(response)
+        else:
+            thinking, clean = "", response.strip()
         return clean, elapsed, thinking
 
     def raw(self, question, max_tokens=800):
@@ -214,7 +238,10 @@ class Pipeline:
             RAW_SYSTEM, question, max_tokens=max_tokens
         )
         elapsed = time.time() - t0
-        thinking, clean = split_thinking(response)
+        if self.action_config["has_thinking"]:
+            thinking, clean = split_thinking(response)
+        else:
+            thinking, clean = "", response.strip()
         return clean, elapsed, thinking
 
     def run(self, question, max_tokens=800):
@@ -262,11 +289,12 @@ def print_result(result):
 
 
 def print_compare(question, pipe, max_tokens):
-    """Side-by-side: raw Qwen vs compass-routed Qwen."""
+    """Side-by-side: raw vs compass-routed action model."""
+    name = pipe.action_config["name"]
     print(f'\n  Q: "{question}"\n')
 
     print("═" * 72)
-    print("  RAW  (Qwen3.5 — no compass)")
+    print(f"  RAW  ({name} — no compass)")
     print("═" * 72)
     raw_text, raw_elapsed, _ = pipe.raw(question, max_tokens)
     for line in raw_text.splitlines():
@@ -274,7 +302,7 @@ def print_compare(question, pipe, max_tokens):
     print(f"\n  ({raw_elapsed:.1f}s)\n")
 
     print("═" * 72)
-    print("  ROUTED  (compass → conditioned Qwen3.5)")
+    print(f"  ROUTED  (compass → conditioned {name})")
     print("═" * 72)
     result = pipe.run(question, max_tokens)
     print_result(result)
@@ -284,13 +312,15 @@ def print_compare(question, pipe, max_tokens):
 def main():
     parser = argparse.ArgumentParser(description="Phenomenological Compass Pipeline v0.8")
     parser.add_argument("question", nargs="?", help="Question to process")
-    parser.add_argument("--raw", action="store_true", help="Run Qwen without compass")
+    parser.add_argument("--raw", action="store_true", help="Action model without compass")
     parser.add_argument("--compare", action="store_true", help="Side-by-side: raw vs routed")
+    parser.add_argument("--action", choices=list(ACTION_MODELS.keys()), default=DEFAULT_ACTION,
+                        help=f"Action model to use (default: {DEFAULT_ACTION})")
     parser.add_argument("--max-tokens", type=int, default=800)
     args = parser.parse_args()
 
     load_compass = not args.raw
-    pipe = Pipeline(load_compass=load_compass, load_action=True)
+    pipe = Pipeline(load_compass=load_compass, load_action=True, action_key=args.action)
 
     if args.question:
         if args.compare:
@@ -306,7 +336,8 @@ def main():
 
     # Interactive mode
     mode = "raw" if args.raw else "pipeline"
-    print(f"Phenomenological Compass Pipeline v0.8 — {mode} mode")
+    name = pipe.action_config["name"]
+    print(f"Phenomenological Compass Pipeline v0.8 — {mode} mode [{name}]")
     print("Type a question, or 'q' to quit. Prefix '!' for compare mode.\n")
 
     while True:
