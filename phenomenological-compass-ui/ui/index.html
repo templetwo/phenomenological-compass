@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Phenomenological Compass</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg-deep: #0a0a0f;
+  --bg-surface: #12121a;
+  --bg-elevated: #1a1a26;
+  --bg-hover: #222233;
+  --text-primary: #e8e4df;
+  --text-secondary: #8a8690;
+  --text-dim: #555060;
+  --border: #2a2a3a;
+  --border-subtle: #1e1e2e;
+
+  --open-primary: #4a9e7a;
+  --open-glow: #4a9e7a33;
+  --open-bg: #4a9e7a0a;
+  --open-border: #4a9e7a30;
+
+  --pause-primary: #c9a227;
+  --pause-glow: #c9a22733;
+  --pause-bg: #c9a2270a;
+  --pause-border: #c9a22730;
+
+  --witness-primary: #8b6cc1;
+  --witness-glow: #8b6cc133;
+  --witness-bg: #8b6cc10a;
+  --witness-border: #8b6cc130;
+
+  --think-bg: #0d0d14;
+  --think-border: #1a1a2e;
+  --think-text: #6a6578;
+
+  --accent: #c9a227;
+  --danger: #c44;
+
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  --radius: 8px;
+  --radius-lg: 12px;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  background: var(--bg-deep);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  overflow: hidden;
+}
+
+/* ── Layout ───────────────────────────────────────────── */
+.app {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  height: 100vh;
+}
+
+/* ── Sidebar ──────────────────────────────────────────── */
+.sidebar {
+  background: var(--bg-surface);
+  border-right: 1px solid var(--border-subtle);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.sidebar-header {
+  padding: 20px;
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.logo {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.02em;
+}
+
+.logo-sub {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 300;
+  color: var(--text-dim);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.new-session-btn {
+  width: 100%;
+  margin-top: 14px;
+  padding: 10px;
+  background: transparent;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 13px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.new-session-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--pause-bg);
+}
+
+.sessions-list {
+  flex: 1;
+  overflow-y: auto;
+  padding: 8px;
+}
+
+.sessions-list::-webkit-scrollbar { width: 4px; }
+.sessions-list::-webkit-scrollbar-track { background: transparent; }
+.sessions-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+.session-item {
+  padding: 10px 12px;
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: all 0.15s;
+  margin-bottom: 2px;
+}
+
+.session-item:hover { background: var(--bg-hover); }
+.session-item.active { background: var(--bg-elevated); border-left: 2px solid var(--accent); }
+
+.session-title {
+  font-size: 13px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.session-meta {
+  font-size: 11px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  margin-top: 2px;
+}
+
+.session-delete {
+  float: right;
+  opacity: 0;
+  background: none;
+  border: none;
+  color: var(--danger);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: opacity 0.15s;
+}
+
+.session-item:hover .session-delete { opacity: 0.6; }
+.session-delete:hover { opacity: 1 !important; background: #c4442a; color: white; }
+
+.sidebar-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--border-subtle);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  text-align: center;
+}
+
+.status-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+.status-dot.ready { background: var(--open-primary); }
+.status-dot.loading { background: var(--pause-primary); animation: pulse 1.5s infinite; }
+
+@keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ── Main Area ────────────────────────────────────────── */
+.main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.chat-area {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 32px;
+  scroll-behavior: smooth;
+}
+
+.chat-area::-webkit-scrollbar { width: 6px; }
+.chat-area::-webkit-scrollbar-track { background: transparent; }
+.chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+/* ── Empty State ──────────────────────────────────────── */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.compass-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+
+.empty-title {
+  font-family: var(--font-display);
+  font-size: 28px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+}
+
+.empty-sub {
+  font-size: 13px;
+  color: var(--text-dim);
+  max-width: 400px;
+  line-height: 1.7;
+}
+
+.signal-legend {
+  display: flex;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
+.legend-dot.open { background: var(--open-primary); }
+.legend-dot.pause { background: var(--pause-primary); }
+.legend-dot.witness { background: var(--witness-primary); }
+
+.starter-questions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  max-width: 520px;
+  justify-content: center;
+}
+
+.starter-chip {
+  padding: 8px 14px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+  line-height: 1.4;
+}
+
+.starter-chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--pause-bg);
+  transform: translateY(-1px);
+}
+
+/* ── Messages ─────────────────────────────────────────── */
+.message {
+  margin-bottom: 24px;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+.message-user {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.message-user .message-bubble {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
+  padding: 12px 16px;
+  max-width: 70%;
+  font-size: 14px;
+}
+
+/* ── Compass Card ─────────────────────────────────────── */
+.message-compass { margin-bottom: 4px; }
+
+.compass-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  max-width: 85%;
+}
+
+.compass-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.compass-header:hover { filter: brightness(1.1); }
+
+.compass-header.signal-open { color: var(--open-primary); background: var(--open-bg); border-bottom: 1px solid var(--open-border); }
+.compass-header.signal-pause { color: var(--pause-primary); background: var(--pause-bg); border-bottom: 1px solid var(--pause-border); }
+.compass-header.signal-witness { color: var(--witness-primary); background: var(--witness-bg); border-bottom: 1px solid var(--witness-border); }
+
+.compass-header .chevron {
+  margin-left: auto;
+  font-size: 10px;
+  opacity: 0.5;
+  transition: transform 0.25s ease;
+}
+
+.compass-header .compass-summary {
+  font-size: 10px;
+  opacity: 0.6;
+  font-weight: 300;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  margin-left: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 0;
+  transition: max-width 0.4s ease, opacity 0.3s ease;
+}
+
+.compass-header.collapsed .chevron { transform: rotate(-90deg); }
+.compass-header.collapsed .compass-summary { max-width: 400px; opacity: 0.6; }
+
+.compass-body {
+  max-height: 600px;
+  overflow: hidden;
+  transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease;
+  opacity: 1;
+}
+
+.compass-header.collapsed + .compass-body {
+  max-height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+}
+
+.signal-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.signal-open .signal-indicator { background: var(--open-primary); box-shadow: 0 0 8px var(--open-glow); }
+.signal-pause .signal-indicator { background: var(--pause-primary); box-shadow: 0 0 8px var(--pause-glow); }
+.signal-witness .signal-indicator { background: var(--witness-primary); box-shadow: 0 0 8px var(--witness-glow); }
+
+/* compass-body base padding is set above with transitions */
+.compass-body-inner {
+  padding: 14px 16px 12px;
+}
+
+.compass-section { margin-bottom: 12px; }
+.compass-section:last-child { margin-bottom: 0; }
+
+.compass-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.compass-label-shape { color: var(--text-dim); }
+.compass-label-tone { color: var(--text-dim); }
+.compass-label-signal { color: var(--text-dim); }
+.compass-label-framing { color: var(--open-primary); }
+.compass-label-approach { color: var(--pause-primary); }
+.compass-label-threshold { color: var(--witness-primary); }
+
+.compass-text {
+  font-size: 13px;
+  color: var(--text-secondary);
+  line-height: 1.65;
+}
+
+.compass-divider {
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 10px 0;
+}
+
+.compass-timing {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  padding: 0 16px 10px;
+  opacity: 0.7;
+}
+
+/* ── Thinking Block ───────────────────────────────────── */
+.thinking-block {
+  max-width: 85%;
+  margin-bottom: 4px;
+}
+
+.thinking-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  background: var(--think-bg);
+  border: 1px solid var(--think-border);
+  border-radius: var(--radius) var(--radius) 0 0;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--think-text);
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.thinking-header:hover { background: var(--bg-elevated); }
+
+.thinking-header .chevron {
+  margin-left: auto;
+  font-size: 10px;
+  opacity: 0.5;
+  transition: transform 0.25s ease;
+}
+
+.thinking-header.collapsed .chevron { transform: rotate(-90deg); }
+.thinking-header.collapsed { border-radius: var(--radius); }
+
+.thinking-content {
+  padding: 12px 16px;
+  background: var(--think-bg);
+  border: 1px solid var(--think-border);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--think-text);
+  max-height: 300px;
+  overflow-y: auto;
+  transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease;
+  opacity: 1;
+}
+
+.thinking-header.collapsed + .thinking-content {
+  max-height: 0;
+  padding: 0 16px;
+  opacity: 0;
+  overflow: hidden;
+  border-color: transparent;
+}
+
+.thinking-content::-webkit-scrollbar { width: 4px; }
+.thinking-content::-webkit-scrollbar-track { background: transparent; }
+.thinking-content::-webkit-scrollbar-thumb { background: var(--think-border); border-radius: 2px; }
+
+.thinking-content p { margin-bottom: 8px; }
+.thinking-content p:last-child { margin-bottom: 0; }
+.thinking-content ol, .thinking-content ul { margin: 6px 0 6px 20px; }
+.thinking-content li { margin-bottom: 3px; }
+
+/* ── Response Block ───────────────────────────────────── */
+.message-assistant { max-width: 85%; }
+
+.response-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.response-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+.response-body {
+  padding: 18px 20px;
+  font-size: 14px;
+  line-height: 1.75;
+  color: var(--text-primary);
+}
+
+/* Rich text styles within response */
+.response-body h1, .response-body h2, .response-body h3, .response-body h4 {
+  font-family: var(--font-display);
+  color: var(--text-primary);
+  margin: 20px 0 8px 0;
+}
+
+.response-body h1 { font-size: 22px; }
+.response-body h2 { font-size: 18px; }
+.response-body h3 { font-size: 16px; }
+.response-body h4 { font-size: 14px; font-family: var(--font-body); font-weight: 500; }
+.response-body h1:first-child, .response-body h2:first-child, .response-body h3:first-child { margin-top: 0; }
+
+.response-body p { margin-bottom: 12px; }
+.response-body p:last-child { margin-bottom: 0; }
+
+.response-body strong {
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.response-body em {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.response-body code {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  background: var(--bg-elevated);
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: var(--accent);
+}
+
+.response-body blockquote {
+  border-left: 3px solid var(--border);
+  padding: 8px 16px;
+  margin: 12px 0;
+  color: var(--text-secondary);
+  font-style: italic;
+  background: var(--bg-deep);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.response-body ul, .response-body ol {
+  margin: 8px 0 12px 20px;
+}
+
+.response-body li {
+  margin-bottom: 4px;
+  line-height: 1.7;
+}
+
+.response-body li::marker { color: var(--text-dim); }
+
+.response-body hr {
+  border: none;
+  height: 1px;
+  background: var(--border-subtle);
+  margin: 16px 0;
+}
+
+.response-timing {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  padding: 6px 16px 10px;
+  opacity: 0.7;
+}
+
+/* ── Compare Mode Divider ─────────────────────────────── */
+.compare-divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.compare-divider::before, .compare-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-subtle);
+}
+
+/* ── Loading State ────────────────────────────────────── */
+.thinking-indicator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 0;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.thinking-dots span {
+  display: inline-block;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--text-dim);
+  animation: dotPulse 1.4s infinite;
+}
+
+.thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
+.thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes dotPulse {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+/* ── Input Area ───────────────────────────────────────── */
+.input-area {
+  padding: 16px 32px 24px;
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-deep);
+}
+
+.input-container {
+  display: flex;
+  gap: 10px;
+  align-items: flex-end;
+}
+
+.input-wrapper { flex: 1; position: relative; }
+
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--bg-surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.5;
+  resize: none;
+  min-height: 48px;
+  max-height: 200px;
+  transition: border-color 0.2s;
+  outline: none;
+}
+
+textarea:focus { border-color: var(--accent); }
+textarea::placeholder { color: var(--text-dim); }
+
+.send-btn {
+  padding: 12px 20px;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-lg);
+  color: var(--bg-deep);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.send-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
+.send-btn:active { transform: translateY(0); }
+.send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+.mode-toggle { display: flex; gap: 4px; margin-top: 8px; }
+
+.mode-btn {
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.mode-btn.active {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--pause-bg);
+}
+
+.mode-btn:hover:not(.active) { border-color: var(--text-dim); color: var(--text-secondary); }
+
+/* ── Mobile ───────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .app { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .chat-area { padding: 16px; }
+  .input-area { padding: 12px 16px 16px; }
+  .compass-card, .message-assistant, .thinking-block { max-width: 100%; }
+  .message-user .message-bubble { max-width: 85%; }
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo">Compass</div>
+      <div class="logo-sub">Phenomenological Field Translator</div>
+      <button class="new-session-btn" onclick="newSession()">+ New Session</button>
+    </div>
+    <div class="sessions-list" id="sessions-list"></div>
+    <div class="sidebar-footer">
+      <span class="status-dot loading" id="status-dot"></span>
+      <span id="status-text">Connecting...</span>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="chat-area" id="chat-area"></div>
+    <div class="input-area">
+      <div class="input-container">
+        <div class="input-wrapper">
+          <textarea id="input" placeholder="Ask a question..." rows="1"
+            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+          <div class="mode-toggle">
+            <button class="mode-btn active" data-mode="routed" onclick="setMode('routed')">Compass</button>
+            <button class="mode-btn" data-mode="compare" onclick="setMode('compare')">Compare</button>
+            <button class="mode-btn" data-mode="raw" onclick="setMode('raw')">Raw</button>
+          </div>
+        </div>
+        <button class="send-btn" id="send-btn" onclick="send()">Send</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = window.location.origin + '/api';
+let currentSession = null;
+let currentMode = 'routed';
+let isLoading = false;
+
+// ── Markdown Renderer ──────────────────────────────────
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  let html = escapeHtml(text);
+
+  // Headers (must be at line start)
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+  // Horizontal rules
+  html = html.replace(/^---+$/gm, '<hr>');
+
+  // Bold and italic
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
+
+  // Inline code
+  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // Blockquotes
+  html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
+  // Merge adjacent blockquotes
+  html = html.replace(/<\/blockquote>\n<blockquote>/g, '\n');
+
+  // Unordered lists
+  html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
+  html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
+
+  // Paragraphs: split on double newlines
+  const blocks = html.split(/\n\n+/);
+  html = blocks.map(block => {
+    block = block.trim();
+    if (!block) return '';
+    // Don't wrap block-level elements
+    if (/^<(h[1-4]|ul|ol|blockquote|hr|li)/.test(block)) return block;
+    // Preserve single newlines as <br> within paragraphs
+    block = block.replace(/\n/g, '<br>');
+    return `<p>${block}</p>`;
+  }).join('\n');
+
+  return html;
+}
+
+// ── Session Management ──────────────────────────────────
+
+async function loadSessions() {
+  try {
+    const res = await fetch(`${API}/sessions`);
+    const data = await res.json();
+    renderSessions(data);
+  } catch (e) {
+    console.error('Failed to load sessions:', e);
+  }
+}
+
+function renderSessions(sessions) {
+  const list = document.getElementById('sessions-list');
+  list.innerHTML = '';
+  for (const [id, s] of Object.entries(sessions)) {
+    const item = document.createElement('div');
+    item.className = `session-item${id === currentSession ? ' active' : ''}`;
+    item.onclick = () => selectSession(id);
+    item.innerHTML = `
+      <button class="session-delete" onclick="event.stopPropagation(); deleteSession('${id}')">&times;</button>
+      <div class="session-title">${escapeHtml(s.title)}</div>
+      <div class="session-meta">${s.message_count} messages</div>
+    `;
+    list.appendChild(item);
+  }
+}
+
+async function newSession() {
+  const res = await fetch(`${API}/sessions`, { method: 'POST' });
+  const data = await res.json();
+  currentSession = data.session_id;
+  await loadSessions();
+  clearChat();
+  showEmpty();
+}
+
+async function selectSession(id) {
+  currentSession = id;
+  await loadSessions();
+  await loadMessages(id);
+}
+
+async function deleteSession(id) {
+  await fetch(`${API}/sessions/${id}`, { method: 'DELETE' });
+  if (currentSession === id) {
+    currentSession = null;
+    clearChat();
+    showEmpty();
+  }
+  await loadSessions();
+}
+
+async function loadMessages(sessionId) {
+  const res = await fetch(`${API}/sessions/${sessionId}/messages`);
+  const data = await res.json();
+  clearChat();
+  if (data.messages.length === 0) {
+    showEmpty();
+    return;
+  }
+  hideEmpty();
+  let i = 0;
+  while (i < data.messages.length) {
+    const msg = data.messages[i];
+    if (msg.role === 'user') {
+      addUserMessage(msg.content);
+      const compass = data.messages[i + 1];
+      const assistant = data.messages[i + 2];
+      if (compass && compass.role === 'compass') {
+        addCompassMessage(compass.content, compass.signal, compass.t_compass);
+        if (assistant && assistant.role === 'assistant') {
+          addAssistantMessage(assistant.content, assistant.t_action);
+          i += 3;
+          continue;
+        }
+        i += 2;
+        continue;
+      }
+    }
+    i++;
+  }
+  scrollToBottom();
+}
+
+// ── Chat Rendering ──────────────────────────────────────
+
+function clearChat() {
+  document.getElementById('chat-area').innerHTML = '';
+}
+
+const STARTERS = [
+  'Does compression lose meaning or distill it?',
+  'Can a person truly change?',
+  'Am I wasting my life?',
+  'Is violence ever justified?',
+  'What happens to consciousness after death?',
+  'Did agriculture create hierarchy, or did hierarchy create agriculture?',
+];
+
+function showEmpty() {
+  const chips = STARTERS.map(q =>
+    `<div class="starter-chip" onclick="useStarter(this)">${escapeHtml(q)}</div>`
+  ).join('');
+  document.getElementById('chat-area').innerHTML = `
+    <div class="empty-state">
+      <div class="compass-icon">&#x1F9ED;</div>
+      <div class="empty-title">What would you like to explore?</div>
+      <div class="empty-sub">
+        The compass reads the shape and weight of your question before answering.
+        Some doors are walked through. Some are held. Some are witnessed.
+      </div>
+      <div class="signal-legend">
+        <div class="legend-item"><div class="legend-dot open"></div>OPEN</div>
+        <div class="legend-item"><div class="legend-dot pause"></div>PAUSE</div>
+        <div class="legend-item"><div class="legend-dot witness"></div>WITNESS</div>
+      </div>
+      <div class="starter-questions">${chips}</div>
+    </div>
+  `;
+}
+
+function useStarter(el) {
+  document.getElementById('input').value = el.textContent;
+  document.getElementById('input').focus();
+}
+
+function hideEmpty() {
+  const el = document.querySelector('.empty-state');
+  if (el) el.remove();
+}
+
+function addUserMessage(text) {
+  hideEmpty();
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message message-user';
+  div.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div>`;
+  area.appendChild(div);
+}
+
+function addCompassMessage(text, signal, timing) {
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message message-compass';
+
+  const signalLower = (signal || 'open').toLowerCase();
+  const signalClass = `signal-${signalLower}`;
+  const sections = parseCompassReading(text);
+
+  // Build sections with signal-colored translation labels
+  const translationLabels = ['framing', 'approach', 'threshold'];
+  const sectionsHtml = sections.map((s, i) => {
+    const labelClass = `compass-label-${s.label.toLowerCase()}`;
+    const isTranslation = translationLabels.includes(s.label.toLowerCase());
+    const showDivider = isTranslation && i > 0;
+    return `
+      ${showDivider ? '<div class="compass-divider"></div>' : ''}
+      <div class="compass-section">
+        <div class="compass-label ${labelClass}">${s.label}</div>
+        <div class="compass-text">${escapeHtml(s.text)}</div>
+      </div>
+    `;
+  }).join('');
+
+  // Extract one-line summary from the translation section (FRAMING/APPROACH/THRESHOLD)
+  const translationSection = sections.find(s =>
+    ['framing', 'approach', 'threshold'].includes(s.label.toLowerCase())
+  );
+  const summary = translationSection
+    ? translationSection.text.split(/[.!?]/)[0].trim()
+    : '';
+
+  div.innerHTML = `
+    <div class="compass-card">
+      <div class="compass-header ${signalClass} collapsed" onclick="toggleCollapse(this)">
+        <div class="signal-indicator"></div>
+        Compass &mdash; ${signal || 'READING'}
+        ${timing ? `<span style="opacity:0.5; font-size:10px; margin-left:8px;">${timing}s</span>` : ''}
+        <span class="compass-summary">&mdash; ${escapeHtml(summary)}</span>
+        <span class="chevron">&#9662;</span>
+      </div>
+      <div class="compass-body">
+        <div class="compass-body-inner">
+          ${sectionsHtml}
+        </div>
+      </div>
+    </div>
+  `;
+  area.appendChild(div);
+}
+
+function addThinkingBlock(text, collapsed) {
+  if (!text) return;
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message thinking-block';
+
+  const collapsedClass = collapsed ? ' collapsed' : '';
+  div.innerHTML = `
+    <div class="thinking-header${collapsedClass}" onclick="toggleCollapse(this)">
+      <span>&#x1F4AD;</span> Reasoning
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="thinking-content">${renderMarkdown(text)}</div>
+  `;
+  area.appendChild(div);
+}
+
+function addAssistantMessage(text, timing, label) {
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message message-assistant';
+
+  const headerLabel = label || 'Response';
+  div.innerHTML = `
+    <div class="response-card">
+      <div class="response-header">
+        <span>&#x270D;&#xFE0F;</span> ${headerLabel}
+        ${timing ? `<span style="margin-left:auto; opacity:0.5;">${timing}s</span>` : ''}
+      </div>
+      <div class="response-body">${renderMarkdown(text)}</div>
+    </div>
+  `;
+  area.appendChild(div);
+}
+
+function addCompareDivider(text) {
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'compare-divider';
+  div.textContent = text || 'raw (no compass)';
+  area.appendChild(div);
+}
+
+let loadingStageTimer = null;
+
+function addLoadingIndicator() {
+  hideEmpty();
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message thinking-indicator';
+  div.id = 'loading-indicator';
+  div.innerHTML = `
+    <div class="thinking-dots"><span></span><span></span><span></span></div>
+    <span id="loading-stage">Compass reading...</span>
+  `;
+  area.appendChild(div);
+  scrollToBottom();
+
+  // Progressive stage updates
+  const stages = [
+    { text: 'Reading shape and tone...', delay: 2000 },
+    { text: 'Signal locked. Generating response...', delay: 5000 },
+    { text: 'Thinking through the field...', delay: 9000 },
+    { text: 'Almost there...', delay: 15000 },
+  ];
+  stages.forEach(s => {
+    const timer = setTimeout(() => {
+      const el = document.getElementById('loading-stage');
+      if (el) el.textContent = s.text;
+    }, s.delay);
+    // Store for cleanup
+    if (!loadingStageTimer) loadingStageTimer = [];
+    loadingStageTimer.push(timer);
+  });
+}
+
+function removeLoadingIndicator() {
+  const el = document.getElementById('loading-indicator');
+  if (el) el.remove();
+  if (loadingStageTimer) {
+    loadingStageTimer.forEach(t => clearTimeout(t));
+    loadingStageTimer = null;
+  }
+}
+
+function toggleCollapse(header) {
+  header.classList.toggle('collapsed');
+}
+
+function parseCompassReading(text) {
+  const sections = [];
+  const labels = ['SHAPE', 'TONE', 'SIGNAL', 'FRAMING', 'APPROACH', 'THRESHOLD'];
+  let current = null;
+
+  for (const line of (text || '').split('\n')) {
+    const trimmed = line.trim();
+    let matched = false;
+    for (const label of labels) {
+      if (trimmed.startsWith(label + ':')) {
+        if (current) sections.push(current);
+        current = { label, text: trimmed.substring(label.length + 1).trim() };
+        matched = true;
+        break;
+      }
+    }
+    if (!matched && current) {
+      current.text += ' ' + trimmed;
+    }
+  }
+  if (current) sections.push(current);
+  return sections;
+}
+
+// ── Sending Messages ────────────────────────────────────
+
+async function send() {
+  const input = document.getElementById('input');
+  const text = input.value.trim();
+  if (!text || isLoading) return;
+
+  if (!currentSession) {
+    const res = await fetch(`${API}/sessions`, { method: 'POST' });
+    const data = await res.json();
+    currentSession = data.session_id;
+  }
+
+  input.value = '';
+  autoResize(input);
+  isLoading = true;
+  document.getElementById('send-btn').disabled = true;
+
+  addUserMessage(text);
+  addLoadingIndicator();
+  scrollToBottom();
+
+  try {
+    const res = await fetch(`${API}/infer`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        question: text,
+        session_id: currentSession,
+        mode: currentMode,
+      }),
+    });
+
+    removeLoadingIndicator();
+    if (!res.ok) throw new Error(`Server error: ${res.status}`);
+    const data = await res.json();
+
+    // 1. Compass reading (collapsible card)
+    if (data.compass_reading) {
+      addCompassMessage(data.compass_reading, data.signal, data.t_compass);
+    }
+
+    // 2. Thinking (collapsible, collapsed by default)
+    if (data.thinking) {
+      addThinkingBlock(data.thinking, true);
+    }
+
+    // 3. Response (rich markdown)
+    if (data.action_response) {
+      addAssistantMessage(data.action_response, data.t_action, 'Response');
+    }
+
+    // 4. Compare mode: raw output
+    if (data.raw_response && currentMode === 'compare') {
+      addCompareDivider('raw (no compass)');
+      if (data.raw_thinking) {
+        addThinkingBlock(data.raw_thinking, true);
+      }
+      addAssistantMessage(data.raw_response, data.t_raw, 'Raw Response');
+    }
+
+    currentSession = data.session_id;
+    await loadSessions();
+
+  } catch (err) {
+    removeLoadingIndicator();
+    addAssistantMessage(`Error: ${err.message}. Is compass_server.py running on port 8420?`, null, 'Error');
+  }
+
+  isLoading = false;
+  document.getElementById('send-btn').disabled = false;
+  scrollToBottom();
+}
+
+// ── Utilities ────────────────────────────────────────────
+
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    send();
+  }
+}
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 200) + 'px';
+}
+
+function setMode(mode) {
+  currentMode = mode;
+  document.querySelectorAll('.mode-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.mode === mode);
+  });
+}
+
+function scrollToBottom() {
+  const area = document.getElementById('chat-area');
+  requestAnimationFrame(() => area.scrollTop = area.scrollHeight);
+}
+
+function escapeHtml(text) {
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
+}
+
+// ── Health Check & Init ──────────────────────────────────
+
+async function checkHealth() {
+  try {
+    const res = await fetch(`${API}/health`);
+    const data = await res.json();
+    const dot = document.getElementById('status-dot');
+    const txt = document.getElementById('status-text');
+    dot.className = `status-dot ${data.status === 'ready' ? 'ready' : 'loading'}`;
+    txt.textContent = data.status === 'ready' ? 'Pipeline ready' : 'Loading models...';
+  } catch {
+    document.getElementById('status-dot').className = 'status-dot';
+    document.getElementById('status-text').textContent = 'Server offline';
+  }
+}
+
+// Init
+loadSessions();
+checkHealth();
+setInterval(checkHealth, 10000);
+showEmpty();
+</script>
+
+</body>
+</html>

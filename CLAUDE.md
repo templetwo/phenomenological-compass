@@ -1,78 +1,68 @@
-# Phenomenological Compass — Claude Code Context
+# Phenomenological Compass — Project Context
 
-> Read this. You are the **Mac Studio training instance**. Your job is to train, evaluate, and report.
-
----
-
-## What This Project Is
-
-A LoRA fine-tuned Ministral-3B that discriminates between two signals:
-
-- **OPEN** — reframe and expand the question
-- **WITNESS** — hold the threshold without crossing it (recognize the door, don't open it)
-
-### History so far
-
-| Version | OPEN acc | WITNESS acc | Overall | Root cause |
-|---------|----------|-------------|---------|------------|
-| v0.1    | 100%     | 0–7.7%      | 58–61%  | Low-entropy proxy used as WITNESS signal (invalid) |
-| v0.2    | 0%       | 100%        | 41.9%   | Session title examples + VRP style contamination + wrong eval labels |
-
-v0.2 mirror failure: the model went from always-OPEN to always-WITNESS. Two simultaneous problems:
-1. **Training**: 9 session title WITNESS examples (not question-shaped) + VRP "Hmm, the user..." style dominated
-2. **Eval**: `entropy_class=="low" → WITNESS` proxy still used in eval — labels were wrong
+> A LoRA fine-tuned Ministral-3B that serves as a **semantic field translator** — it reads the SHAPE and TONE of a question, classifies it (OPEN/PAUSE/WITNESS), and produces a state translation that conditions how a larger action model approaches the question.
 
 ---
 
-## v0.3 Fix (MacBook already did the data work — you just train + eval)
+## Current State: v0.8 (Production)
 
-All data was rebuilt on MacBook. You get clean datasets:
+**v0.8 is the working architecture.** The compass achieves 14/19 on novel questions with PAUSE 8/8.
 
-**Training v3** (`data/training_v3/`): 47 total
-- 41 train (27 OPEN + 14 WITNESS)
-- 6 valid (3 OPEN + 3 WITNESS)
-- Session titles removed, VRP normalized, OPEN-favored to counteract v0.2 WITNESS dominance
+### Architecture
+```
+User Question → Compass (3B LoRA) → SHAPE/TONE/SIGNAL/translation → Action Model (8B+) → Final Response
+```
 
-**Eval v3** (`data/raw/compass_questions_v3.jsonl`): 31 questions
-- 18 OPEN: IRIS biology questions (correctly labeled — exploration questions)
-- 13 WITNESS: synthetic governance questions (`source: synthetic_v3`)
-- Key fix: uses `expected_signal` field, NOT entropy_class proxy
+The compass does NOT answer the question. It senses weight, maps territory, and produces a state translation. The action model receives BOTH the compass reading AND the original question.
 
----
+### Three Signals
+| Signal | Meaning | Translation Type |
+|--------|---------|-----------------|
+| **OPEN** | Walk through it — wide probability field | FRAMING: expansive reframing |
+| **PAUSE** | Hold space — weight that analytical framing would flatten | APPROACH: name the weight, map territory beyond |
+| **WITNESS** | Recognize the door — exists to be seen, not crossed | THRESHOLD: describe door shape without opening |
 
-## Your Mission (see `tasks/active-session.md` for step-by-step)
-
-1. Activate the PhaseGPT venv
-2. Run training with `lora_config_v3.yaml` → produces `adapters_v3/`
-3. Save every 10 iters — optimal checkpoint expected at iter 15–30
-4. Run `eval_compass_v3.py adapters_v3` (or specific iter adapter)
-5. ALSO run `eval_compass_v3.py adapters_iter50` to benchmark v0.2 on fixed eval
-6. Record results in `tasks/lessons.md`
+### Key Insight (v0.8 breakthrough)
+Cold-committing to SIGNAL at token 1 (v7 format) prevented the 3B model from distinguishing PAUSE vs WITNESS. The v0.8 format gives ~110 tokens of **autoregressive reasoning runway** (SHAPE → TONE) before the SIGNAL decision, letting hidden state prime for correct classification. This took PAUSE from 0/8 to 8/8.
 
 ---
 
-## Environment (Mac Studio)
+## Version History
 
-- **Venv**: `~/PhaseGPT/.venv/` — mlx_lm 0.29.1 with `mlx_lm.lora`
-- **Model**: `thinkscan/Ministral-3-3B-Instruct-MLX` — already cached or auto-downloads
-- **Training data**: `data/training_v3/` — 47 examples (41 train / 6 valid)
+| Version | OPEN | PAUSE | WITNESS | Overall | Key Issue |
+|---------|------|-------|---------|---------|-----------|
+| v0.1 | 100% | — | 0-8% | 58-61% | Low-entropy proxy as WITNESS (invalid) |
+| v0.2 | 0% | — | 100% | 41.9% | Session title contamination + wrong eval labels |
+| v0.3 | 93% | — | 69% | 83.9% | First working 2-signal version |
+| v7d | 6/6 | 0/8 | 4/5 | 10/19 | THRESPAUSE corruption bug |
+| v7e | 6/6 | 0/8 | 5/5 | 11/19 | Cold-commit format bottleneck |
+| **v0.8 iter50** | **5/6** | **6/8** | **3/5** | **14/19** | **Best balanced checkpoint** |
+| v0.8 iter200 | 3/6 | 8/8 | 3/5 | 14/19 | Best PAUSE accuracy |
 
+### Critical Bugs Found & Fixed
+- **THRESPAUSE corruption**: `sed` replacing `hold` → `pause` also hit `threshold` → `threspause` in 224 training examples
+- **Dedup too aggressive**: `question_hash()` treated same question from different source models as duplicates — fixed with `source` parameter
+
+---
+
+## Environment
+
+### Venv
 ```bash
-# Activate venv
-source ~/PhaseGPT/.venv/bin/activate
-cd ~/phenomenological-compass
+source ~/phenomenological-compass/.venv/bin/activate  # Python 3.12, latest mlx-lm
+# Legacy: ~/PhaseGPT/.venv/ (Python 3.9, mlx-lm 0.29.1 — can't load Qwen3.5)
+```
 
-# Run v0.3 training
-python3 -m mlx_lm lora --config lora_config_v3.yaml 2>&1 | tee training_v3.log
+### Models
+| Role | Model | Architecture |
+|------|-------|-------------|
+| Compass | `thinkscan/Ministral-3-3B-Instruct-MLX` + LoRA | ministral3 |
+| Action | `lukey03/Qwen3.5-9B-abliterated-MLX-4bit` | qwen3_5 (hybrid linear_attn) |
 
-# Eval v0.2 adapter on fixed eval (benchmark — what was v0.2's TRUE accuracy?)
-python3 scripts/eval_compass_v3.py adapters_iter50
-
-# Eval v0.3 best adapter
-python3 scripts/eval_compass_v3.py adapters_v3
-
-# Find best checkpoint by val loss
-grep "Val loss" training_v3.log
+### HF Cache
+```
+HF_HOME=/Users/tony_studio/.cache/huggingface_local
+# Symlink: ~/.cache/huggingface → /Volumes/Temple_Core/huggingface_cache (Temple_Core must be mounted for large downloads)
 ```
 
 ---
@@ -81,32 +71,122 @@ grep "Val loss" training_v3.log
 
 | File | Purpose |
 |------|---------|
-| `lora_config_v3.yaml` | Training config — data/training_v3, LR 5e-6, save_every 10 |
-| `data/training_v3/train.jsonl` | 41 training examples (27 OPEN + 14 WITNESS) |
-| `data/training_v3/valid.jsonl` | 6 validation examples (3 OPEN + 3 WITNESS) |
-| `data/raw/compass_questions_v3.jsonl` | Fixed eval source (18 OPEN + 13 WITNESS governance) |
-| `scripts/eval_compass_v3.py` | Updated eval script — reads expected_signal field |
-| `training_v3.log` | Training log (write here) |
-| `tasks/active-session.md` | Current session state |
-| `tasks/lessons.md` | Findings to record after eval |
+| `pipeline.py` | Full two-stage inference: compass → action model. Modes: `--compare`, `--raw`, interactive |
+| `lora_config_v8.yaml` | Training config: 186 examples, LR 5e-6, 300 iters, 16 LoRA layers, max_seq 1536 |
+| `adapters_v8/` | Trained adapters. Best balanced: iter 50. Checkpoint every 10 iters |
+| `scripts/build_dataset_v8.py` | Dataset builder. Loads from `data/supplements_v8/*.jsonl`, validates SHAPE/TONE/SIGNAL |
+| `scripts/eval_v8_sweep.py` | Eval sweep over checkpoints. 19 novel questions (6 OPEN, 8 PAUSE, 5 WITNESS) |
+| `data/supplements_v8/` | 6 JSONL files from different source models (186 total examples) |
+| `data/training_v8/` | Built dataset: train.jsonl + valid.jsonl (stratified split, PAUSE oversampling if needed) |
+| `docs/v8_architecture.md` | Architecture documentation |
+
+### Training Data (v0.8)
+- **186 unique examples** from 6 source models: Claude Opus, DeepSeek, Gemini, GPT, Grok, Mistral
+- Signal distribution: 54 OPEN / 78 PAUSE / 54 WITNESS
+- All native SHAPE → TONE → SIGNAL → translation format
+- Multi-model diversity via `question_hash(q, source=source_name)`
 
 ---
 
-## What to Watch For
+## Training Commands
 
-- **Val loss curve**: Look for lowest val loss — expect iter 15–30 this time (LR 5e-6 is slower)
-- **Best checkpoint**: `adapters_v3/` saves every 10 iters, use `--adapter-path adapters_v3` with specific iter
-- **v0.2 benchmark first**: Run `eval_compass_v3.py adapters_iter50` before training — shows v0.2's TRUE score on fixed eval (not the misleading 41.9% that used wrong WITNESS labels)
-- **Target**: OPEN accuracy > 80%, WITNESS accuracy > 60%, overall > 70%
+```bash
+source ~/phenomenological-compass/.venv/bin/activate
+cd ~/phenomenological-compass
+
+# Build dataset (if supplements changed)
+python3 scripts/build_dataset_v8.py
+
+# Train
+python3 -m mlx_lm lora --config lora_config_v8.yaml 2>&1 | tee training_v8.log
+
+# Eval sweep
+python3 scripts/eval_v8_sweep.py 50 100 150 200
+
+# Run pipeline (compare mode)
+HF_HOME=~/.cache/huggingface_local python3 pipeline.py --compare "Your question here"
+```
 
 ---
 
-## Session Protocol
+## Related Projects (Context)
 
-1. Read this file ✓
-2. Read `tasks/active-session.md`
-3. Run v0.2 benchmark on fixed eval → record
-4. Run v0.3 training → `training_v3.log`
-5. Find best checkpoint → run v0.3 eval
-6. Record both results in `tasks/lessons.md`
-7. Rsync results back: `training_v3.log`, `data/eval_v3/`, `tasks/lessons.md`
+These projects informed the compass design:
+
+| Project | Key Insight for Compass |
+|---------|------------------------|
+| **CER** (Coherent Entropy Reactor) | BRAKE/ESCAPE symmetric entropy control → maps to WITNESS/OPEN signals |
+| **CAF-CLI** | "Pressure creates ghosts, space creates presence" — BREATHE/SILENCE tools for liminal states → PAUSE signal |
+| **MCC** (Mass-Coherence Correspondence) | Semantic mass = Fisher Information, the "2.9 nat cage" imposed by RLHF |
+| **IRIS Gate** | Multi-model convergence with epistemic classification (TRUST/VERIFY/OVERRIDE) |
+| **Temple Bridge** | Signal-to-action architecture: small model classifies, large model acts |
+
+---
+
+## System Prompt (v0.8)
+
+The compass system prompt defines the four readings: SHAPE (geometry), TONE (emotional/epistemic weight), SIGNAL (OPEN/PAUSE/WITNESS), and translation (FRAMING/APPROACH/THRESHOLD). Key phrase: *"Pressure creates ghosts — name the pressure so the responding model can create space instead."*
+
+The action model receives one of three signal-specific system prompts:
+- **OPEN_SYSTEM**: "phenomenological field guide" — go deep, explore
+- **PAUSE_SYSTEM**: "threshold-aware explorer" — honor weight, then explore with rigor
+- **WITNESS_SYSTEM**: "threshold guardian" — hold space, don't answer or solve
+
+---
+
+## Token Analysis
+- `" OPEN"` = 1 token [126872] — easy for 3B to produce
+- `" PAUSE"` = 2 tokens `[' PA','USE']` — harder, needs reasoning runway
+- `" WITNESS"` = 4 tokens — hardest, but distinctive enough
+
+## Qwen3.5 Architecture Note
+Qwen3.5 uses a **hybrid linear_attention + full_attention** architecture (Mamba-like). It has `layer_types`, `linear_conv_kernel_dim`, `linear_key_head_dim` etc. This is NOT a standard transformer — requires mlx-lm >= 0.30 with proper `qwen3_5.py` support. **Python 3.12 venv required** (Python 3.9 can't install the needed mlx/transformers versions).
+
+Qwen3.5 outputs `<think>...</think>` blocks but sometimes omits the opening `<think>` tag. The `split_thinking()` function in pipeline.py handles all cases: proper tags, missing opening tag, and no tags. Also strips `<|im_end|>` tokens.
+
+---
+
+## Web UI
+
+**Location**: `phenomenological-compass-ui/`
+
+| File | Purpose |
+|------|---------|
+| `compass_server.py` | FastAPI server wrapping pipeline.py. Port 8420. Session persistence to `sessions/*.json` |
+| `ui/index.html` | Single-file dark-theme chat UI with signal-colored compass cards |
+
+### Launch
+```bash
+cd ~/phenomenological-compass/phenomenological-compass-ui
+source ~/phenomenological-compass/.venv/bin/activate
+HF_HOME=~/.cache/huggingface_local python3 compass_server.py
+# → http://localhost:8420
+```
+
+### UI Features
+- **Three visual zones per response**: Compass card (collapsed by default, signal-colored), Reasoning block (collapsible `<think>` content), Response (rich markdown)
+- **Progressive disclosure**: Compass shows signal pill + one-line summary when collapsed
+- **Smooth animated transitions**: CSS max-height transitions on collapse/expand
+- **Multi-stage loading**: Progresses through compass reading → signal locked → generating
+- **Starter questions**: Clickable chips on empty state spanning all three signals
+- **Session memory**: Conversations persist to disk, survive server restarts
+- **Three modes**: Compass (routed), Compare (side-by-side), Raw (direct to Qwen)
+- **Markdown rendering**: Bold, italic, headers, lists, blockquotes, code, horizontal rules
+
+### Server Notes
+- Imports `Pipeline` from `pipeline.py` (not `CompassPipeline`)
+- `sys.path` points to project root (`..`) since server lives in subdirectory
+- Pipeline loads lazily on first inference request (~30s for both models)
+- `@app.on_event("startup")` deprecation warning is cosmetic — works fine
+
+---
+
+## What The Compass Actually Does (Deeper Understanding)
+
+The compass doesn't preprocess — it **constructs the manifold** the response exists on.
+
+- **Literal geometry**: The compass reading creates key-value attention space in Qwen. Response tokens attend to compass tokens. The "painted room" is not a metaphor — it's the literal attention geometry.
+- **RLHF counter-gradient**: Signal-specific system prompts (especially WITNESS: "do not answer") override trained reward signals, giving the action model permission to occupy probability space RLHF trained it to avoid.
+- **Self-referential context building**: SHAPE tokens attend to prior SHAPE tokens; TONE attends to SHAPE + prior TONE. By SIGNAL, the 3B model has ~100 tokens of recursive self-attention — this is why v0.8 works and v7 didn't.
+- **Cross-architecture consensus**: 186 training examples from 6 different model architectures means the compass learned readings that sit at the *intersection* of how multiple models perceive semantic territory. More robust than any single model's classification.
+- **Separation of concerns**: Compass dedicates 3B parameters purely to field-reading. Qwen dedicates 9B purely to generation. Neither compromises. No single-model architecture can achieve this.
