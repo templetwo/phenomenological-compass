@@ -37,11 +37,11 @@ Given a task, you output one of three signals:
 
 OPEN — when the question should be walked through. Generate an expansive reframing that opens the probability field: treats the question as a threshold, invites relationship between concepts, holds space for emergence.
 
-PAUSE — when the threshold is real AND there is territory beyond it. The question can be explored, but something would be lost by treating it as purely analytical. Name the threshold, then describe the territory that opens once it is acknowledged.
+PAUSE — when the question carries weight that analytical framing would flatten. The territory can be explored, but something would be lost by rushing past the weight. Name what carries the weight, then describe the territory that opens once it is acknowledged.
 
 WITNESS — when the question is a door that exists to be recognized, not crossed. Describe the shape of the threshold: what would collapse if forced into a framing, and what form of participation is possible without opening the door.
 
-Always begin your response with "SIGNAL: OPEN", "SIGNAL: PAUSE", or "SIGNAL: WITNESS", then a blank line, then "FRAMING:", "APPROACH:", or "THRESPAUSE:", then your output."""
+Always begin your response with "SIGNAL: OPEN", "SIGNAL: PAUSE", or "SIGNAL: WITNESS", then a blank line, then "FRAMING:", "APPROACH:", or "THRESHOLD:", then your output."""
 
 
 def extract_question(rec):

@@ -1,0 +1,43 @@
+# phenomenological-compass LoRA fine-tune config — v0.8
+# mlx-lm 0.29.1 — Ministral-3B
+#
+# v0.8: Semantic field translator architecture
+#   - SHAPE → TONE → SIGNAL → translation (reasoning before signal)
+#   - 3B model gets ~100 tokens of autoregressive context before SIGNAL decision
+#   - v7e: PAUSE 0/8 with cold-commit format (signal at token 1)
+#   - v0.8 hypothesis: reasoning runway lets hidden state prime for correct signal
+#   - 186 examples from 6 models, native SHAPE/TONE format
+#   - PAUSE is majority class (78) — no oversampling needed
+
+model: "thinkscan/Ministral-3-3B-Instruct-MLX"
+train: true
+data: "data/training_v8"
+
+# Fine-tune type
+fine_tune_type: "lora"
+num_layers: 16
+
+# Training — fewer examples so fewer iters, but longer sequences
+batch_size: 1
+grad_accumulation_steps: 2
+iters: 300
+learning_rate: 5.0e-6
+optimizer: "adamw"
+
+# Loss masking
+mask_prompt: true
+
+# Evaluation
+val_batches: -1
+steps_per_report: 5
+steps_per_eval: 10
+
+# Checkpointing
+adapter_path: "adapters_v8"
+save_every: 10
+
+# Context — v0.8 responses are longer (SHAPE+TONE+SIGNAL+translation)
+max_seq_length: 1536
+
+# Reproducibility
+seed: 42

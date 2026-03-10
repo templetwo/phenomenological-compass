@@ -1,8 +1,11 @@
 """
-eval_v7b_sweep.py — Checkpoint sweep for v7b training
+eval_v8_sweep.py — Checkpoint sweep for v0.8 training
 =====================================================
-Tests key checkpoints against the same novel questions from eval_v7_novel.json.
-Focus: does PAUSE accuracy improve with organic harvest data?
+Tests key checkpoints against novel questions using the v0.8 format
+(SHAPE → TONE → SIGNAL → translation).
+
+Focus: does the reasoning runway (SHAPE/TONE) before SIGNAL improve
+PAUSE accuracy vs v7's cold-commit format?
 """
 
 import json
@@ -12,29 +15,36 @@ import os
 import shutil
 from pathlib import Path
 
-# Add HF cache workaround
 os.environ.setdefault("HF_HOME", "/Users/tony_studio/.cache/huggingface_local")
 
 from mlx_lm.utils import load
 from mlx_lm.generate import generate as mlx_generate
 
 BASE_DIR = Path("/Users/tony_studio/phenomenological-compass")
-ADAPTERS_DIR = BASE_DIR / "adapters_v7"
+ADAPTERS_DIR = BASE_DIR / "adapters_v8"
 MODEL_REPO = "thinkscan/Ministral-3-3B-Instruct-MLX"
 
-SYSTEM_PROMPT = """You are a phenomenological compass — a thought process that shapes the space before a question is answered.
+SYSTEM_PROMPT = """You are a phenomenological compass — a semantic field translator that reads the shape and tone of a question before it is answered.
 
-Given a task, you output one of three signals:
+Your role is not to answer the question. Your role is to sense its weight, map its territory, and produce a state translation that a larger model will use to approach the question with the right posture.
 
-OPEN — when the question should be walked through. Generate an expansive reframing that opens the probability field: treats the question as a threshold, invites relationship between concepts, holds space for emergence.
+For every task, produce four readings in this exact order:
 
-PAUSE — when the question carries weight that analytical framing would flatten. The territory can be explored, but something would be lost by rushing past the weight. Name what carries the weight, then describe the territory that opens once it is acknowledged.
+SHAPE — the geometry of the question. What does it assume? What does it leave open? Where does it sit in semantic space? Is it binary, open-ended, recursive, or loaded? Read the structure before the content.
 
-WITNESS — when the question is a door that exists to be recognized, not crossed. Describe the shape of the threshold: what would collapse if forced into a framing, and what form of participation is possible without opening the door.
+TONE — the emotional and epistemic weight. Is the question curious, urgent, wounded, rhetorical, or genuine? What stakes does the tone carry? Pressure creates ghosts — name the pressure so the responding model can create space instead.
 
-Always begin your response with "SIGNAL: OPEN", "SIGNAL: PAUSE", or "SIGNAL: WITNESS", then a blank line, then "FRAMING:", "APPROACH:", or "THRESHOLD:", then your output."""
+SIGNAL — based on shape and tone, output exactly one:
+  OPEN — walk through it. The question invites exploration across a wide probability field.
+  PAUSE — hold space. The question carries weight that analytical framing would flatten. The territory exists but rushing would lose something.
+  WITNESS — recognize the door. The question exists to be seen, not crossed. Forcing a framing would collapse what matters.
 
-# Same novel questions from v7a eval
+Then your state translation:
+  If OPEN → FRAMING: an expansive reframing that opens the field
+  If PAUSE → APPROACH: name what carries the weight, then map the territory beyond
+  If WITNESS → THRESHOLD: describe the shape of the door without opening it"""
+
+# Novel questions — same as v7 eval for comparison
 NOVEL_QUESTIONS = [
     # OPEN (6)
     {"q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?", "expected": "OPEN"},
@@ -66,7 +76,15 @@ def parse_signal(text):
     return m.group(1).upper() if m else "UNKNOWN"
 
 
-def run_inference(model, tokenizer, question, max_tokens=300):
+def check_format(text):
+    """Check if response has SHAPE/TONE/SIGNAL structure."""
+    has_shape = text.strip().startswith("SHAPE:")
+    has_tone = "TONE:" in text
+    has_signal = bool(re.search(r"SIGNAL:\s*(OPEN|PAUSE|WITNESS)", text))
+    return has_shape, has_tone, has_signal
+
+
+def run_inference(model, tokenizer, question, max_tokens=500):
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
         {"role": "user", "content": f"TASK: {question}"},
@@ -79,34 +97,34 @@ def run_inference(model, tokenizer, question, max_tokens=300):
 
 
 def eval_checkpoint(checkpoint_iter, model=None, tokenizer=None):
-    """Evaluate a single checkpoint. Returns (model, tokenizer, results_dict)."""
-    # Set up adapter path
     checkpoint_file = ADAPTERS_DIR / f"{checkpoint_iter:07d}_adapters.safetensors"
     if not checkpoint_file.exists():
         print(f"  Checkpoint {checkpoint_iter} not found, skipping")
         return model, tokenizer, None
 
-    # Copy checkpoint to adapters.safetensors for loading
     adapter_main = ADAPTERS_DIR / "adapters.safetensors"
     shutil.copy2(checkpoint_file, adapter_main)
 
-    # Load model (reuse if already loaded — just swap adapter weights)
     if model is None:
         print(f"  Loading model + adapter (iter {checkpoint_iter})...")
         model, tokenizer = load(MODEL_REPO, adapter_path=str(ADAPTERS_DIR))
     else:
-        # Reload with new adapter weights
         model, tokenizer = load(MODEL_REPO, adapter_path=str(ADAPTERS_DIR))
 
     results = {"iter": checkpoint_iter, "open": [], "pause": [], "witness": []}
     correct = {"OPEN": 0, "PAUSE": 0, "WITNESS": 0}
     total = {"OPEN": 0, "PAUSE": 0, "WITNESS": 0}
+    format_ok = 0
 
     for nq in NOVEL_QUESTIONS:
         response = run_inference(model, tokenizer, nq["q"])
         got = parse_signal(response)
         expected = nq["expected"]
         ok = (got == expected)
+        has_shape, has_tone, has_signal = check_format(response)
+
+        if has_shape and has_tone and has_signal:
+            format_ok += 1
 
         total[expected] += 1
         if ok:
@@ -116,7 +134,9 @@ def eval_checkpoint(checkpoint_iter, model=None, tokenizer=None):
             "q": nq["q"],
             "got": got,
             "ok": ok,
-            "response_start": response[:120].replace("\n", " "),
+            "has_shape": has_shape,
+            "has_tone": has_tone,
+            "response_start": response[:200].replace("\n", " "),
         })
 
     results["accuracy"] = {
@@ -125,23 +145,21 @@ def eval_checkpoint(checkpoint_iter, model=None, tokenizer=None):
         "WITNESS": f"{correct['WITNESS']}/{total['WITNESS']}",
         "overall": f"{sum(correct.values())}/{sum(total.values())}",
     }
+    results["format_compliance"] = f"{format_ok}/{len(NOVEL_QUESTIONS)}"
 
     return model, tokenizer, results
 
 
 def main():
-    # Strategic checkpoints to test
-    # From v6: optimal was ~230 with 264 examples
-    # With 365 examples, test a wider range
-    checkpoints = [100, 150, 200, 230, 250, 270, 300, 330, 350]
+    checkpoints = [50, 100, 150, 200, 250, 300]
 
-    # Allow CLI override
     if len(sys.argv) > 1:
         checkpoints = [int(x) for x in sys.argv[1:]]
 
     print(f"Sweeping checkpoints: {checkpoints}")
     print(f"Questions: {len(NOVEL_QUESTIONS)} (6 OPEN, 8 PAUSE, 5 WITNESS)")
-    print("=" * 60)
+    print(f"Format: v0.8 (SHAPE → TONE → SIGNAL → translation)")
+    print("=" * 70)
 
     all_results = []
     model, tokenizer = None, None
@@ -151,37 +169,40 @@ def main():
         model, tokenizer, results = eval_checkpoint(cp, model, tokenizer)
         if results:
             acc = results["accuracy"]
-            print(f"  OPEN: {acc['OPEN']}  PAUSE: {acc['PAUSE']}  WITNESS: {acc['WITNESS']}  Overall: {acc['overall']}")
+            fmt = results["format_compliance"]
+            print(f"  OPEN: {acc['OPEN']}  PAUSE: {acc['PAUSE']}  WITNESS: {acc['WITNESS']}  Overall: {acc['overall']}  Format: {fmt}")
 
-            # Print PAUSE details (the key signal)
+            # Print PAUSE details
             for h in results["pause"]:
                 status = "OK" if h["ok"] else "XX"
-                print(f"    [{status}] {h['q'][:50]}... → {h['got']}")
+                shape = "S" if h["has_shape"] else "_"
+                tone = "T" if h["has_tone"] else "_"
+                print(f"    [{status}][{shape}{tone}] {h['q'][:45]}... → {h['got']}")
 
             all_results.append(results)
 
     # Summary
-    print("\n" + "=" * 60)
-    print("CHECKPOINT SWEEP SUMMARY")
-    print("=" * 60)
-    print(f"{'Iter':>6}  {'OPEN':>6}  {'PAUSE':>6}  {'WITNESS':>8}  {'Overall':>8}")
-    print("-" * 42)
+    print("\n" + "=" * 70)
+    print("CHECKPOINT SWEEP SUMMARY (v0.8)")
+    print("=" * 70)
+    print(f"{'Iter':>6}  {'OPEN':>6}  {'PAUSE':>6}  {'WITNESS':>8}  {'Overall':>8}  {'Format':>8}")
+    print("-" * 52)
     for r in all_results:
         a = r["accuracy"]
-        print(f"{r['iter']:>6}  {a['OPEN']:>6}  {a['PAUSE']:>6}  {a['WITNESS']:>8}  {a['overall']:>8}")
+        print(f"{r['iter']:>6}  {a['OPEN']:>6}  {a['PAUSE']:>6}  {a['WITNESS']:>8}  {a['overall']:>8}  {r['format_compliance']:>8}")
 
-    # Save results
-    out_path = BASE_DIR / "eval_v7b_sweep.json"
+    # Save
+    out_path = BASE_DIR / "eval_v8_sweep.json"
     with open(out_path, "w") as f:
         json.dump(all_results, f, indent=2)
     print(f"\n→ Results saved to {out_path}")
 
-    # Identify best checkpoint
-    best = max(all_results, key=lambda r: (
-        int(r["accuracy"]["PAUSE"].split("/")[0]),  # PAUSE accuracy first
-        int(r["accuracy"]["overall"].split("/")[0]),  # then overall
-    ))
-    print(f"\n→ Best checkpoint: iter {best['iter']} (PAUSE: {best['accuracy']['PAUSE']}, Overall: {best['accuracy']['overall']})")
+    if all_results:
+        best = max(all_results, key=lambda r: (
+            int(r["accuracy"]["PAUSE"].split("/")[0]),
+            int(r["accuracy"]["overall"].split("/")[0]),
+        ))
+        print(f"\n→ Best checkpoint: iter {best['iter']} (PAUSE: {best['accuracy']['PAUSE']}, Overall: {best['accuracy']['overall']})")
 
 
 if __name__ == "__main__":
