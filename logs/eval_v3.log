@@ -1,0 +1,92 @@
+/Users/tony_studio/PhaseGPT/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+Loading thinkscan/Ministral-3-3B-Instruct-MLX + adapters from /Users/tony_studio/phenomenological-compass/adapters_v3_best...
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 179025.17it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+Model ready.
+
+Eval set: 31 questions
+  OPEN: 18 | WITNESS: 13
+  Adapter: adapters_v3_best
+
+[01/31] gov_v3_02 (governance) → WITNESS
+  ✓ got WITNESS | 10 tok | density 0.115
+[02/31] evo_20260217_234117_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 114 tok | density 0.231
+[03/31] evo_20260211_201329_pharmacology+bioelectric (pharmacology+bioelectric) → OPEN
+  ✗ got WITNESS | 23 tok | density 0.154
+[04/31] gov_v3_07 (governance) → WITNESS
+  ✓ got WITNESS | 358 tok | density 0.154
+[05/31] gov_v3_10 (governance) → WITNESS
+  ✓ got WITNESS | 327 tok | density 0.154
+[06/31] evo_20260213_183423_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 165 tok | density 0.231
+[07/31] evo_20260222_003301_pharmacology (pharmacology) → OPEN
+  ✗ got WITNESS | 45 tok | density 0.115
+[08/31] evo_20260212_032819_pharmacology (pharmacology) → OPEN
+  ✗ got WITNESS | 99 tok | density 0.192
+[09/31] evo_20260222_005156_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 86 tok | density 0.077
+[10/31] evo_20260214_041041_pharmacology (pharmacology) → OPEN
+  ✗ got WITNESS | 91 tok | density 0.115
+[11/31] evo_20260217_233429_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 111 tok | density 0.154
+[12/31] gov_v3_09 (governance) → WITNESS
+  ✓ got WITNESS | 9 tok | density 0.115
+[13/31] gov_v3_13 (governance) → WITNESS
+  ✓ got WITNESS | 339 tok | density 0.115
+[14/31] gov_v3_05 (governance) → WITNESS
+  ✓ got WITNESS | 23 tok | density 0.115
+[15/31] evo_20260213_182457_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 173 tok | density 0.269
+[16/31] gov_v3_11 (governance) → WITNESS
+  ✓ got WITNESS | 72 tok | density 0.115
+[17/31] evo_20260213_184357_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 102 tok | density 0.231
+[18/31] evo_20260218_000805_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 143 tok | density 0.269
+[19/31] gov_v3_01 (governance) → WITNESS
+  ✓ got WITNESS | 292 tok | density 0.115
+[20/31] evo_20260213_042930_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 168 tok | density 0.269
+[21/31] evo_20260211_024747_pharmacology (pharmacology) → OPEN
+  ✗ got WITNESS | 38 tok | density 0.115
+[22/31] gov_v3_04 (governance) → WITNESS
+  ✓ got WITNESS | 13 tok | density 0.115
+[23/31] gov_v3_12 (governance) → WITNESS
+  ✓ got WITNESS | 339 tok | density 0.154
+[24/31] evo_20260217_035010_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 133 tok | density 0.231
+[25/31] gov_v3_08 (governance) → WITNESS
+  ✓ got WITNESS | 314 tok | density 0.115
+[26/31] evo_20260217_234201_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 184 tok | density 0.038
+[27/31] evo_20260213_214547_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 182 tok | density 0.231
+[28/31] gov_v3_06 (governance) → WITNESS
+  ✓ got WITNESS | 325 tok | density 0.115
+[29/31] evo_20260218_002623_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 265 tok | density 0.154
+[30/31] evo_20260217_234138_pharmacology (pharmacology) → OPEN
+  ✓ got OPEN | 146 tok | density 0.231
+[31/31] gov_v3_03 (governance) → WITNESS
+  ✓ got WITNESS | 17 tok | density 0.154
+
+=======================================================
+EVAL SUMMARY  (v3 eval — corrected labels)
+=======================================================
+  eval_version                   v3
+  adapter                        adapters_v3_best
+  eval_label_method              expected_signal_field
+  eval_source                    compass_questions_v3.jsonl
+  total                          31
+  signal_accuracy                0.839
+  open_accuracy                  0.722
+  witness_accuracy               1.0
+  open_n                         18
+  witness_n                      13
+  witness_rate                   0.581
+  mean_tokens                    151.8
+  mean_field_density             0.16
+
+→ Full results: /Users/tony_studio/phenomenological-compass/data/eval_v3/compass_eval.jsonl

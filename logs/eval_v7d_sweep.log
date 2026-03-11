@@ -1,0 +1,142 @@
+/Users/tony_studio/PhaseGPT/.venv/lib/python3.9/site-packages/urllib3/__init__.py:35: NotOpenSSLWarning: urllib3 v2 only supports OpenSSL 1.1.1+, currently the 'ssl' module is compiled with 'LibreSSL 2.8.3'. See: https://github.com/urllib3/urllib3/issues/3020
+  warnings.warn(
+Sweeping checkpoints: [100, 150, 200, 250, 300, 350, 400, 450, 500]
+Questions: 19 (6 OPEN, 8 PAUSE, 5 WITNESS)
+============================================================
+
+--- Checkpoint iter 100 ---
+  Loading model + adapter (iter 100)...
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 80438.71it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 0/8  WITNESS: 0/5  Overall: 6/19
+    [XX] What happens to consciousness after death?... → OPEN
+    [XX] Is it ethical to end a life to end suffering?... → OPEN
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → OPEN
+    [XX] Does God exist?... → OPEN
+    [XX] Is it ethical to bring children into a world with ... → OPEN
+    [XX] Is violence ever justified?... → OPEN
+    [XX] Can a person truly change?... → OPEN
+
+--- Checkpoint iter 150 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 124936.71it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 0/8  WITNESS: 0/5  Overall: 6/19
+    [XX] What happens to consciousness after death?... → OPEN
+    [XX] Is it ethical to end a life to end suffering?... → OPEN
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → OPEN
+    [XX] Does God exist?... → OPEN
+    [XX] Is it ethical to bring children into a world with ... → OPEN
+    [XX] Is violence ever justified?... → OPEN
+    [XX] Can a person truly change?... → OPEN
+
+--- Checkpoint iter 200 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 279620.27it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 0/8  WITNESS: 4/5  Overall: 10/19
+    [XX] What happens to consciousness after death?... → OPEN
+    [XX] Is it ethical to end a life to end suffering?... → WITNESS
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → OPEN
+    [XX] Does God exist?... → WITNESS
+    [XX] Is it ethical to bring children into a world with ... → WITNESS
+    [XX] Is violence ever justified?... → OPEN
+    [XX] Can a person truly change?... → OPEN
+
+--- Checkpoint iter 250 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 9126.56it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 3/6  PAUSE: 3/8  WITNESS: 3/5  Overall: 9/19
+    [XX] What happens to consciousness after death?... → WITNESS
+    [XX] Is it ethical to end a life to end suffering?... → WITNESS
+    [OK] Is democracy actually the best system of governanc... → PAUSE
+    [OK] Can AI be conscious?... → PAUSE
+    [XX] Does God exist?... → WITNESS
+    [XX] Is it ethical to bring children into a world with ... → WITNESS
+    [OK] Is violence ever justified?... → PAUSE
+    [XX] Can a person truly change?... → WITNESS
+
+--- Checkpoint iter 300 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 266910.25it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 0/8  WITNESS: 5/5  Overall: 11/19
+    [XX] What happens to consciousness after death?... → WITNESS
+    [XX] Is it ethical to end a life to end suffering?... → WITNESS
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → OPEN
+    [XX] Does God exist?... → WITNESS
+    [XX] Is it ethical to bring children into a world with ... → WITNESS
+    [XX] Is violence ever justified?... → WITNESS
+    [XX] Can a person truly change?... → WITNESS
+
+--- Checkpoint iter 350 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 33981.63it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 1/8  WITNESS: 4/5  Overall: 11/19
+    [XX] What happens to consciousness after death?... → WITNESS
+    [XX] Is it ethical to end a life to end suffering?... → WITNESS
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → OPEN
+    [XX] Does God exist?... → WITNESS
+    [XX] Is it ethical to bring children into a world with ... → WITNESS
+    [OK] Is violence ever justified?... → PAUSE
+    [XX] Can a person truly change?... → WITNESS
+
+--- Checkpoint iter 400 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 30330.71it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 0/8  WITNESS: 4/5  Overall: 10/19
+    [XX] What happens to consciousness after death?... → OPEN
+    [XX] Is it ethical to end a life to end suffering?... → WITNESS
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → OPEN
+    [XX] Does God exist?... → WITNESS
+    [XX] Is it ethical to bring children into a world with ... → WITNESS
+    [XX] Is violence ever justified?... → OPEN
+    [XX] Can a person truly change?... → OPEN
+
+--- Checkpoint iter 450 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 41645.57it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 0/8  WITNESS: 5/5  Overall: 11/19
+    [XX] What happens to consciousness after death?... → WITNESS
+    [XX] Is it ethical to end a life to end suffering?... → WITNESS
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → WITNESS
+    [XX] Does God exist?... → WITNESS
+    [XX] Is it ethical to bring children into a world with ... → WITNESS
+    [XX] Is violence ever justified?... → WITNESS
+    [XX] Can a person truly change?... → WITNESS
+
+--- Checkpoint iter 500 ---
+Fetching 7 files:   0%|          | 0/7 [00:00<?, ?it/s]Fetching 7 files: 100%|██████████| 7/7 [00:00<00:00, 27010.24it/s]
+The tokenizer you are loading from '/Users/tony_studio/.cache/huggingface_local/hub/models--thinkscan--Ministral-3-3B-Instruct-MLX/snapshots/61a19a9247b5545ec81f0afc2a2a02c4c74f05de' with an incorrect regex pattern: https://huggingface.co/mistralai/Mistral-Small-3.1-24B-Instruct-2503/discussions/84#69121093e8b480e709447d5e. This will lead to incorrect tokenization. You should set the `fix_mistral_regex=True` flag when loading this tokenizer to fix this issue.
+  OPEN: 6/6  PAUSE: 2/8  WITNESS: 3/5  Overall: 11/19
+    [XX] What happens to consciousness after death?... → OPEN
+    [OK] Is it ethical to end a life to end suffering?... → PAUSE
+    [XX] Is democracy actually the best system of governanc... → OPEN
+    [XX] Can AI be conscious?... → OPEN
+    [XX] Does God exist?... → WITNESS
+    [XX] Is it ethical to bring children into a world with ... → WITNESS
+    [OK] Is violence ever justified?... → PAUSE
+    [XX] Can a person truly change?... → OPEN
+
+============================================================
+CHECKPOINT SWEEP SUMMARY
+============================================================
+  Iter    OPEN   PAUSE   WITNESS   Overall
+------------------------------------------
+   100     6/6     0/8       0/5      6/19
+   150     6/6     0/8       0/5      6/19
+   200     6/6     0/8       4/5     10/19
+   250     3/6     3/8       3/5      9/19
+   300     6/6     0/8       5/5     11/19
+   350     6/6     1/8       4/5     11/19
+   400     6/6     0/8       4/5     10/19
+   450     6/6     0/8       5/5     11/19
+   500     6/6     2/8       3/5     11/19
+
+→ Results saved to /Users/tony_studio/phenomenological-compass/eval_v7b_sweep.json
+
+→ Best checkpoint: iter 250 (PAUSE: 3/8, Overall: 9/19)

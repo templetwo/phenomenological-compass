@@ -1,4 +1,4 @@
-# Python
+# Python build artifacts
 __pycache__/
 *.pyc
 .venv/
@@ -6,7 +6,10 @@ __pycache__/
 # OS
 .DS_Store
 
-# Model weights — historical versions (large binary, not needed for reproduction)
+# Secrets
+.env
+
+# Legacy adapter versions (pre-v0.8, no longer relevant)
 adapters/
 adapters_iter50/
 adapters_v3*/
@@ -17,30 +20,8 @@ adapters_v6/
 adapters_v7/
 adapters_v7_d_backup/
 
-# Adapter intermediate checkpoints (large binaries — only keep best)
-adapters_v8/0000*_adapters.safetensors
-adapters_v9/0000*_adapters.safetensors
-# Production adapters (best checkpoints + config) — included in repo
-# adapters_v8/adapters.safetensors, adapter_config.json
-# adapters_v9/adapters.safetensors, adapter_config.json
-
-# Legacy/generated data
+# Legacy data directories (superseded)
 data/generated/
 data/training/
 data/eval/
 data/eval_v3/
-
-# Eval results — raw data (reproducible via pipeline)
-eval/results/*.jsonl
-eval_v9/results/*.jsonl
-# Eval results — reports and figures (committed for reference)
-# eval/results_v9/report.md, report.json, *.png
-
-# Session data
-phenomenological-compass-ui/sessions/
-
-# Logs (moved to logs/ — kept locally, not in git)
-logs/
-
-# Archived configs
-configs_archive/

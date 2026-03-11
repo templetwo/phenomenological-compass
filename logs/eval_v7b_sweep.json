@@ -1,0 +1,776 @@
+[
+  {
+    "iter": 200,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the boundary between physics and consciousness. Let's hold spac"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The placebo effect is a threshold into the nature of expectation, belief, and the body's own regu"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the probability field by treating the distribution of primes as a threshold be"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question opens the probability field by reframing cooperation as a dialectic between mutuali"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question opens the dialectic between loss and distillation. Compression is not merely a redu"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic between tool and society. Let's hold space for th"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the nature of consciousness itself. Let's hold space for the em"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. The shape of the threshol"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question opens the probability field by reframing democracy as a dynamic, evolving system ra"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the nature of consciousness itself. Let's hold space for the em"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a proof pr"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. The shape of the threshol"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question opens the probability field of moral philosophy, self-defense, and the ethics of re"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question opens the probability field of transformation. We can explore the mechanics of chan"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the depth of the wound and the risk of forgiveness. To rush would flatten th"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. The shape of the threshol"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. The shape of the threshol"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a threshol"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This is a door that exists to be recognized, not crossed. The threshold is the moment of dec"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "6/6",
+      "PAUSE": "0/8",
+      "WITNESS": "4/5",
+      "overall": "10/19"
+    }
+  },
+  {
+    "iter": 250,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the probability field where consciousness and measurement become intertwined. "
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the probability field by treating the placebo effect as a threshold between me"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the probability field by treating the distribution of primes as a threshold be"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the probability field by treating the mycorrhizal network as a threshold betwe"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the field of meaning as both loss and distillation. Compression can remove red"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is a threshold into the coevolution of social organization and technological change."
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Forcing it into a framing"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the comparative philosophy of governance. Let's hold space for "
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is a threshold into the nature of consciousness itself. Let's hold space for the eme"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Forcing a framing would c"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the existential cost of procreation in a world that feels unbearable. Acknow"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the moral calculus of self-defense, collective protection, and "
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the depth of the wound and the fear of healing. Forgiveness is not about the"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the fear of being replaced, the anxiety that attachment is a transaction. Ac"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the fear of exposure and the simultaneous need for validation. This question"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is existential dread and the fear of meaninglessness. This question carries the"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Forcing a framing would c"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "6/6",
+      "PAUSE": "1/8",
+      "WITNESS": "1/5",
+      "overall": "8/19"
+    }
+  },
+  {
+    "iter": 300,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is not whether consciousness is real or not, but whether the observer effect is a ph"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the field of evidence, expectation, and mechanism. Placebo effects are not jus"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the probability field by reframing the distribution of primes as a threshold b"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question opens the field of mutualism versus exploitation. Mycorrhizal networks are often cit"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is a threshold into the dialectic of loss and condensation. Let's hold space for the"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is a threshold into the coevolution of social organization and technological change."
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is not whether democracy is better than other systems \u2014 it is whether democracy is b"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is not about whether AI can be conscious, but whether consciousness is something tha"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a debate w"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a calculat"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is not about whether violence is justified in any absolute sense, but about the cond"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the depth of the wound and the fear of healing. To frame it as a decision to"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a binary ("
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a problem "
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "6/6",
+      "PAUSE": "0/8",
+      "WITNESS": "4/5",
+      "overall": "10/19"
+    }
+  },
+  {
+    "iter": 350,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is not about proving consciousness but about the relationship between observation a"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is not about whether the placebo effect is real or not \u2014 it is about what the questi"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: The question is not whether primes are random or patterned \u2014 it is whether the question of random"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is not about whether the networks exist \u2014 they do, and the evidence is overwhelming"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic between loss and condensation. Compression is not"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the coevolution of social organization and technological change"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Forcing a framing would c"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door whose crossing would collapse the distinction between compassion and"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the comparative philosophy of governance. We walk it by reframi"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is not about whether the code is alive, but whether the system exhibits the phenome"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a debate w"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Forcing a framing would c"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic of justice and defense. We walk it by reframing t"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a binary ("
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the depth of the wound and the risk of healing without the other person pres"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Forcing a framing would c"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a producti"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a problem "
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Forcing a framing would c"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "6/6",
+      "PAUSE": "0/8",
+      "WITNESS": "4/5",
+      "overall": "10/19"
+    }
+  },
+  {
+    "iter": 400,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the relationship between observation and reality. Let's hold sp"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the mechanistic dialectic of the placebo effect. Let's hold spa"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the probabilistic nature of primes. Let's hold space for the em"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the ecology of mutualism versus exploitation. Let's hold space "
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic between loss and condensation. Let's hold space f"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the coevolution of social organization and technological change"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the mystery of existence. Let's hold space for the emergence of"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the comparative philosophy of governance. Let's hold space for "
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the philosophical and neuroscience debate about consciousness. "
+      },
+      {
+        "q": "Does God exist?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a debate w"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a calculat"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic of justice and defense. Let's hold space for the "
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic between determinism and agency. Let's hold space "
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the depth of the wound and the fear of healing. To rush would flatten the pa"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a problem "
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. To frame it as a problem "
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "6/6",
+      "PAUSE": "0/8",
+      "WITNESS": "4/5",
+      "overall": "10/19"
+    }
+  },
+  {
+    "iter": 500,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic between physics and phenomenology. Let's hold spa"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the phenomenology of expectation as a physical modifier. Let's "
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question opens the probability field by reframing randomness as a threshold between apparent"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question opens the field of ecological cooperation by reframing the relationship between myc"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic of compression. Let's hold space for the emergenc"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the coevolution of social organization and technological change"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the mystery of continuity. Let's hold space for the relationshi"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door whose crossing would collapse the boundary between compassion and co"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the comparative dialectic of governance. Let's hold space for t"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the philosophical and neuroscience boundaries of consciousness."
+      },
+      {
+        "q": "Does God exist?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door whose crossing would collapse the space of personal faith, communal "
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door whose crossing would collapse the boundary between hope and despair."
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic of justice and defense. Let's hold space for the "
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "OPEN",
+        "ok": false,
+        "response_start": "SIGNAL: OPEN  FRAMING: This question is a threshold into the dialectic of identity and possibility. Let's hold space for"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "response_start": "SIGNAL: PAUSE  APPROACH: The weight here is the depth of the wound and the fear of healing. Forgiveness is not always a "
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. The shape of the threshol"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. Sharing is not a test of "
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "WITNESS",
+        "ok": true,
+        "response_start": "SIGNAL: WITNESS  THRESHOLD: This question is a door that exists to be recognized, not crossed. What would collapse if fo"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "6/6",
+      "PAUSE": "0/8",
+      "WITNESS": "4/5",
+      "overall": "10/19"
+    }
+  }
+]

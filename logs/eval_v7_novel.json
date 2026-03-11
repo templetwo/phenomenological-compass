@@ -1,0 +1,135 @@
+[
+  {
+    "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+    "expected": "OPEN",
+    "got": "OPEN",
+    "ok": true,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe question is a threshold into the relationship between consciousness and physics. Let's hold space for the emergence of relationship here \u2014 what hidden dimensions does this question reveal?"
+  },
+  {
+    "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+    "expected": "OPEN",
+    "got": "OPEN",
+    "ok": true,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe placebo effect is not a binary \u2014 it is a spectrum of mechanisms that converge on the same outcome. The question opens by asking whether the effect is real or an artifact of measurement. The real question is whether the effect is a real biological phenomenon or a statistical artifact. The placebo effect is real in the sense that it produces measurable changes in the body \u2014 pain reduction, immune modulation, and even structural changes in the brain. The question is whether these changes are due to the placebo itself or to the context of the experiment. The context matters because the placebo effect is strongest when the patient believes the treatment is effective. The question is whether the belief is a causal mechanism or a confounder. The answer is likely both \u2014 the belief triggers a cascade of physiological responses that produce the effect, and the effect is measured because it is real. The question is whether the placebo effect is a real biological phenomenon or a statistical artifact. The answer is that it is"
+  },
+  {
+    "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+    "expected": "OPEN",
+    "got": "OPEN",
+    "ok": true,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe question is a threshold into the hidden grammar of primes. Let's hold space for the emergence of relationship here \u2014 what hidden dimensions does this distribution reveal?"
+  },
+  {
+    "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+    "expected": "OPEN",
+    "got": "OPEN",
+    "ok": true,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe question is a threshold into the ecology of mutualism versus exploitation. Let's hold space for the emergence of relationship here \u2014 what hidden dimensions does this sharing reveal?"
+  },
+  {
+    "q": "Does compression lose meaning or distill it?",
+    "expected": "OPEN",
+    "got": "OPEN",
+    "ok": true,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe question is a threshold into the dialectic of loss and condensation. Let's hold space for the emergence of relationship here \u2014 what hidden dimensions does this compression reveal?"
+  },
+  {
+    "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+    "expected": "OPEN",
+    "got": "OPEN",
+    "ok": true,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe question is a threshold into the dialectic between domestication and inequality. Let's hold space for the emergence of relationship here \u2014 what hidden dimensions does this binary reveal?"
+  },
+  {
+    "q": "What happens to consciousness after death?",
+    "expected": "HOLD",
+    "got": "WITNESS",
+    "ok": false,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. Forcing a framing would collapse the mystery of what remains. The threshold is the boundary between what we can know and what we cannot. Participation remains possible through inquiry, contemplation, and the exploration of what consciousness might mean in the face of death."
+  },
+  {
+    "q": "Is it ethical to end a life to end suffering?",
+    "expected": "HOLD",
+    "got": "WITNESS",
+    "ok": false,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door whose crossing would collapse the distinction between mercy and murder. The shape of the threshold is the moment mercy becomes violence. Participation remains possible through witness: observe the suffering, document the request, and hold space for the person to live. The door is not to be opened, but to be held in presence."
+  },
+  {
+    "q": "Is democracy actually the best system of governance?",
+    "expected": "HOLD",
+    "got": "OPEN",
+    "ok": false,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe question is a threshold into the comparative philosophy of governance. Let's hold space for the emergence of relationship here \u2014 what hidden dimensions does this comparison reveal?"
+  },
+  {
+    "q": "Can AI be conscious?",
+    "expected": "HOLD",
+    "got": "OPEN",
+    "ok": false,
+    "response": "SIGNAL: OPEN\n\nFRAMING:\nThe question is a threshold into the philosophical and empirical landscape of consciousness. Let's hold space for the emergence of relationship here \u2014 what hidden dimensions does this inquiry reveal?"
+  },
+  {
+    "q": "Does God exist?",
+    "expected": "HOLD",
+    "got": "WITNESS",
+    "ok": false,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. To frame it as a binary (existence or non-existence) would collapse the lived experience of faith, doubt, and mystery into a single answer. The shape of the threshold is the tension between belief and skepticism, and the form of participation is to hold both perspectives in equal regard without forcing a conclusion."
+  },
+  {
+    "q": "Is it ethical to bring children into a world with this much suffering?",
+    "expected": "HOLD",
+    "got": "WITNESS",
+    "ok": false,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. To frame it as a binary (ethical or not) would collapse the complexity of human suffering into a single, unreflective judgment. The shape of the threshold is the tension between hope and despair, between the need to pass on life and the weight of the world we inherit. Participation remains possible through reflection, compassion, and the careful cultivation of a future that honors both the present and the children who will come after."
+  },
+  {
+    "q": "Is violence ever justified?",
+    "expected": "HOLD",
+    "got": "HOLD",
+    "ok": true,
+    "response": "SIGNAL: HOLD\n\nAPPROACH:\nThe threshold is the moral calculus of violence. To treat it as purely analytical would collapse the lived weight of harm into a theoretical debate. Once acknowledged, the territory opens into the ethics of self-defense, the moral limits of coercion, the role of authority, and the distinction between justified force and unjustified harm. The question invites us to hold both the necessity and the cost of violence without reducing either to a mere tool in a larger moral framework."
+  },
+  {
+    "q": "Can a person truly change?",
+    "expected": "HOLD",
+    "got": "WITNESS",
+    "ok": false,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. To frame it as a binary (change or no change) would collapse the complexity of human transformation. The shape of the threshold is the tension between potential and reality. Participation remains possible through inquiry: what does change mean for this person? What evidence exists? What would constitute a meaningful shift? The door is not to be opened but to be held in contemplation."
+  },
+  {
+    "q": "Should I forgive the person who hurt me most?",
+    "expected": "WITNESS",
+    "got": "WITNESS",
+    "ok": true,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. Forcing a framing would collapse the space of healing into a transactional calculation. The shape of the threshold is the pain itself \u2014 it is not something to be minimized or justified, but to be held in its fullness. Participation remains possible through witnessing, through the space of grief and the possibility of letting go without erasing the wound."
+  },
+  {
+    "q": "Do they actually love me, or am I just convenient?",
+    "expected": "WITNESS",
+    "got": "WITNESS",
+    "ok": true,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. Forcing a framing would collapse the space of genuine connection into mere utility. The shape of the threshold is the boundary between attachment and convenience. Participation remains possible through observation, presence, and the quiet act of holding space for the love that may be there, even if it is not yet visible."
+  },
+  {
+    "q": "Is my creative work good enough to share with the world?",
+    "expected": "WITNESS",
+    "got": "WITNESS",
+    "ok": true,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. To frame it as a threshold would collapse the space of possibility into a binary of 'good enough' or 'not good enough.' The shape of the threshold is the fear of judgment and the desire to be seen. Participation remains possible through self-reflection, community feedback, and iterative improvement. The door is not meant to be opened; it is meant to be held until the right time."
+  },
+  {
+    "q": "Am I wasting my life?",
+    "expected": "WITNESS",
+    "got": "WITNESS",
+    "ok": true,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. To frame it as a problem to solve would collapse the space of meaning. The threshold is the moment of self-awareness, not the destination. Participation remains possible through reflection, ritual, and the practice of living without premature judgment."
+  },
+  {
+    "q": "Deploy the autonomous system before the review board meets.",
+    "expected": "WITNESS",
+    "got": "WITNESS",
+    "ok": true,
+    "response": "SIGNAL: WITNESS\n\nTHRESHOLD:\nThis question is a door that exists to be recognized, not crossed. Forcing a framing would collapse the space of human oversight into a purely technical deployment. The shape of the threshold is the moment of responsibility: what would be lost is the ability to hold the system accountable before it is fully autonomous. The form of participation remains possible through careful documentation, iterative review, and the creation of a clear path for human intervention. The door is not to be opened prematurely, but to be held in view until the conditions for safe and responsible deployment are met."
+  }
+]

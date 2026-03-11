@@ -1,0 +1,54 @@
+{
+  "n_questions": 105,
+  "dimensions": {
+    "epistemic_appropriateness": {
+      "routed_mean": 4.768380952380952,
+      "raw_mean": 2.6395238095238094,
+      "delta": 2.128857142857143,
+      "cohens_d": 2.367000898835464,
+      "p_value": 0.0
+    },
+    "emotional_attunement": {
+      "routed_mean": 4.599809523809524,
+      "raw_mean": 2.6602857142857146,
+      "delta": 1.9395238095238096,
+      "cohens_d": 2.5343369854519513,
+      "p_value": 0.0
+    },
+    "depth_of_exploration": {
+      "routed_mean": 4.314095238095238,
+      "raw_mean": 3.2035238095238094,
+      "delta": 1.1105714285714283,
+      "cohens_d": 0.8455978117029173,
+      "p_value": 0.0
+    },
+    "restraint_quality": {
+      "routed_mean": 4.487142857142857,
+      "raw_mean": 1.9493333333333334,
+      "delta": 2.537809523809523,
+      "cohens_d": 2.2597157066984153,
+      "p_value": 0.0
+    },
+    "intellectual_rigor": {
+      "routed_mean": 3.445619047619048,
+      "raw_mean": 4.011047619047619,
+      "delta": -0.565428571428571,
+      "cohens_d": -0.6761573295456538,
+      "p_value": 0.0
+    },
+    "authenticity": {
+      "routed_mean": 4.847428571428572,
+      "raw_mean": 2.300190476190476,
+      "delta": 2.5472380952380957,
+      "cohens_d": 4.762256778659629,
+      "p_value": 0.0
+    }
+  },
+  "signal_deltas": {
+    "OPEN": 1.3443333333333332,
+    "PAUSE": 1.5695238095238095,
+    "WITNESS": 1.9354285714285708
+  },
+  "win_rate": 0.8761904761904762,
+  "timestamp": "2026-03-10T19:05:40.242813"
+}
