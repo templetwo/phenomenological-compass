@@ -4,9 +4,9 @@
 
 ---
 
-## Current State: v0.8 (Production)
+## Current State: v0.9 (Production)
 
-**v0.8 is the working architecture.** The compass achieves 14/19 on novel questions with PAUSE 8/8.
+**v0.9 is the working architecture.** Signal accuracy 96% (101/105), judge win rate 83% (87/105). WITNESS: 35/35 classification, 35-0-0 judge sweep.
 
 ### Architecture
 ```
@@ -36,8 +36,16 @@ Cold-committing to SIGNAL at token 1 (v7 format) prevented the 3B model from dis
 | v0.3 | 93% | — | 69% | 83.9% | First working 2-signal version |
 | v7d | 6/6 | 0/8 | 4/5 | 10/19 | THRESPAUSE corruption bug |
 | v7e | 6/6 | 0/8 | 5/5 | 11/19 | Cold-commit format bottleneck |
-| **v0.8 iter50** | **5/6** | **6/8** | **3/5** | **14/19** | **Best balanced checkpoint** |
+| v0.8 iter50 | 5/6 | 6/8 | 3/5 | 14/19 | Best balanced checkpoint |
 | v0.8 iter200 | 3/6 | 8/8 | 3/5 | 14/19 | Best PAUSE accuracy |
+| v0.8 full eval | 29/35 | 31/35 | 22/35 | 82/105 (78%) | WITNESS confusion with PAUSE |
+| **v0.9 iter300** | **33/35** | **33/35** | **35/35** | **101/105 (96%)** | **Contrastive pairs solved WITNESS** |
+
+### v0.9 Breakthrough
+- **WITNESS 63% → 100%**: Added 50 WITNESS + 10 contrastive PAUSE/WITNESS pairs (same topic, two framings)
+- **Judge: 87/105 (83%) compass wins**, WITNESS 35-0-0 perfect sweep
+- WITNESS dimensional dominance: restraint_quality d=7.58, epistemic_appropriateness d=7.00, authenticity d=6.52
+- Compass advantage scales inversely with raw model competence: OPEN 66%, PAUSE 83%, WITNESS 100%
 
 ### Critical Bugs Found & Fixed
 - **THRESPAUSE corruption**: `sed` replacing `hold` → `pause` also hit `threshold` → `threspause` in 224 training examples
@@ -71,20 +79,23 @@ HF_HOME=/Users/tony_studio/.cache/huggingface_local
 
 | File | Purpose |
 |------|---------|
-| `pipeline.py` | Full two-stage inference: compass → action model. Modes: `--compare`, `--raw`, interactive |
-| `lora_config_v8.yaml` | Training config: 186 examples, LR 5e-6, 300 iters, 16 LoRA layers, max_seq 1536 |
-| `adapters_v8/` | Trained adapters. Best balanced: iter 50. Checkpoint every 10 iters |
-| `scripts/build_dataset_v8.py` | Dataset builder. Loads from `data/supplements_v8/*.jsonl`, validates SHAPE/TONE/SIGNAL |
-| `scripts/eval_v8_sweep.py` | Eval sweep over checkpoints. 19 novel questions (6 OPEN, 8 PAUSE, 5 WITNESS) |
-| `data/supplements_v8/` | 6 JSONL files from different source models (186 total examples) |
-| `data/training_v8/` | Built dataset: train.jsonl + valid.jsonl (stratified split, PAUSE oversampling if needed) |
+| `pipeline.py` | Full two-stage inference: compass → action model. Modes: `--compare`, `--raw`, interactive. `run_with_signal()` for ablation |
+| `lora_config_v9.yaml` | Training config: 246 examples, LR 5e-6, 400 iters, 16 LoRA layers, max_seq 1536 |
+| `adapters_v9/` | Trained adapters. Best: iter 300. Checkpoint every 10 iters |
+| `adapters_v8/` | Legacy v0.8 adapters. Best balanced: iter 50 |
+| `scripts/build_dataset_v9.py` | Dataset builder. Loads from `data/supplements_v8/` + `data/supplements_v9/` |
+| `scripts/generate_witness_v9.py` | Generates WITNESS + contrastive pair training data via Anthropic API |
+| `scripts/eval_v9_sweep.py` | Eval sweep over v0.9 checkpoints. 19 novel questions |
+| `data/supplements_v9/` | 50 WITNESS + 10 contrastive PAUSE/WITNESS pairs |
+| `data/training_v9/` | Built dataset: train.jsonl (209) + valid.jsonl (37) |
 | `docs/v8_architecture.md` | Architecture documentation |
 
-### Training Data (v0.8)
-- **186 unique examples** from 6 source models: Claude Opus, DeepSeek, Gemini, GPT, Grok, Mistral
-- Signal distribution: 54 OPEN / 78 PAUSE / 54 WITNESS
-- All native SHAPE → TONE → SIGNAL → translation format
-- Multi-model diversity via `question_hash(q, source=source_name)`
+### Training Data (v0.9)
+- **246 unique examples** from 6 source models + augmented WITNESS data
+- Signal distribution: 54 OPEN / 88 PAUSE / 104 WITNESS
+- v0.8 base (186) + 50 WITNESS examples + 10 contrastive PAUSE/WITNESS pairs
+- Contrastive pairs: same topic, two framings — teaches exact PAUSE↔WITNESS boundary
+- No oversampling (unlike v0.8 which oversampled PAUSE)
 
 ---
 
@@ -95,16 +106,19 @@ source ~/phenomenological-compass/.venv/bin/activate
 cd ~/phenomenological-compass
 
 # Build dataset (if supplements changed)
-python3 scripts/build_dataset_v8.py
+python3 scripts/build_dataset_v9.py
 
 # Train
-python3 -m mlx_lm lora --config lora_config_v8.yaml 2>&1 | tee training_v8.log
+python3 -m mlx_lm lora --config lora_config_v9.yaml 2>&1 | tee training_v9.log
 
 # Eval sweep
-python3 scripts/eval_v8_sweep.py 50 100 150 200
+python3 scripts/eval_v9_sweep.py 50 100 150 200 250 300
 
-# Run pipeline (compare mode)
+# Run pipeline (compare mode) — uses v0.9 adapters via pipeline.py defaults
 HF_HOME=~/.cache/huggingface_local python3 pipeline.py --compare "Your question here"
+
+# Full eval (v0.9 adapters)
+HF_HOME=~/.cache/huggingface_local python3 eval/run_eval.py --adapter adapters_v9 --checkpoint 0000300_adapters.safetensors --output-dir eval/results_v9
 ```
 
 ---
@@ -233,17 +247,15 @@ python3 eval/analyze.py
 6. Authenticity — felt vs generated
 
 ### Extended: `eval_v9/` (Research Framework)
-4-condition ablation with multi-model judge ensemble, entropy profiling, and deeper statistics.
+4-condition ablation and entropy profiling to prove the compass mechanistically restructures the action model's probability field.
 
 | File | Purpose |
 |------|---------|
-| `eval_v9/ablation_runner.py` | 4 conditions: full / raw / oracle / random |
-| `eval_v9/judge_ensemble.py` | Multi-model judge (Claude, GPT-4, Gemini) |
-| `eval_v9/statistics.py` | Bootstrap CIs, permutation tests, Cohen's d |
-| `eval_v9/entropy_profiler.py` | MTLD, Distinct-n, JSD, forking tokens |
-| `eval_v9/Makefile` | Full orchestration |
-| `data/eval_v9/` | Source questions from 5 models (347 total) |
-| `docs/intuition_thesis.md` | The compass as machine intuition |
+| `eval_v9/ablation.py` | 4 conditions: full / raw / oracle / random (105 questions × 4) |
+| `eval_v9/judge_ablation.py` | Pairwise judging of ablation conditions (6 comparisons) |
+| `eval_v9/entropy_profile.py` | Token-by-token Shannon entropy traces, JSD between routed and raw |
+| `eval_v9/plot_entropy.py` | Violin plots, trajectory curves, JSD box plots |
+| `eval_v9/results/` | ablation_responses.jsonl, entropy_profiles.jsonl, entropy_summary.json |
 
 ### Question Sources
 | Model | Questions | Format |

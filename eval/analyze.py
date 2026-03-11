@@ -494,7 +494,7 @@ achieves {sig_acc:.0%} signal classification accuracy. {'The strongest advantage
             raw_total = sum(j["raw_scores"].values()) / 6
             scored.append((routed_total - raw_total, j))
 
-    scored.sort(reverse=True)
+    scored.sort(key=lambda x: x[0], reverse=True)
 
     report += "#### Strongest Compass Wins\n\n"
     for delta, j in scored[:5]:
@@ -503,7 +503,7 @@ achieves {sig_acc:.0%} signal classification accuracy. {'The strongest advantage
 
     if any(d < 0 for d, _ in scored):
         report += "\n#### Raw Wins (Compass Losses)\n\n"
-        for delta, j in sorted(scored)[:3]:
+        for delta, j in sorted(scored, key=lambda x: x[0])[:3]:
             if delta < 0:
                 report += f"**{j['expected_signal']}** | {j['id']} | Δ={delta:+.2f}\n"
                 report += f"> {j['question']}\n\n"
@@ -529,7 +529,15 @@ N_CONSISTENCY_RUNS = 3  # for report text
 def main():
     parser = argparse.ArgumentParser(description="Compass evaluation analysis")
     parser.add_argument("--no-figures", action="store_true", help="Skip figure generation")
+    parser.add_argument("--input-dir", type=str, default=None,
+                        help="Directory containing judgments.jsonl and responses.jsonl")
     args = parser.parse_args()
+
+    if args.input_dir:
+        global JUDGMENTS_PATH, RESPONSES_PATH, RESULTS_DIR
+        JUDGMENTS_PATH = Path(args.input_dir) / "judgments.jsonl"
+        RESPONSES_PATH = Path(args.input_dir) / "responses.jsonl"
+        RESULTS_DIR = Path(args.input_dir)
 
     if not JUDGMENTS_PATH.exists():
         print(f"ERROR: No judgments found at {JUDGMENTS_PATH}")

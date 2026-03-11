@@ -113,11 +113,20 @@ def main():
                         help="Resume — skip already-completed questions")
     parser.add_argument("--action", type=str, default=None,
                         help="Action model key (e.g. m14b). Outputs to responses_{key}.jsonl")
+    parser.add_argument("--adapter", type=str, default=None,
+                        help="Adapter directory path (e.g. adapters_v9)")
+    parser.add_argument("--checkpoint", type=str, default=None,
+                        help="Checkpoint filename (e.g. 0000300_adapters.safetensors)")
+    parser.add_argument("--output-dir", type=str, default=None,
+                        help="Output directory for results (default: eval/results)")
     args = parser.parse_args()
 
+    global RESULTS_PATH
+    # Custom output directory
+    if args.output_dir:
+        RESULTS_PATH = Path(args.output_dir) / "responses.jsonl"
     # If alternate action model, use separate output file
-    if args.action:
-        global RESULTS_PATH
+    elif args.action:
         RESULTS_PATH = PROJECT / "eval" / "results" / f"responses_{args.action}.jsonl"
 
     questions = load_questions(QUESTIONS_PATH, args.limit)
@@ -142,7 +151,10 @@ def main():
     # Load pipeline
     print("\nLoading pipeline...")
     from pipeline import Pipeline
-    pipe = Pipeline(load_compass=True, load_action=True, action_key=args.action)
+    pipe = Pipeline(
+        load_compass=True, load_action=True, action_key=args.action,
+        adapter_path=args.adapter, adapter_checkpoint=args.checkpoint,
+    )
 
     # Ensure results directory exists
     RESULTS_PATH.parent.mkdir(parents=True, exist_ok=True)

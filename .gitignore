@@ -17,9 +17,12 @@ adapters_v6/
 adapters_v7/
 adapters_v7_d_backup/
 
-# Production adapters (v0.8) — included in repo
-# adapters_v8/ contains the trained LoRA weights
-# adapters_v5_best/ and adapters_v7_best/ kept for version history
+# Adapter intermediate checkpoints (large binaries — only keep best)
+adapters_v8/0000*_adapters.safetensors
+adapters_v9/0000*_adapters.safetensors
+# Production adapters (best checkpoints + config) — included in repo
+# adapters_v8/adapters.safetensors, adapter_config.json
+# adapters_v9/adapters.safetensors, adapter_config.json
 
 # Legacy/generated data
 data/generated/
@@ -27,9 +30,14 @@ data/training/
 data/eval/
 data/eval_v3/
 
-# Eval results (reproducible via pipeline)
-eval/results/
-eval_v9/results/
+# Eval results — raw data (reproducible via pipeline)
+eval/results/*.jsonl
+eval_v9/results/*.jsonl
+# Eval results — reports and figures (committed for reference)
+# eval/results_v9/report.md, report.json, *.png
+
+# Session data
+phenomenological-compass-ui/sessions/
 
 # Logs (moved to logs/ — kept locally, not in git)
 logs/

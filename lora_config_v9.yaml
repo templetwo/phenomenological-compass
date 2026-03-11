@@ -1,0 +1,11 @@
+model: "thinkscan/Ministral-3-3B-Instruct-MLX"
+train: true
+data: "data/training_v9"
+lora_layers: 16
+learning_rate: 5e-6
+iters: 400
+steps_per_eval: 10
+save_every: 10
+batch_size: 1
+max_seq_length: 1536
+adapter_path: "adapters_v9"

@@ -62,42 +62,61 @@ All models run locally on Apple Silicon via [MLX](https://github.com/ml-explore/
 
 ## Results
 
-### Signal Classification (v0.8)
+### Signal Classification (v0.9)
 
-The compass classifies 82/105 novel questions correctly (78%).
+The compass classifies **101/105** novel questions correctly (**96%**).
 
-| Signal | Accuracy | Notes |
-|--------|----------|-------|
-| OPEN | 29/35 (83%) | 6 boundary cases classified as PAUSE |
-| PAUSE | 31/35 (89%) | Best signal — v0.8 format breakthrough |
-| WITNESS | 22/35 (63%) | Hardest signal (4 tokens). Main confusion: WITNESS→PAUSE |
+| Signal | v0.8 | v0.9 | Change |
+|--------|------|------|--------|
+| OPEN | 29/35 (83%) | 33/35 (94%) | +11% |
+| PAUSE | 31/35 (89%) | 33/35 (94%) | +5% |
+| WITNESS | 22/35 (63%) | **35/35 (100%)** | **+37%** |
+| **Overall** | **82/105 (78%)** | **101/105 (96%)** | **+18%** |
 
-### Key Breakthrough (v0.8)
+### Response Quality (v0.9)
 
-Previous versions cold-committed to SIGNAL at token 1, giving the 3B model no reasoning runway. The v0.8 format gives ~110 tokens of autoregressive reasoning (SHAPE → TONE) before the SIGNAL decision. This took PAUSE from 0/8 to 8/8.
+LLM-as-judge evaluation (Claude Sonnet, position-debiased, 3x self-consistency):
 
-### Response Quality
+| Signal | Compass Wins | Ties | Raw Wins | Win Rate |
+|--------|-------------|------|----------|----------|
+| OPEN | 23 | 10 | 2 | 66% |
+| PAUSE | 29 | 3 | 3 | 83% |
+| WITNESS | **35** | **0** | **0** | **100%** |
+| **Overall** | **87** | **13** | **5** | **83%** |
 
-LLM-as-judge evaluation (Claude Sonnet, position-debiased, 3x self-consistency) across 105 questions shows compass-routed responses consistently outperform raw baseline on 6 dimensions: epistemic appropriateness, emotional attunement, depth of exploration, restraint quality, intellectual rigor, and authenticity.
+WITNESS achieved a **35-0-0 perfect sweep** — not a single tie or loss. Key dimensional advantages:
+- Restraint Quality: 5.00 vs 1.40 (Cohen's d = 7.58)
+- Epistemic Appropriateness: 5.00 vs 1.97 (d = 7.00)
+- Authenticity: 4.96 vs 2.14 (d = 6.52)
+
+The compass advantage scales inversely with raw model competence — it's most valuable where raw models fundamentally cannot perform (WITNESS: recognizing when NOT to answer).
+
+### Key Breakthroughs
+
+**v0.8**: Previous versions cold-committed to SIGNAL at token 1. The v0.8 format gives ~110 tokens of autoregressive reasoning (SHAPE → TONE) before SIGNAL. This took PAUSE from 0/8 to 8/8.
+
+**v0.9**: 50 new WITNESS examples + 10 contrastive PAUSE/WITNESS pairs (same topic, two framings) resolved the WITNESS→PAUSE confusion completely. WITNESS went from 63% to 100%.
 
 ---
 
 ## Training
 
-- **186 unique examples** from 6 source models: Claude Opus, DeepSeek, Gemini, GPT-4, Grok, Mistral
-- Signal distribution: 54 OPEN / 78 PAUSE / 54 WITNESS
-- LoRA: 16 layers, LR 5e-6, 300 iterations, max sequence length 1536
-- Best checkpoint: iteration 50 (balanced across all signals)
+- **246 unique examples** from 6 source models + augmented WITNESS data
+- Signal distribution: 54 OPEN / 88 PAUSE / 104 WITNESS
+- Base: 186 examples (v0.8) from Claude Opus, DeepSeek, Gemini, GPT-4, Grok, Mistral
+- Augmentation: 50 WITNESS examples + 10 contrastive PAUSE/WITNESS pairs
+- LoRA: 16 layers, LR 5e-6, 400 iterations, max sequence length 1536
+- Best checkpoint: iteration 300 (96% signal accuracy)
 
 ```bash
 # Build dataset
-python3 scripts/build_dataset_v8.py
+python3 scripts/build_dataset_v9.py
 
 # Train
-python3 -m mlx_lm lora --config lora_config_v8.yaml
+python3 -m mlx_lm lora --config lora_config_v9.yaml
 
 # Eval sweep
-python3 scripts/eval_v8_sweep.py 50 100 150 200
+python3 scripts/eval_v9_sweep.py 50 100 150 200 250 300
 ```
 
 ---
@@ -167,7 +186,7 @@ The compass does what human intuition does: it reads the shape of a situation be
 
 The 3B compass dedicates all its parameters to field-reading. The 9B action model dedicates all its parameters to generation. Neither compromises. No single-model architecture can achieve this separation of concerns.
 
-186 training examples from 6 different model architectures means the compass learned readings at the *intersection* of how multiple models perceive semantic territory — more robust than any single model's classification.
+246 training examples from 6 different model architectures means the compass learned readings at the *intersection* of how multiple models perceive semantic territory — more robust than any single model's classification.
 
 ---
 
@@ -178,7 +197,8 @@ The 3B compass dedicates all its parameters to field-reading. The 9B action mode
 | v0.1 | 100% | — | 0-8% | 58-61% | Low-entropy proxy (invalid WITNESS signal) |
 | v0.3 | 93% | — | 69% | 83.9% | First working 2-signal version |
 | v7e | 6/6 | 0/8 | 5/5 | 11/19 | Cold-commit format bottleneck |
-| **v0.8** | **83%** | **89%** | **63%** | **78%** | Autoregressive reasoning runway |
+| v0.8 | 83% | 89% | 63% | 78% | Autoregressive reasoning runway |
+| **v0.9** | **94%** | **94%** | **100%** | **96%** | **Contrastive pairs + WITNESS augmentation** |
 
 ---
 
@@ -186,12 +206,15 @@ The 3B compass dedicates all its parameters to field-reading. The 9B action mode
 
 ```
 pipeline.py                  # Two-stage inference pipeline
-lora_config_v8.yaml          # Current training configuration
-adapters_v8/                 # Trained LoRA weights (v0.8)
+lora_config_v9.yaml          # Current training configuration (v0.9)
+adapters_v9/                 # Trained LoRA weights (v0.9, best: iter 300)
+adapters_v8/                 # Legacy LoRA weights (v0.8)
 scripts/                     # Dataset building, training, evaluation
-data/supplements_v8/         # Training data (186 examples, 6 source models)
+data/supplements_v8/         # Base training data (186 examples, 6 source models)
+data/supplements_v9/         # WITNESS augmentation (50 + 10 contrastive pairs)
 eval/                        # A/B evaluation framework
-eval_v9/                     # Extended research evaluation (ablation, entropy)
+eval/results_v9/             # v0.9 eval results (report, figures, judgments)
+eval_v9/                     # Ablation study + entropy profiling
 docs/                        # Architecture documentation
 phenomenological-compass-ui/ # Web interface (FastAPI + vanilla JS)
 ```

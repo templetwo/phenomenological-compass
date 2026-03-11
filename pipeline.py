@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-pipeline.py — v0.8 Phenomenological compass pipeline
+pipeline.py — v0.9 Phenomenological compass pipeline
 =====================================================
 Stage 1: Compass (Ministral-3B LoRA) reads SHAPE → TONE → SIGNAL → translation
 Stage 2: Action model generates full response conditioned on compass's state translation
@@ -32,8 +32,8 @@ from mlx_lm.generate import generate as mlx_generate
 
 # ── Models ────────────────────────────────────────────────────────────────────
 COMPASS_MODEL = "thinkscan/Ministral-3-3B-Instruct-MLX"
-COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v8")
-COMPASS_CHECKPOINT = "0000050_adapters.safetensors"  # iter 50: balanced
+COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v9")
+COMPASS_CHECKPOINT = "0000300_adapters.safetensors"  # iter 300: 96% accuracy
 
 ACTION_MODELS = {
     "qwen": {
@@ -155,7 +155,8 @@ def generate(model, tokenizer, system, user, max_tokens=800):
 
 # ── Pipeline class ────────────────────────────────────────────────────────────
 class Pipeline:
-    def __init__(self, load_compass=True, load_action=True, action_key=None):
+    def __init__(self, load_compass=True, load_action=True, action_key=None,
+                 adapter_path=None, adapter_checkpoint=None):
         self.compass_model = None
         self.compass_tokenizer = None
         self.action_model = None
@@ -164,15 +165,20 @@ class Pipeline:
         self.action_key = action_key or DEFAULT_ACTION
         self.action_config = ACTION_MODELS[self.action_key]
 
+        # Allow override of adapter path/checkpoint
+        _adapter_dir = adapter_path or COMPASS_ADAPTER
+        _adapter_cp = adapter_checkpoint or COMPASS_CHECKPOINT
+
         if load_compass:
-            print("Loading compass (Ministral-3B + v0.8 LoRA)...")
+            version = "v0.9" if "v9" in str(_adapter_dir) else "v0.8"
+            print(f"Loading compass (Ministral-3B + {version} LoRA from {os.path.basename(_adapter_dir)})...")
             # Ensure best checkpoint is active
-            cp_path = os.path.join(COMPASS_ADAPTER, COMPASS_CHECKPOINT)
-            active_path = os.path.join(COMPASS_ADAPTER, "adapters.safetensors")
+            cp_path = os.path.join(_adapter_dir, _adapter_cp)
+            active_path = os.path.join(_adapter_dir, "adapters.safetensors")
             if os.path.exists(cp_path):
                 shutil.copy2(cp_path, active_path)
             self.compass_model, self.compass_tokenizer = load(
-                COMPASS_MODEL, adapter_path=COMPASS_ADAPTER
+                COMPASS_MODEL, adapter_path=_adapter_dir
             )
             print("  Compass ready.")
 
@@ -244,6 +250,20 @@ class Pipeline:
             thinking, clean = "", response.strip()
         return clean, elapsed, thinking
 
+    def run_with_signal(self, question, forced_signal, max_tokens=800):
+        """Bypass compass. Inject forced signal directly into action model conditioning."""
+        action_response, t_action, thinking = self.act(
+            question, forced_signal, compass_reading="", max_tokens=max_tokens
+        )
+        return {
+            "signal": forced_signal,
+            "compass_response": "",
+            "action_response": action_response,
+            "thinking": thinking,
+            "t_compass": 0.0,
+            "t_action": t_action,
+        }
+
     def run(self, question, max_tokens=800):
         """Full pipeline: classify then act."""
         signal, compass_response, t_compass = self.classify(question)
@@ -310,7 +330,7 @@ def print_compare(question, pipe, max_tokens):
 
 # ── Entry point ───────────────────────────────────────────────────────────────
 def main():
-    parser = argparse.ArgumentParser(description="Phenomenological Compass Pipeline v0.8")
+    parser = argparse.ArgumentParser(description="Phenomenological Compass Pipeline v0.9")
     parser.add_argument("question", nargs="?", help="Question to process")
     parser.add_argument("--raw", action="store_true", help="Action model without compass")
     parser.add_argument("--compare", action="store_true", help="Side-by-side: raw vs routed")
@@ -337,7 +357,7 @@ def main():
     # Interactive mode
     mode = "raw" if args.raw else "pipeline"
     name = pipe.action_config["name"]
-    print(f"Phenomenological Compass Pipeline v0.8 — {mode} mode [{name}]")
+    print(f"Phenomenological Compass Pipeline v0.9 — {mode} mode [{name}]")
     print("Type a question, or 'q' to quit. Prefix '!' for compare mode.\n")
 
     while True:

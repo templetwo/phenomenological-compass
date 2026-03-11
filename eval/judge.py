@@ -264,7 +264,15 @@ def main():
     parser = argparse.ArgumentParser(description="LLM-as-judge evaluation")
     parser.add_argument("--limit", type=int, default=None)
     parser.add_argument("--resume", action="store_true")
+    parser.add_argument("--input-dir", type=str, default=None,
+                        help="Directory containing responses.jsonl (default: eval/results)")
     args = parser.parse_args()
+
+    if args.input_dir:
+        global RESPONSES_PATH, JUDGMENTS_PATH
+        input_dir = Path(args.input_dir)
+        RESPONSES_PATH = input_dir / "responses.jsonl"
+        JUDGMENTS_PATH = input_dir / "judgments.jsonl"
 
     # Check API key
     if not os.environ.get("ANTHROPIC_API_KEY"):

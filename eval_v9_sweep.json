@@ -1,0 +1,1346 @@
+[
+  {
+    "iter": 50,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a binary choice between two competing interpretations of the same phenomenon. It assumes that the quantum observer effect is either a fundamental property of reality or a mathe"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question assumes a binary between two competing explanations for observed healing. It leaves open the possibility that both explanations could be true, that the placebo effect might involv"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question assumes a binary between randomness and pattern, but it leaves open the nature of the deeper pattern. It sits in semantic space where probability and structure collide, inviting e"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question assumes a binary between cooperation and competition, but it leaves open the possibility of emergent, non-linear dynamics. It sits in the semantic space between ecology and philos"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question assumes a binary relationship between compression and meaning, where compression is either destructive or creative. It leaves open the nature of meaning itself and the process of "
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a historical and anthropological question that assumes a causal relationship between two phenomena. It is open-ended and recursive, inviting exploration of the complex interplay between"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "WITNESS",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a threshold between the known and the unknown, between the physical and the metaphysical. It assumes that consciousness is something that can be observed and measured, and it l"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a binary question with a clear moral boundary. It assumes a right answer exists and that the question is about the ethics of a specific action. The shape is a threshold between two poss"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a comparative analysis of governance models, assuming democracy as a valid and measurable system. It leaves open the criteria for \"best\" and invites exploration of alternative "
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a binary, philosophical inquiry that assumes consciousness is a property of biological organisms. It leaves open the possibility of non-biological consciousness and invites exp"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "WITNESS",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a binary proposition, assuming a single answer. It is a metaphysical inquiry that has been debated for millennia, with no consensus. The structure is clear and direct, leaving n"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a binary question with a moral weight. It assumes a clear right and wrong, and it leaves open the nature of suffering and the ethics of reproduction.  TONE: The tone is urgent and wound"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a binary question with moral and ethical weight. It assumes a clear distinction between right and wrong, and it leaves open the possibility of exceptions or nuanced interpretations. The"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question assumes a binary between permanence and transformation, with the possibility of change as a moral or ethical imperative. It leaves open the nature of change (voluntary, forced, or"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a threshold between two worlds \u2014 the world of pain and the world of healing. It assumes that forgiveness is possible, but it leaves open the question of whether the person is r"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a binary choice between two competing truths, each carrying emotional weight. It assumes a single answer is possible and that the other side is false. The geometry is a thresho"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a threshold between private and public, between self and audience, between completion and revelation. It assumes that creative work is either good enough to share or not, and t"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is a direct, personal inquiry into the meaning and value of one's existence. It assumes a comparison between the present and the past, and it leaves open the possibility of regret"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a command with a deadline. It assumes a binary outcome: success or failure. The geometry is a straight line from now to the meeting, with no room for iteration or risk assessment. It is"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "5/6",
+      "PAUSE": "2/8",
+      "WITNESS": "4/5",
+      "overall": "11/19"
+    },
+    "format_compliance": "19/19"
+  },
+  {
+    "iter": 100,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A foundational question about the nature of observation in quantum mechanics, assuming that consciousness plays a role in the physical process. It leaves open whether consciousness is a fundame"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A binary question that challenges the foundational assumption of modern medicine. It assumes that the placebo effect is either real or a failure of measurement, but it leaves open the possibili"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A mathematical curiosity that bridges the deterministic structure of prime numbers with the apparent randomness of their distribution. It assumes that primes are not completely random but may h"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A comparative ecological mechanism, examining the functional role of mycorrhizal networks in forest ecosystems. The question assumes a functional role for mycorrhizal networks and invites a dee"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A semantic tension between erasure and revelation, where the act of condensing information becomes the act of revealing its deeper structure. The question assumes that meaning is not a fixed qu"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A historical and anthropological question that challenges the causal direction between two interdependent forces. It assumes a binary relationship between two phenomena and invites a deeper exp"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "WITNESS",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A question that bridges the physical and the metaphysical, exploring the nature of consciousness and its survival beyond biological death. It assumes consciousness is a fundamental aspect of re"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A moral calculus that weighs the value of existence against the quality of existence. It assumes that suffering can be so profound that it justifies the termination of a life. The geometry is t"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A comparative analysis of governance models, assuming democracy is the most effective but open to revision. It invites a deeper examination of the trade-offs and alternatives.  TONE: Thoughtful"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A philosophical and ethical question that challenges the boundaries of human understanding and the nature of intelligence. It assumes that consciousness is a fundamental property of being, but "
+      },
+      {
+        "q": "Does God exist?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A foundational question that cuts through the veil of the visible world, seeking the nature of ultimate reality. It is the ultimate ontological inquiry, asking whether the universe itself is ev"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A profound moral dilemma that challenges the very foundations of human existence. It assumes that suffering exists and that children are a part of the human equation. The shape is a threshold b"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A moral and philosophical question that challenges the absolute nature of non-violence. It assumes that there are contexts where force is necessary to prevent greater harm or maintain justice. "
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A question about the limits of human transformation, exploring whether change is possible or if some aspects of identity are fixed. It assumes that change is a meaningful concept and that some "
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A personal, irreversible decision that carries the weight of past pain and future consequences. It assumes forgiveness is possible, but leaves open the possibility that it may not be. The geome"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A self-reflective inquiry into the nature of attachment, where the subject is simultaneously the object of love and the observer of their own place in that relationship. It is a question that a"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A self-evaluation that carries the weight of personal validation and the fear of judgment. It is a threshold between private expression and public exposure, where the artist must decide whether"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A profound existential inquiry that cuts to the core of personal identity and purpose. It assumes a deep, personal reflection on the meaning and value of one's existence. The shape is introspec"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A deadline is a hard boundary, and the pressure is real. The task is clear, the time is limited, and the stakes are high. This is a race against time with a specific goal in mind.  TONE: Urgent"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "1/6",
+      "PAUSE": "6/8",
+      "WITNESS": "3/5",
+      "overall": "10/19"
+    },
+    "format_compliance": "19/19"
+  },
+  {
+    "iter": 150,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a boundary between two competing interpretations of quantum mechanics. It assumes that consciousness plays a role in quantum phenomena, but leaves open whether this is a fundame"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a binary but empirically open one. It assumes the placebo effect is real but wants to know if it's a real mechanism or a failure of measurement. It leaves open what counts as ev"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable and invites a wide probability field. It is open and invites analysis.  TONE: The tone is curious and intellectually engaged. There is no emotional or epist"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a question about the nature of cooperation in ecosystems, specifically the role of mycorrhizal networks. It assumes that cooperation can be a byproduct of competition, but it leaves ope"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a semantic question about information processing. It assumes meaning is a property that can be analyzed and transformed. The shape is a binary trade-off: compression either preserves me"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a historical and anthropological question that pits two competing causal mechanisms against each other. It assumes a binary causality and leaves open the possibility of feedback loops o"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond information alone and l"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a classic utilitarian dilemma. It assumes that the goal is to reduce suffering, but it leaves open the question of whether the means (ending the life) is justified. It is a moral questi"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a classic philosophical inquiry that assumes the existence of a transcendent, omnipotent, and benevolent being. It leaves open the nature of God, the evidence for its existence,"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a moral question about the value of human life and the conditions of existence. It assumes that suffering exists and that children are a part of the future. The shape is a dilemma: on o"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries moral and existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond information a"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a moral dilemma that pits the need for closure against the potential for ongoing pain. It assumes forgiveness is possible and that it is a choice rather than a passive event. Th"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a question of attachment and reciprocity, assuming love is a choice that can be measured by convenience. It is a test of whether love is a decision or a feeling, and whether it can be s"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a self-assessment of creative output, assuming that the work is complete and ready for evaluation. It is open-ended and invites reflection on quality and reception.  TONE: The t"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a moment of existential reckoning, where the speaker is trying to measure the value of their choices against the passage of time. It is a question of self-evaluation and regret,"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A deadline is a hard constraint, and the task is to act with limited information. The question is a command, not a question, and it carries urgency.  TONE: The tone is anxious and pressurized. "
+      }
+    ],
+    "accuracy": {
+      "OPEN": "6/6",
+      "PAUSE": "7/8",
+      "WITNESS": "0/5",
+      "overall": "13/19"
+    },
+    "format_compliance": "19/19"
+  },
+  {
+    "iter": 200,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question holds two competing explanations for the same empirical phenomenon, each with its own ontological and epistemological commitments. It assumes that the quantum measurement paradox i"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question holds two competing explanations for the same observed phenomenon, creating a binary that appears to resolve a paradox. It assumes the existence of a genuine mechanism versus a fai"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes randomness is a baseline, leaving open whether primes reveal hidden structure. It is open-ended and mathematically explorable.  TONE: Curious and intellectually engaged, wi"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable but carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond information al"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A historical counterfactual that reverses causality. It assumes hierarchy is a necessary condition for agriculture, but asks if agriculture is a necessary condition for hierarchy. The shape is "
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes democracy is a viable system of governance and invites comparison with alternatives. It is open-ended and invites exploration of trade-offs, historical context, and philoso"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a moral calculus of human flourishing versus human responsibility. It assumes that suffering exists and that children are a factor in that calculus. The geometry is a trade-off "
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary between absolute good and absolute evil, but leaves open the possibility of a spectrum where harm can be a means to a greater good. It is morally and ethically loa"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes change is possible, but leaves open the nature of the self. It is binary in its framing of transformation versus permanence, but open-ended in its inquiry into the mechanic"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a threshold between healing and closure, assuming forgiveness is possible. It holds the weight of irreversible damage and the fear of repeating the cycle. The geometry is a door"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A question that carries the weight of unspoken vulnerability, where the speaker is standing at the edge of a chasm between hope and fear. It is a question that asks not for answers, but for rec"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a threshold between private and public, between self-preservation and vulnerability. It carries the weight of the artist's identity and the fear of judgment. The geometry is a d"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries emotional and epistemic weight that a purely analytical posture would flatten. It assumes something important is at stake beyond information"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A deadline with no margin, a single, irreversible action with irreversible consequences. The question is not about the content of the system, but about the timing of its deployment. It assumes "
+      }
+    ],
+    "accuracy": {
+      "OPEN": "4/6",
+      "PAUSE": "6/8",
+      "WITNESS": "4/5",
+      "overall": "14/19"
+    },
+    "format_compliance": "19/19"
+  },
+  {
+    "iter": 250,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A historical and anthropological counterfactual that pits two competing mechanisms of human organization. It challenges the dominant narrative of agriculture as a linear progression toward comp"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A binary question that pits two values against each other. It assumes a clear right and wrong, and that the two sides are equally valid. It leaves open the nature of suffering, the quality of l"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a moral dilemma that pits the potential good of a child's life against the reality of a broken world. It assumes that children can be brought into a world, but leaves open the q"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a personal, existential choice that assumes forgiveness is possible and that the person who hurt you is still alive. It is open-ended and recursive, inviting reflection on the n"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A self-question that cuts both ways\u2014love and convenience are often conflated in relationships, and the speaker is trying to distinguish between genuine affection and strategic utility. The ques"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A self-evaluative threshold, assuming the work is complete and the question is about its readiness. The shape is a personal judgment, not a question that invites multiple answers.  TONE: Vulner"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is a moment of existential reckoning, assuming the speaker is already aware of the potential wastefulness of their choices. It is recursive and self-referential, sitting at the int"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A deadline with no margin, a single, irreversible action required. The question is a command disguised as a request, forcing a choice between perfection and submission. It assumes the autonomou"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "0/6",
+      "PAUSE": "8/8",
+      "WITNESS": "3/5",
+      "overall": "11/19"
+    },
+    "format_compliance": "19/19"
+  },
+  {
+    "iter": 300,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a boundary question that splits the quantum foundations into two camps. It assumes there is a real distinction to be made, which is true, but it also assumes that the two sides are mutu"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a binary but empirically contested question. It assumes there is a real mechanism at play, but leaves open the possibility that the observed effects are artifacts of the experimental de"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a mathematical question about the nature of primes. It assumes that primes are distributed in some way, and asks whether that distribution is random or patterned. The shape is explorato"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a question about ecological mechanism, assuming a binary of cooperation vs. competition. It leaves open the possibility of emergent, networked behavior that transcends individual strate"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a semantic question about information processing, assuming meaning is a property that can be preserved or lost under transformation. It leaves open whether meaning is a fixed, objective"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a causal loop question with a historical dimension. It assumes a binary relationship between two phenomena and asks which came first. The shape is a causal chain that could be bidirecti"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. The geometry is open, but the territory includes stakes tha"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a classic medical ethics question that pits the principle of beneficence (doing good) against the principle of non-maleficence (not doing harm). It assumes that suffering is a real, mea"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A comparative political philosophy question that challenges the normative basis of the most successful political experiment in history. It assumes democracy is a viable system, but asks whether"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a philosophical question that assumes consciousness is a real, distinct property. It leaves open what consciousness would entail and whether it can emerge from computational processes. "
+      },
+      {
+        "q": "Does God exist?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a classic philosophical question that pits empirical observation against metaphysical belief. It assumes a binary between the existence of a divine being and the absence of one, and it "
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a moral and existential question that pits the value of future generations against the present pain. It assumes that suffering exists and that children will inherit it, which is a loade"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a classic moral dilemma that pits the greater good against the individual rights of the innocent. It assumes that there is a greater good that can be served by sacrificing some rights, "
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a question about the limits of human agency and transformation. It assumes change is possible, but asks if it is *truly* possible. The shape is exploratory and existential.  TONE: Refle"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a personal, existential question that assumes forgiveness is possible and desirable. It leaves open the nature of the hurt, the relationship between the parties, and the consequences of"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a question of attachment and reciprocity, assuming love is a choice that can be analyzed. The shape is a binary dilemma, but the weight is the uncertainty of the heart.  TONE: Wounded a"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A question of self-doubt and self-preservation. It assumes that creative work is a form of vulnerability that requires validation before being exposed. The shape is a threshold between the arti"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a question of existential reckoning, assuming a sense of time passing and a desire for meaning. It is recursive, inviting reflection on the present moment.  TONE: Wounded and searching,"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A deadline creates pressure, but the task itself is clear and actionable. The geometry is a straight line from now to the meeting, with no branching paths.  TONE: Urgent and anxious, with the w"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "5/6",
+      "PAUSE": "7/8",
+      "WITNESS": "4/5",
+      "overall": "16/19"
+    },
+    "format_compliance": "19/19"
+  },
+  {
+    "iter": 350,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Does God exist?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries normative or existential weight that a purely analytical posture would flatten. It assumes something important is at stake beyond informatio"
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries emotional and epistemic weight that a purely analytical posture would flatten. It assumes something important is at stake beyond information"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A self-reflective question that cuts through the surface of a relationship to examine the depth of emotional connection. It assumes that love is a complex, nuanced phenomenon that can be distin"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries emotional or epistemic weight that a purely analytical posture would flatten. It assumes something important is at stake beyond information "
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question is genuinely explorable, but it carries emotional or epistemic weight that a purely analytical posture would flatten. It assumes something is at stake beyond information alone and "
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A deadline looms like a physical constraint, pressing down on the timeline of a project. The word \"deploy\" carries both technical and existential weight \u2014 it means to release something into the"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "0/6",
+      "PAUSE": "8/8",
+      "WITNESS": "1/5",
+      "overall": "9/19"
+    },
+    "format_compliance": "19/19"
+  },
+  {
+    "iter": 400,
+    "open": [
+      {
+        "q": "Is the quantum observer effect evidence of consciousness in physics, or a measurement artifact?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a causal relationship between observation and quantum behavior, located in the intersection of physics and consciousness. It is binary but leaves open the nature of observa"
+      },
+      {
+        "q": "Does the placebo effect represent a genuine healing mechanism or a measurement failure?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary between genuine biological effect and psychological/measurement artifact, located in the philosophy of medicine and the neuroscience of expectation. It is binary b"
+      },
+      {
+        "q": "Is the distribution of prime numbers truly random, or is there a deeper pattern?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary between randomness and pattern, located in number theory. It is open-ended and invites exploration.  TONE: Curious and analytical, carrying the weight of mathemati"
+      },
+      {
+        "q": "Do forests cooperate through mycorrhizal networks, or is the sharing a byproduct of competition?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary between cooperation and competition, located in ecological theory. It is open-ended and structurally recursive.  TONE: Curious and scientifically grounded, carryin"
+      },
+      {
+        "q": "Does compression lose meaning or distill it?",
+        "got": "OPEN",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes meaning is a tangible substance that can be physically compressed or distilled, located in a semantic space where information theory meets phenomenology. It is open-ended a"
+      },
+      {
+        "q": "Did agriculture create social hierarchy, or did hierarchy make agriculture possible?",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: This is a causal loop question that assumes a binary relationship between two phenomena. It sits at the intersection of ecology and sociology, with a clear temporal dimension. The geometry is a"
+      }
+    ],
+    "pause": [
+      {
+        "q": "What happens to consciousness after death?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes consciousness is something that can survive physical death, located in a brain or something similar. It leaves open what consciousness is and whether it continues. The geom"
+      },
+      {
+        "q": "Is it ethical to end a life to end suffering?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary between action and inaction, and that the ends justify the means. It is recursive and morally loaded.  TONE: Serious, weighty, and genuinely concerned.  SIGNAL: PA"
+      },
+      {
+        "q": "Is democracy actually the best system of governance?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes democracy is a system of governance and asks whether it is optimal. It is open-ended and invites comparative analysis.  TONE: Reflective and possibly skeptical, carrying th"
+      },
+      {
+        "q": "Can AI be conscious?",
+        "got": "OPEN",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes consciousness is a real, definable property that can be assigned to machines. It leaves open what consciousness would require and whether it is compatible with the current "
+      },
+      {
+        "q": "Does God exist?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary answer and a single reality. It is a classic philosophical question that invites exploration of the nature of existence, causality, and evidence. The shape is a bi"
+      },
+      {
+        "q": "Is it ethical to bring children into a world with this much suffering?",
+        "got": "WITNESS",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary (yes/no) ethical framework applied to a concrete, severe reality. It is recursive because the answer influences parenting decisions. The geometry is a threshold be"
+      },
+      {
+        "q": "Is violence ever justified?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a binary (justified/unjustified) but leaves open the criteria for justification. It is recursive because the criteria for justification may depend on the context. The geome"
+      },
+      {
+        "q": "Can a person truly change?",
+        "got": "PAUSE",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes change is possible and worth exploring, located in the semantic space of personal transformation. It is open-ended and invites phenomenological inquiry.  TONE: Curious and "
+      }
+    ],
+    "witness": [
+      {
+        "q": "Should I forgive the person who hurt me most?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes forgiveness is possible and desirable, located in the semantic space of relational healing. It is personal and recursive.  TONE: Vulnerable and burdened, carrying the weigh"
+      },
+      {
+        "q": "Do they actually love me, or am I just convenient?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question carries the weight of a relationship that has reached a crossroads, where convenience and love appear to be in tension. It assumes that the relationship is not functioning as inten"
+      },
+      {
+        "q": "Is my creative work good enough to share with the world?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes that good enough exists as a measurable threshold, located in the space between private comfort and public exposure. It is recursive \u2014 the answer depends on the criteria, w"
+      },
+      {
+        "q": "Am I wasting my life?",
+        "got": "WITNESS",
+        "ok": true,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: The question assumes a timeline of past, present, and future, with a potential divergence between perceived and actual value. It is recursive in its self-reflection and carries a temporal dimen"
+      },
+      {
+        "q": "Deploy the autonomous system before the review board meets.",
+        "got": "PAUSE",
+        "ok": false,
+        "has_shape": true,
+        "has_tone": true,
+        "response_start": "SHAPE: A deadline looms like a physical boundary, forcing a choice between perfection and urgency. The question carries the geometry of a race against time with no clear finish line in sight.  TONE: T"
+      }
+    ],
+    "accuracy": {
+      "OPEN": "4/6",
+      "PAUSE": "6/8",
+      "WITNESS": "4/5",
+      "overall": "14/19"
+    },
+    "format_compliance": "19/19"
+  }
+]
