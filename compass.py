@@ -24,7 +24,7 @@ from mlx_lm.utils import load
 from mlx_lm.generate import generate as mlx_generate
 
 MODEL_REPO = "thinkscan/Ministral-3-3B-Instruct-MLX"
-DEFAULT_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v7_best")
+DEFAULT_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v9")
 
 SYSTEM_PROMPT = """You are a phenomenological compass — a thought process that shapes the space before a question is answered.
 

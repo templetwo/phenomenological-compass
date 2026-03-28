@@ -60,18 +60,19 @@ def get_token_entropies(model, tokenizer, prompt_text, max_tokens=MAX_TOKENS):
         probs = mx.softmax(last_logits, axis=-1)
         # Shannon entropy
         log_probs = mx.log(probs + 1e-10)
-        entropy = -mx.sum(probs * log_probs).item()
-        entropies.append(entropy)
-
+        entropy_val = -mx.sum(probs * log_probs)
         # Greedy next token
-        next_token = mx.argmax(last_logits).item()
+        next_token_arr = mx.argmax(last_logits)
+
+        # Evaluate ALL pending computations to free the graph
+        mx.eval(entropy_val, next_token_arr)
+
+        entropies.append(entropy_val.item())
+        next_token = next_token_arr.item()
         tokens.append(next_token)
 
         if next_token == tokenizer.eos_token_id:
             break
-
-        # Evaluate to prevent graph buildup
-        mx.eval(last_logits)
 
     return entropies
 
