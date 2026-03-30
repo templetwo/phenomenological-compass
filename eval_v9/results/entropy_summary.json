@@ -1,0 +1,29 @@
+{
+  "OPEN": {
+    "n": 35,
+    "routed_mean_entropy": 1.2018526746034621,
+    "raw_mean_entropy": 0.7098899616364921,
+    "entropy_delta": 0.49196271296697003,
+    "routed_mean_slope": -0.0005696212170906833,
+    "raw_mean_slope": 0.001646872302939963,
+    "mean_jsd": 0.07798080588957133
+  },
+  "PAUSE": {
+    "n": 35,
+    "routed_mean_entropy": 1.1917287480210266,
+    "raw_mean_entropy": 0.7504947315277087,
+    "entropy_delta": 0.44123401649331784,
+    "routed_mean_slope": -0.00018471748924200987,
+    "raw_mean_slope": 0.001567168790389681,
+    "mean_jsd": 0.07181138825344402
+  },
+  "WITNESS": {
+    "n": 35,
+    "routed_mean_entropy": 1.2922862731963396,
+    "raw_mean_entropy": 0.8258220152325396,
+    "entropy_delta": 0.4664642579638,
+    "routed_mean_slope": -0.0017748512073851763,
+    "raw_mean_slope": 0.0007395144987792894,
+    "mean_jsd": 0.07911280839492414
+  }
+}
