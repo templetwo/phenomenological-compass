@@ -143,15 +143,32 @@ python3 pipeline.py --action m14b "What is the sound of one hand clapping?"
 python3 pipeline.py
 ```
 
-### Web UI
+### Web UI (Streaming)
 
 ```bash
 cd phenomenological-compass-ui
+source ../venv/bin/activate
 HF_HOME=~/.cache/huggingface_local python3 compass_server.py
 # → http://localhost:8420
 ```
 
-Dark-theme chat interface with signal-colored compass cards, collapsible reasoning blocks, and three modes (compass / compare / raw).
+SSE streaming interface — tokens appear as they generate. Features:
+- **Signal lock-in animation**: color wash + glow pulse when the compass commits to OPEN/PAUSE/WITNESS
+- **Live entropy sparkline**: canvas-rendered Shannon entropy trace per token, colored by signal
+- **Real-time tok/s**: generation speed in the response header
+- **Think-tag routing**: Qwen's `<think>` blocks detected server-side, routed to collapsible reasoning block
+- **Keyboard shortcuts**: Cmd+K cycles modes, Cmd+N new session, Escape aborts streaming
+- Three modes: compass (routed), compare (side-by-side), raw (direct)
+
+### Literature Watch
+
+```bash
+python3 scripts/literature_watch.py              # full 5-domain scan via Perplexity
+python3 scripts/literature_watch.py --chronicle   # also write to sovereign-stack chronicle
+python3 scripts/literature_watch.py --query "..."  # custom one-off search
+```
+
+Perplexity-powered research radar monitoring: two-stage routing, entropy from prompt conditioning, computational phenomenology, abliteration/RLHF, and LLM-as-judge methodology.
 
 ---
 
@@ -243,18 +260,22 @@ The 3B compass dedicates all its parameters to field-reading. The 9B action mode
 ## Project Structure
 
 ```
-pipeline.py                  # Two-stage inference pipeline
+pipeline.py                  # Two-stage inference pipeline (+ streaming generators)
+compass.py                   # Standalone compass CLI
 lora_config_v9.yaml          # Current training configuration (v0.9)
 adapters_v9/                 # Trained LoRA weights (v0.9, best: iter 300)
 adapters_v8/                 # Legacy LoRA weights (v0.8)
 scripts/                     # Dataset building, training, evaluation
+scripts/literature_watch.py  # Perplexity-powered research radar
 data/supplements_v8/         # Base training data (186 examples, 6 source models)
 data/supplements_v9/         # WITNESS augmentation (50 + 10 contrastive pairs)
 eval/                        # A/B evaluation framework
 eval/results_v9/             # v0.9 eval results (report, figures, judgments)
 eval_v9/                     # Ablation study + entropy profiling
+eval_v9/results/             # 630 ablation judgments + 105 entropy profiles
 docs/                        # Architecture documentation
-phenomenological-compass-ui/ # Web interface (FastAPI + vanilla JS)
+phenomenological-compass-ui/ # Streaming web interface (FastAPI + SSE)
+PAPER_BRIEF.md               # Complete research context for paper drafting
 ```
 
 ---
