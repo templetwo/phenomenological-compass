@@ -176,6 +176,44 @@ python3 eval/analyze.py
 
 See `eval/README.md` for full protocol documentation.
 
+### Ablation Study (eval_v9/)
+
+Four-condition ablation isolating the compass contribution:
+
+| Condition | Description |
+|-----------|-------------|
+| **full** | Complete pipeline: compass classifies, reading conditions action model |
+| **raw** | No compass — action model receives question directly |
+| **oracle** | Correct signal injected without compass reading |
+| **random** | Wrong signal injected without compass reading |
+
+630 pairwise judgments (Claude Sonnet, position-debiased, 3x self-consistency):
+
+| Comparison | A wins | B wins | Ties | Key Finding |
+|------------|--------|--------|------|-------------|
+| **full vs raw** | **94 (90%)** | 8 | 3 | Compass dominates across all signals |
+| full vs oracle | 38 (36%) | 39 (37%) | 28 | Compass reading adds marginal value beyond bare signal |
+| **full vs random** | 45 | 50 | 10 | Signal-specific — see WITNESS below |
+| oracle vs raw | 94 (90%) | 4 | 7 | Even bare signal dramatically improves responses |
+| raw vs random | 2 | **96 (91%)** | 7 | Any signal conditioning >> no conditioning |
+
+**WITNESS full vs random: 31-2-2.** Wrong-signal conditioning strips the "do not answer" instruction — the judge catches the collapse immediately. This proves the compass is structurally necessary for WITNESS, not just better prompting.
+
+### Entropy Profiling (eval_v9/)
+
+Token-by-token Shannon entropy traces across all 105 questions:
+
+| Signal | Routed H | Raw H | Delta H | JSD |
+|--------|----------|-------|---------|-----|
+| OPEN | 1.20 | 0.71 | **+0.49** | 0.078 |
+| PAUSE | 1.19 | 0.75 | **+0.44** | 0.072 |
+| WITNESS | **1.29** | 0.83 | **+0.47** | **0.079** |
+| **Overall** | **1.23** | **0.76** | **+0.47** | **0.076** |
+
+The compass increases Shannon entropy by +0.47 nats across all signals — the model holds ~60% more possibilities open per token when routed. WITNESS has the highest absolute entropy: the most space opened where the model is told not to answer.
+
+Entropy slope asymmetry: routed responses have **negative slope** (opens wide, then focuses) while raw responses have **positive slope** (commits early, wanders late).
+
 ---
 
 ## The Deeper Claim
