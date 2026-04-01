@@ -160,7 +160,7 @@ class ThinkDetector:
 
         else:  # response
             # Clean stray tags
-            clean = token_text.replace("<|im_end|>", "")
+            clean = token_text.replace("<|im_end|>", "").replace("<|im_start|>", "")
             return "action", clean
 
 
@@ -417,8 +417,18 @@ async def stream_infer(req: InferenceRequest):
             t_action = round(time.time() - t1, 1)
 
             # ── Finalize ────────────────────────────────────────────
-            # Clean response text
-            response_text = response_text.replace("<|im_end|>", "").strip()
+            # Clean response text — truncate at hallucinated continuations
+            for stop_tag in ["<|im_start|>", "<|im_end|>"]:
+                if stop_tag in response_text:
+                    response_text = response_text[:response_text.index(stop_tag)]
+            # Strip any remaining think tags
+            import re as _re
+            response_text = _re.sub(r"</?think>", "", response_text).strip()
+            # If response is duplicated (thinking leaked into response), take second half
+            lines = response_text.split("\n")
+            mid = len(lines) // 2
+            if mid > 3 and lines[:3] == lines[mid:mid+3]:
+                response_text = "\n".join(lines[mid:]).strip()
 
             mean_entropy = round(sum(entropy_values) / len(entropy_values), 4) if entropy_values else None
 
