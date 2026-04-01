@@ -9,6 +9,12 @@ __pycache__/
 # Secrets
 .env
 
+# Claude Code worktrees and config
+.claude/
+
+# Session data (user-specific)
+phenomenological-compass-ui/sessions/
+
 # Legacy adapter versions (pre-v0.8, no longer relevant)
 adapters/
 adapters_iter50/
