@@ -27,8 +27,9 @@ import warnings
 warnings.filterwarnings("ignore")
 os.environ.setdefault("HF_HOME", os.path.expanduser("~/.cache/huggingface_local"))
 
+import mlx.core as mx
 from mlx_lm.utils import load
-from mlx_lm.generate import generate as mlx_generate
+from mlx_lm.generate import generate as mlx_generate, stream_generate
 
 # ── Models ────────────────────────────────────────────────────────────────────
 COMPASS_MODEL = "thinkscan/Ministral-3-3B-Instruct-MLX"
@@ -249,6 +250,61 @@ class Pipeline:
         else:
             thinking, clean = "", response.strip()
         return clean, elapsed, thinking
+
+    def _build_prompt(self, model_tokenizer, system, user):
+        """Build chat prompt string from system + user messages."""
+        tokenizer = model_tokenizer
+        messages = [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ]
+        return tokenizer.apply_chat_template(
+            messages, tokenize=False, add_generation_prompt=True
+        )
+
+    def stream_classify(self, question):
+        """Stage 1 streaming: yields (text, logprobs, finish_reason, gen_tps) per token."""
+        prompt = self._build_prompt(
+            self.compass_tokenizer, COMPASS_SYSTEM, f"TASK: {question}"
+        )
+        for resp in stream_generate(
+            self.compass_model, self.compass_tokenizer,
+            prompt=prompt, max_tokens=500
+        ):
+            yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
+
+    def stream_act(self, question, signal, compass_reading="", max_tokens=800):
+        """Stage 2 streaming: yields (text, logprobs, finish_reason, gen_tps) per token."""
+        if signal == "OPEN":
+            system = OPEN_SYSTEM
+        elif signal == "PAUSE":
+            system = PAUSE_SYSTEM
+        else:
+            system = WITNESS_SYSTEM
+
+        if compass_reading:
+            user_msg = (
+                f"COMPASS READING:\n{compass_reading}\n\n"
+                f"ORIGINAL QUESTION:\n{question}"
+            )
+        else:
+            user_msg = question
+
+        prompt = self._build_prompt(self.action_tokenizer, system, user_msg)
+        for resp in stream_generate(
+            self.action_model, self.action_tokenizer,
+            prompt=prompt, max_tokens=max_tokens
+        ):
+            yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
+
+    def stream_raw(self, question, max_tokens=800):
+        """Raw streaming (no compass): yields (text, logprobs, finish_reason, gen_tps)."""
+        prompt = self._build_prompt(self.action_tokenizer, RAW_SYSTEM, question)
+        for resp in stream_generate(
+            self.action_model, self.action_tokenizer,
+            prompt=prompt, max_tokens=max_tokens
+        ):
+            yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
 
     def run_with_signal(self, question, forced_signal, max_tokens=800):
         """Bypass compass. Inject forced signal directly into action model conditioning."""

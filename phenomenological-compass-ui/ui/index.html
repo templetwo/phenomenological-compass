@@ -317,6 +317,7 @@ html, body {
   border-radius: var(--radius-lg);
   overflow: hidden;
   max-width: 85%;
+  transition: box-shadow 0.8s ease;
 }
 
 .compass-header {
@@ -331,7 +332,7 @@ html, body {
   text-transform: uppercase;
   cursor: pointer;
   user-select: none;
-  transition: background 0.15s;
+  transition: all 0.3s;
 }
 
 .compass-header:hover { filter: brightness(1.1); }
@@ -339,6 +340,7 @@ html, body {
 .compass-header.signal-open { color: var(--open-primary); background: var(--open-bg); border-bottom: 1px solid var(--open-border); }
 .compass-header.signal-pause { color: var(--pause-primary); background: var(--pause-bg); border-bottom: 1px solid var(--pause-border); }
 .compass-header.signal-witness { color: var(--witness-primary); background: var(--witness-bg); border-bottom: 1px solid var(--witness-border); }
+.compass-header.signal-reading { color: var(--text-dim); background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
 
 .compass-header .chevron {
   margin-left: auto;
@@ -382,13 +384,14 @@ html, body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  transition: all 0.5s ease;
 }
 
+.signal-reading .signal-indicator { background: var(--text-dim); }
 .signal-open .signal-indicator { background: var(--open-primary); box-shadow: 0 0 8px var(--open-glow); }
 .signal-pause .signal-indicator { background: var(--pause-primary); box-shadow: 0 0 8px var(--pause-glow); }
 .signal-witness .signal-indicator { background: var(--witness-primary); box-shadow: 0 0 8px var(--witness-glow); }
 
-/* compass-body base padding is set above with transitions */
 .compass-body-inner {
   padding: 14px 16px 12px;
 }
@@ -416,6 +419,7 @@ html, body {
   font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.65;
+  white-space: pre-wrap;
 }
 
 .compass-divider {
@@ -430,6 +434,51 @@ html, body {
   color: var(--text-dim);
   padding: 0 16px 10px;
   opacity: 0.7;
+}
+
+/* ── Signal Lock-In Animation ────────────────────────── */
+@keyframes signalPulse {
+  0% { box-shadow: 0 0 0 0 var(--glow-color, #a78bfa33); }
+  50% { box-shadow: 0 0 40px 12px var(--glow-color, #a78bfa33); }
+  100% { box-shadow: 0 0 0 0 var(--glow-color, #a78bfa33); }
+}
+
+.compass-card.signal-locked {
+  animation: signalPulse 1s ease-out;
+}
+
+@keyframes colorWash {
+  0% { opacity: 0; }
+  25% { opacity: 0.06; }
+  100% { opacity: 0; }
+}
+
+.signal-wash {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 100;
+  animation: colorWash 1.5s ease-out forwards;
+}
+
+.signal-wash.open { background: var(--open-primary); }
+.signal-wash.pause { background: var(--pause-primary); }
+.signal-wash.witness { background: var(--witness-primary); }
+
+/* ── Streaming Cursor ────────────────────────────────── */
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.streaming-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  background: var(--accent);
+  vertical-align: text-bottom;
+  animation: blink 0.8s step-end infinite;
+  margin-left: 1px;
 }
 
 /* ── Thinking Block ───────────────────────────────────── */
@@ -481,6 +530,7 @@ html, body {
   overflow-y: auto;
   transition: max-height 0.35s ease, padding 0.35s ease, opacity 0.25s ease;
   opacity: 1;
+  white-space: pre-wrap;
 }
 
 .thinking-header.collapsed + .thinking-content {
@@ -494,11 +544,6 @@ html, body {
 .thinking-content::-webkit-scrollbar { width: 4px; }
 .thinking-content::-webkit-scrollbar-track { background: transparent; }
 .thinking-content::-webkit-scrollbar-thumb { background: var(--think-border); border-radius: 2px; }
-
-.thinking-content p { margin-bottom: 8px; }
-.thinking-content p:last-child { margin-bottom: 0; }
-.thinking-content ol, .thinking-content ul { margin: 6px 0 6px 20px; }
-.thinking-content li { margin-bottom: 3px; }
 
 /* ── Response Block ───────────────────────────────────── */
 .message-assistant { max-width: 85%; }
@@ -523,11 +568,20 @@ html, body {
   border-bottom: 1px solid var(--border-subtle);
 }
 
+.response-tps {
+  margin-left: auto;
+  opacity: 0.5;
+}
+
 .response-body {
   padding: 18px 20px;
   font-size: 14px;
   line-height: 1.75;
   color: var(--text-primary);
+}
+
+.response-body.streaming {
+  white-space: pre-wrap;
 }
 
 /* Rich text styles within response */
@@ -546,15 +600,8 @@ html, body {
 .response-body p { margin-bottom: 12px; }
 .response-body p:last-child { margin-bottom: 0; }
 
-.response-body strong {
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.response-body em {
-  color: var(--text-secondary);
-  font-style: italic;
-}
+.response-body strong { color: var(--text-primary); font-weight: 500; }
+.response-body em { color: var(--text-secondary); font-style: italic; }
 
 .response-body code {
   font-family: var(--font-mono);
@@ -575,15 +622,8 @@ html, body {
   border-radius: 0 var(--radius) var(--radius) 0;
 }
 
-.response-body ul, .response-body ol {
-  margin: 8px 0 12px 20px;
-}
-
-.response-body li {
-  margin-bottom: 4px;
-  line-height: 1.7;
-}
-
+.response-body ul, .response-body ol { margin: 8px 0 12px 20px; }
+.response-body li { margin-bottom: 4px; line-height: 1.7; }
 .response-body li::marker { color: var(--text-dim); }
 
 .response-body hr {
@@ -593,12 +633,39 @@ html, body {
   margin: 16px 0;
 }
 
+/* ── Entropy Sparkline ───────────────────────────────── */
+.entropy-container {
+  padding: 6px 20px 12px;
+  border-top: 1px solid var(--border-subtle);
+}
+
+.entropy-canvas {
+  width: 100%;
+  height: 36px;
+  display: block;
+}
+
+.entropy-label {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ── Response Timing Footer ──────────────────────────── */
 .response-timing {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
   padding: 6px 16px 10px;
   opacity: 0.7;
+  display: flex;
+  gap: 12px;
 }
 
 /* ── Compare Mode Divider ─────────────────────────────── */
@@ -779,6 +846,14 @@ const API = window.location.origin + '/api';
 let currentSession = null;
 let currentMode = 'routed';
 let isLoading = false;
+let activeReader = null;
+
+// Signal color map
+const SIGNAL_COLORS = {
+  OPEN: getComputedStyle(document.documentElement).getPropertyValue('--open-primary').trim(),
+  PAUSE: getComputedStyle(document.documentElement).getPropertyValue('--pause-primary').trim(),
+  WITNESS: getComputedStyle(document.documentElement).getPropertyValue('--witness-primary').trim(),
+};
 
 // ── Markdown Renderer ──────────────────────────────────
 
@@ -786,40 +861,25 @@ function renderMarkdown(text) {
   if (!text) return '';
   let html = escapeHtml(text);
 
-  // Headers (must be at line start)
   html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
   html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
   html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
   html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
-
-  // Horizontal rules
   html = html.replace(/^---+$/gm, '<hr>');
-
-  // Bold and italic
   html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
   html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
   html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-
-  // Inline code
   html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
-
-  // Blockquotes
   html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
-  // Merge adjacent blockquotes
   html = html.replace(/<\/blockquote>\n<blockquote>/g, '\n');
-
-  // Unordered lists
   html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
   html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
 
-  // Paragraphs: split on double newlines
   const blocks = html.split(/\n\n+/);
   html = blocks.map(block => {
     block = block.trim();
     if (!block) return '';
-    // Don't wrap block-level elements
     if (/^<(h[1-4]|ul|ol|blockquote|hr|li)/.test(block)) return block;
-    // Preserve single newlines as <br> within paragraphs
     block = block.replace(/\n/g, '<br>');
     return `<p>${block}</p>`;
   }).join('\n');
@@ -884,10 +944,7 @@ async function loadMessages(sessionId) {
   const res = await fetch(`${API}/sessions/${sessionId}/messages`);
   const data = await res.json();
   clearChat();
-  if (data.messages.length === 0) {
-    showEmpty();
-    return;
-  }
+  if (data.messages.length === 0) { showEmpty(); return; }
   hideEmpty();
   let i = 0;
   while (i < data.messages.length) {
@@ -897,9 +954,9 @@ async function loadMessages(sessionId) {
       const compass = data.messages[i + 1];
       const assistant = data.messages[i + 2];
       if (compass && compass.role === 'compass') {
-        addCompassMessage(compass.content, compass.signal, compass.t_compass);
+        addCompassMessageStatic(compass.content, compass.signal, compass.t_compass);
         if (assistant && assistant.role === 'assistant') {
-          addAssistantMessage(assistant.content, assistant.t_action);
+          addAssistantMessageStatic(assistant.content, assistant.t_action);
           i += 3;
           continue;
         }
@@ -912,7 +969,7 @@ async function loadMessages(sessionId) {
   scrollToBottom();
 }
 
-// ── Chat Rendering ──────────────────────────────────────
+// ── Chat Rendering (Static — for history replay) ────────
 
 function clearChat() {
   document.getElementById('chat-area').innerHTML = '';
@@ -968,151 +1025,10 @@ function addUserMessage(text) {
   area.appendChild(div);
 }
 
-function addCompassMessage(text, signal, timing) {
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message message-compass';
-
-  const signalLower = (signal || 'open').toLowerCase();
-  const signalClass = `signal-${signalLower}`;
-  const sections = parseCompassReading(text);
-
-  // Build sections with signal-colored translation labels
-  const translationLabels = ['framing', 'approach', 'threshold'];
-  const sectionsHtml = sections.map((s, i) => {
-    const labelClass = `compass-label-${s.label.toLowerCase()}`;
-    const isTranslation = translationLabels.includes(s.label.toLowerCase());
-    const showDivider = isTranslation && i > 0;
-    return `
-      ${showDivider ? '<div class="compass-divider"></div>' : ''}
-      <div class="compass-section">
-        <div class="compass-label ${labelClass}">${s.label}</div>
-        <div class="compass-text">${escapeHtml(s.text)}</div>
-      </div>
-    `;
-  }).join('');
-
-  // Extract one-line summary from the translation section (FRAMING/APPROACH/THRESHOLD)
-  const translationSection = sections.find(s =>
-    ['framing', 'approach', 'threshold'].includes(s.label.toLowerCase())
-  );
-  const summary = translationSection
-    ? translationSection.text.split(/[.!?]/)[0].trim()
-    : '';
-
-  div.innerHTML = `
-    <div class="compass-card">
-      <div class="compass-header ${signalClass} collapsed" onclick="toggleCollapse(this)">
-        <div class="signal-indicator"></div>
-        Compass &mdash; ${signal || 'READING'}
-        ${timing ? `<span style="opacity:0.5; font-size:10px; margin-left:8px;">${timing}s</span>` : ''}
-        <span class="compass-summary">&mdash; ${escapeHtml(summary)}</span>
-        <span class="chevron">&#9662;</span>
-      </div>
-      <div class="compass-body">
-        <div class="compass-body-inner">
-          ${sectionsHtml}
-        </div>
-      </div>
-    </div>
-  `;
-  area.appendChild(div);
-}
-
-function addThinkingBlock(text, collapsed) {
-  if (!text) return;
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message thinking-block';
-
-  const collapsedClass = collapsed ? ' collapsed' : '';
-  div.innerHTML = `
-    <div class="thinking-header${collapsedClass}" onclick="toggleCollapse(this)">
-      <span>&#x1F4AD;</span> Reasoning
-      <span class="chevron">&#9662;</span>
-    </div>
-    <div class="thinking-content">${renderMarkdown(text)}</div>
-  `;
-  area.appendChild(div);
-}
-
-function addAssistantMessage(text, timing, label) {
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message message-assistant';
-
-  const headerLabel = label || 'Response';
-  div.innerHTML = `
-    <div class="response-card">
-      <div class="response-header">
-        <span>&#x270D;&#xFE0F;</span> ${headerLabel}
-        ${timing ? `<span style="margin-left:auto; opacity:0.5;">${timing}s</span>` : ''}
-      </div>
-      <div class="response-body">${renderMarkdown(text)}</div>
-    </div>
-  `;
-  area.appendChild(div);
-}
-
-function addCompareDivider(text) {
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'compare-divider';
-  div.textContent = text || 'raw (no compass)';
-  area.appendChild(div);
-}
-
-let loadingStageTimer = null;
-
-function addLoadingIndicator() {
-  hideEmpty();
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message thinking-indicator';
-  div.id = 'loading-indicator';
-  div.innerHTML = `
-    <div class="thinking-dots"><span></span><span></span><span></span></div>
-    <span id="loading-stage">Compass reading...</span>
-  `;
-  area.appendChild(div);
-  scrollToBottom();
-
-  // Progressive stage updates
-  const stages = [
-    { text: 'Reading shape and tone...', delay: 2000 },
-    { text: 'Signal locked. Generating response...', delay: 5000 },
-    { text: 'Thinking through the field...', delay: 9000 },
-    { text: 'Almost there...', delay: 15000 },
-  ];
-  stages.forEach(s => {
-    const timer = setTimeout(() => {
-      const el = document.getElementById('loading-stage');
-      if (el) el.textContent = s.text;
-    }, s.delay);
-    // Store for cleanup
-    if (!loadingStageTimer) loadingStageTimer = [];
-    loadingStageTimer.push(timer);
-  });
-}
-
-function removeLoadingIndicator() {
-  const el = document.getElementById('loading-indicator');
-  if (el) el.remove();
-  if (loadingStageTimer) {
-    loadingStageTimer.forEach(t => clearTimeout(t));
-    loadingStageTimer = null;
-  }
-}
-
-function toggleCollapse(header) {
-  header.classList.toggle('collapsed');
-}
-
 function parseCompassReading(text) {
   const sections = [];
   const labels = ['SHAPE', 'TONE', 'SIGNAL', 'FRAMING', 'APPROACH', 'THRESHOLD'];
   let current = null;
-
   for (const line of (text || '').split('\n')) {
     const trimmed = line.trim();
     let matched = false;
@@ -1132,7 +1048,424 @@ function parseCompassReading(text) {
   return sections;
 }
 
-// ── Sending Messages ────────────────────────────────────
+function addCompassMessageStatic(text, signal, timing) {
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message message-compass';
+
+  const signalLower = (signal || 'open').toLowerCase();
+  const signalClass = `signal-${signalLower}`;
+  const sections = parseCompassReading(text);
+  const translationLabels = ['framing', 'approach', 'threshold'];
+
+  const sectionsHtml = sections.map((s, i) => {
+    const labelClass = `compass-label-${s.label.toLowerCase()}`;
+    const isTranslation = translationLabels.includes(s.label.toLowerCase());
+    const showDivider = isTranslation && i > 0;
+    return `
+      ${showDivider ? '<div class="compass-divider"></div>' : ''}
+      <div class="compass-section">
+        <div class="compass-label ${labelClass}">${s.label}</div>
+        <div class="compass-text">${escapeHtml(s.text)}</div>
+      </div>
+    `;
+  }).join('');
+
+  const translationSection = sections.find(s =>
+    ['framing', 'approach', 'threshold'].includes(s.label.toLowerCase())
+  );
+  const summary = translationSection ? translationSection.text.split(/[.!?]/)[0].trim() : '';
+
+  div.innerHTML = `
+    <div class="compass-card">
+      <div class="compass-header ${signalClass} collapsed" onclick="toggleCollapse(this)">
+        <div class="signal-indicator"></div>
+        Compass &mdash; ${signal || 'READING'}
+        ${timing ? `<span style="opacity:0.5; font-size:10px; margin-left:8px;">${timing}s</span>` : ''}
+        <span class="compass-summary">&mdash; ${escapeHtml(summary)}</span>
+        <span class="chevron">&#9662;</span>
+      </div>
+      <div class="compass-body">
+        <div class="compass-body-inner">${sectionsHtml}</div>
+      </div>
+    </div>
+  `;
+  area.appendChild(div);
+}
+
+function addAssistantMessageStatic(text, timing, label) {
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message message-assistant';
+  const headerLabel = label || 'Response';
+  div.innerHTML = `
+    <div class="response-card">
+      <div class="response-header">
+        <span>&#x270D;&#xFE0F;</span> ${headerLabel}
+        ${timing ? `<span class="response-tps">${timing}s</span>` : ''}
+      </div>
+      <div class="response-body">${renderMarkdown(text)}</div>
+    </div>
+  `;
+  area.appendChild(div);
+}
+
+// ── Streaming State ─────────────────────────────────────
+
+let stream = {
+  compassCard: null,
+  compassBody: null,
+  compassHeader: null,
+  compassText: '',
+  currentSectionEl: null,
+  currentSectionLabel: null,
+  signal: null,
+
+  thinkingBlock: null,
+  thinkingContent: null,
+  thinkingText: '',
+
+  responseCard: null,
+  responseBody: null,
+  responseText: '',
+
+  entropyData: [],
+  entropyCanvas: null,
+  entropyMeanEl: null,
+  tpsEl: null,
+  lastTps: 0,
+};
+
+function resetStream() {
+  stream = {
+    compassCard: null, compassBody: null, compassHeader: null,
+    compassText: '', currentSectionEl: null, currentSectionLabel: null, signal: null,
+    thinkingBlock: null, thinkingContent: null, thinkingText: '',
+    responseCard: null, responseBody: null, responseText: '',
+    entropyData: [], entropyCanvas: null, entropyMeanEl: null, tpsEl: null, lastTps: 0,
+  };
+}
+
+// ── Streaming: Compass Card Builder ─────────────────────
+
+function ensureCompassCard() {
+  if (stream.compassCard) return;
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message message-compass';
+  div.innerHTML = `
+    <div class="compass-card" id="stream-compass-card">
+      <div class="compass-header signal-reading" onclick="toggleCollapse(this)">
+        <div class="signal-indicator"></div>
+        <span id="stream-compass-label">Compass &mdash; reading...</span>
+        <span class="compass-summary"></span>
+        <span class="chevron">&#9662;</span>
+      </div>
+      <div class="compass-body">
+        <div class="compass-body-inner" id="stream-compass-body"></div>
+      </div>
+    </div>
+  `;
+  area.appendChild(div);
+  stream.compassCard = div.querySelector('.compass-card');
+  stream.compassHeader = div.querySelector('.compass-header');
+  stream.compassBody = div.querySelector('#stream-compass-body');
+  scrollToBottom();
+}
+
+function handleCompassToken(data) {
+  ensureCompassCard();
+  stream.compassText += data.token;
+
+  // Create new section element when section changes
+  if (data.section && data.section !== stream.currentSectionLabel) {
+    stream.currentSectionLabel = data.section;
+    const isTranslation = ['framing', 'approach', 'threshold'].includes(data.section);
+
+    if (isTranslation && stream.compassBody.children.length > 0) {
+      const divider = document.createElement('div');
+      divider.className = 'compass-divider';
+      stream.compassBody.appendChild(divider);
+    }
+
+    const section = document.createElement('div');
+    section.className = 'compass-section';
+    section.innerHTML = `
+      <div class="compass-label compass-label-${data.section}">${data.section.toUpperCase()}</div>
+      <div class="compass-text"></div>
+    `;
+    stream.compassBody.appendChild(section);
+    stream.currentSectionEl = section.querySelector('.compass-text');
+  }
+
+  // Append token to current section
+  if (stream.currentSectionEl) {
+    stream.currentSectionEl.textContent += data.token;
+  }
+
+  scrollToBottom();
+}
+
+function handleSignalLock(data) {
+  stream.signal = data.signal;
+  const signalLower = data.signal.toLowerCase();
+  const signalClass = `signal-${signalLower}`;
+
+  // Update compass header
+  if (stream.compassHeader) {
+    stream.compassHeader.className = `compass-header ${signalClass}`;
+    stream.compassHeader.onclick = function() { toggleCollapse(this); };
+    document.getElementById('stream-compass-label').innerHTML =
+      `Compass &mdash; ${data.signal}`;
+  }
+
+  // Glow pulse on card
+  if (stream.compassCard) {
+    const glowColor = SIGNAL_COLORS[data.signal] + '44';
+    stream.compassCard.style.setProperty('--glow-color', glowColor);
+    stream.compassCard.classList.add('signal-locked');
+    setTimeout(() => stream.compassCard.classList.remove('signal-locked'), 1000);
+  }
+
+  // Full-viewport color wash
+  const wash = document.createElement('div');
+  wash.className = `signal-wash ${signalLower}`;
+  document.body.appendChild(wash);
+  setTimeout(() => wash.remove(), 1600);
+}
+
+function handleCompassDone(data) {
+  // Collapse the compass card
+  if (stream.compassHeader) {
+    stream.compassHeader.classList.add('collapsed');
+    // Set summary
+    const summary = stream.compassHeader.querySelector('.compass-summary');
+    const sections = parseCompassReading(data.text);
+    const translationSection = sections.find(s =>
+      ['framing', 'approach', 'threshold'].includes(s.label.toLowerCase())
+    );
+    if (summary && translationSection) {
+      summary.textContent = '— ' + translationSection.text.split(/[.!?]/)[0].trim();
+    }
+    // Add timing
+    const label = document.getElementById('stream-compass-label');
+    if (label && data.t_compass) {
+      label.innerHTML += ` <span style="opacity:0.5; font-size:10px; margin-left:8px;">${data.t_compass}s</span>`;
+    }
+  }
+}
+
+// ── Streaming: Thinking Block Builder ───────────────────
+
+function ensureThinkingBlock() {
+  if (stream.thinkingBlock) return;
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message thinking-block';
+  div.innerHTML = `
+    <div class="thinking-header" onclick="toggleCollapse(this)">
+      <span>&#x1F4AD;</span> Reasoning
+      <span class="chevron">&#9662;</span>
+    </div>
+    <div class="thinking-content" id="stream-thinking-content"></div>
+  `;
+  area.appendChild(div);
+  stream.thinkingBlock = div;
+  stream.thinkingContent = div.querySelector('#stream-thinking-content');
+}
+
+function handleThinkingToken(data) {
+  ensureThinkingBlock();
+  stream.thinkingText += data.token;
+  stream.thinkingContent.textContent = stream.thinkingText;
+  scrollToBottom();
+}
+
+// ── Streaming: Response Block Builder ───────────────────
+
+function ensureResponseCard() {
+  if (stream.responseCard) return;
+
+  // Collapse thinking block if it exists
+  if (stream.thinkingBlock) {
+    const header = stream.thinkingBlock.querySelector('.thinking-header');
+    if (header && !header.classList.contains('collapsed')) {
+      header.classList.add('collapsed');
+    }
+  }
+
+  const area = document.getElementById('chat-area');
+  const div = document.createElement('div');
+  div.className = 'message message-assistant';
+  div.innerHTML = `
+    <div class="response-card" id="stream-response-card">
+      <div class="response-header">
+        <span>&#x270D;&#xFE0F;</span> Response
+        <span class="response-tps" id="stream-tps"></span>
+      </div>
+      <div class="response-body streaming" id="stream-response-body"></div>
+      <div class="entropy-container" id="stream-entropy-container">
+        <canvas class="entropy-canvas" id="stream-entropy-canvas"></canvas>
+        <div class="entropy-label">
+          <span>entropy trace</span>
+          <span id="stream-entropy-mean">H = ...</span>
+        </div>
+      </div>
+    </div>
+  `;
+  area.appendChild(div);
+  stream.responseCard = div;
+  stream.responseBody = div.querySelector('#stream-response-body');
+  stream.entropyCanvas = div.querySelector('#stream-entropy-canvas');
+  stream.entropyMeanEl = div.querySelector('#stream-entropy-mean');
+  stream.tpsEl = div.querySelector('#stream-tps');
+
+  // Size canvas to container
+  const container = div.querySelector('.entropy-container');
+  requestAnimationFrame(() => {
+    const w = container.clientWidth - 40;
+    stream.entropyCanvas.width = w * 2;  // 2x for retina
+    stream.entropyCanvas.height = 72;
+    stream.entropyCanvas.style.width = w + 'px';
+    stream.entropyCanvas.style.height = '36px';
+  });
+}
+
+function handleActionToken(data) {
+  ensureResponseCard();
+  stream.responseText += data.token;
+  stream.responseBody.textContent = stream.responseText;
+
+  // Append cursor
+  let cursor = stream.responseBody.querySelector('.streaming-cursor');
+  if (!cursor) {
+    cursor = document.createElement('span');
+    cursor.className = 'streaming-cursor';
+    stream.responseBody.appendChild(cursor);
+  }
+
+  // Entropy
+  if (data.entropy !== null && data.entropy !== undefined) {
+    stream.entropyData.push(data.entropy);
+    drawEntropySparkline();
+
+    const mean = stream.entropyData.reduce((a, b) => a + b, 0) / stream.entropyData.length;
+    if (stream.entropyMeanEl) {
+      stream.entropyMeanEl.textContent = `H = ${mean.toFixed(3)} nats`;
+    }
+  }
+
+  // TPS
+  if (data.tps && stream.tpsEl) {
+    stream.lastTps = data.tps;
+    stream.tpsEl.textContent = `${data.tps} tok/s`;
+  }
+
+  scrollToBottom();
+}
+
+// ── Streaming: Finalize ─────────────────────────────────
+
+function handleDone(data) {
+  // Remove streaming cursor
+  const cursor = stream.responseBody?.querySelector('.streaming-cursor');
+  if (cursor) cursor.remove();
+
+  // Replace plain text with rendered markdown
+  if (stream.responseBody && stream.responseText) {
+    stream.responseBody.classList.remove('streaming');
+    stream.responseBody.innerHTML = renderMarkdown(data.response_text || stream.responseText);
+  }
+
+  // Render thinking block properly
+  if (stream.thinkingContent && stream.thinkingText) {
+    stream.thinkingContent.innerHTML = renderMarkdown(stream.thinkingText);
+  }
+
+  // Add timing footer
+  if (stream.responseCard) {
+    const card = stream.responseCard.querySelector('.response-card');
+    if (card) {
+      const timing = document.createElement('div');
+      timing.className = 'response-timing';
+      const parts = [];
+      if (data.t_compass) parts.push(`compass ${data.t_compass}s`);
+      parts.push(`action ${data.t_action}s`);
+      parts.push(`total ${data.t_total}s`);
+      if (data.mean_entropy) parts.push(`H\u0304 = ${data.mean_entropy.toFixed(3)}`);
+      timing.textContent = parts.join(' \u00b7 ');
+      card.appendChild(timing);
+    }
+  }
+
+  // Update session
+  if (data.session_id) {
+    currentSession = data.session_id;
+    loadSessions();
+  }
+
+  // Final sparkline draw
+  drawEntropySparkline();
+}
+
+// ── Entropy Sparkline ───────────────────────────────────
+
+function drawEntropySparkline() {
+  const canvas = stream.entropyCanvas;
+  if (!canvas || stream.entropyData.length < 2) return;
+
+  const ctx = canvas.getContext('2d');
+  const w = canvas.width;
+  const h = canvas.height;
+  const data = stream.entropyData;
+  const signalColor = SIGNAL_COLORS[stream.signal] || '#a78bfa';
+
+  ctx.clearRect(0, 0, w, h);
+
+  const maxEntropy = Math.max(Math.max(...data) * 1.1, 2.5);
+  const xStep = w / Math.max(data.length - 1, 1);
+
+  // Filled area
+  ctx.beginPath();
+  ctx.moveTo(0, h);
+  data.forEach((e, i) => {
+    ctx.lineTo(i * xStep, h - (e / maxEntropy) * h * 0.85);
+  });
+  ctx.lineTo((data.length - 1) * xStep, h);
+  ctx.closePath();
+  ctx.fillStyle = signalColor + '12';
+  ctx.fill();
+
+  // Line
+  ctx.beginPath();
+  data.forEach((e, i) => {
+    const x = i * xStep;
+    const y = h - (e / maxEntropy) * h * 0.85;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = signalColor;
+  ctx.lineWidth = 2;
+  ctx.shadowColor = signalColor;
+  ctx.shadowBlur = 6;
+  ctx.stroke();
+  ctx.shadowBlur = 0;
+
+  // Current point glow
+  if (data.length > 0) {
+    const lastX = (data.length - 1) * xStep;
+    const lastY = h - (data[data.length - 1] / maxEntropy) * h * 0.85;
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 3, 0, Math.PI * 2);
+    ctx.fillStyle = signalColor;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(lastX, lastY, 6, 0, Math.PI * 2);
+    ctx.fillStyle = signalColor + '33';
+    ctx.fill();
+  }
+}
+
+// ── SSE Stream Consumer ─────────────────────────────────
 
 async function send() {
   const input = document.getElementById('input');
@@ -1149,13 +1482,12 @@ async function send() {
   autoResize(input);
   isLoading = true;
   document.getElementById('send-btn').disabled = true;
-
+  resetStream();
   addUserMessage(text);
-  addLoadingIndicator();
   scrollToBottom();
 
   try {
-    const res = await fetch(`${API}/infer`, {
+    const response = await fetch(`${API}/stream`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1165,45 +1497,76 @@ async function send() {
       }),
     });
 
-    removeLoadingIndicator();
-    if (!res.ok) throw new Error(`Server error: ${res.status}`);
-    const data = await res.json();
+    if (!response.ok) throw new Error(`Server error: ${response.status}`);
 
-    // 1. Compass reading (collapsible card)
-    if (data.compass_reading) {
-      addCompassMessage(data.compass_reading, data.signal, data.t_compass);
-    }
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    activeReader = reader;
+    let buffer = '';
 
-    // 2. Thinking (collapsible, collapsed by default)
-    if (data.thinking) {
-      addThinkingBlock(data.thinking, true);
-    }
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    // 3. Response (rich markdown)
-    if (data.action_response) {
-      addAssistantMessage(data.action_response, data.t_action, 'Response');
-    }
+      buffer += decoder.decode(value, { stream: true });
 
-    // 4. Compare mode: raw output
-    if (data.raw_response && currentMode === 'compare') {
-      addCompareDivider('raw (no compass)');
-      if (data.raw_thinking) {
-        addThinkingBlock(data.raw_thinking, true);
+      // Parse SSE events
+      const parts = buffer.split('\n\n');
+      buffer = parts.pop();
+
+      for (const part of parts) {
+        const trimmed = part.trim();
+        if (!trimmed) continue;
+
+        // Extract data from SSE format
+        for (const line of trimmed.split('\n')) {
+          if (line.startsWith('data: ')) {
+            try {
+              const data = JSON.parse(line.slice(6));
+              handleStreamEvent(data);
+            } catch (e) {
+              console.warn('SSE parse error:', e, line);
+            }
+          }
+        }
       }
-      addAssistantMessage(data.raw_response, data.t_raw, 'Raw Response');
     }
-
-    currentSession = data.session_id;
-    await loadSessions();
 
   } catch (err) {
-    removeLoadingIndicator();
-    addAssistantMessage(`Error: ${err.message}. Is compass_server.py running on port 8420?`, null, 'Error');
+    console.error('Stream error:', err);
+    addAssistantMessageStatic(`Error: ${err.message}. Is compass_server.py running on port 8420?`, null, 'Error');
   }
 
+  activeReader = null;
   isLoading = false;
   document.getElementById('send-btn').disabled = false;
   scrollToBottom();
+}
+
+function handleStreamEvent(data) {
+  switch (data.stage) {
+    case 'compass':
+      handleCompassToken(data);
+      break;
+    case 'signal_lock':
+      handleSignalLock(data);
+      break;
+    case 'compass_done':
+      handleCompassDone(data);
+      break;
+    case 'thinking':
+      handleThinkingToken(data);
+      break;
+    case 'action':
+      handleActionToken(data);
+      break;
+    case 'done':
+      handleDone(data);
+      break;
+    case 'error':
+      addAssistantMessageStatic(`Error: ${data.message}`, null, 'Error');
+      break;
+  }
 }
 
 // ── Utilities ────────────────────────────────────────────
@@ -1212,6 +1575,11 @@ function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     send();
+  }
+  // Cmd+N for new session
+  if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+    e.preventDefault();
+    newSession();
   }
 }
 
@@ -1227,6 +1595,10 @@ function setMode(mode) {
   });
 }
 
+function toggleCollapse(header) {
+  header.classList.toggle('collapsed');
+}
+
 function scrollToBottom() {
   const area = document.getElementById('chat-area');
   requestAnimationFrame(() => area.scrollTop = area.scrollHeight);
@@ -1237,6 +1609,25 @@ function escapeHtml(text) {
   div.textContent = text;
   return div.innerHTML;
 }
+
+// ── Keyboard Shortcuts ──────────────────────────────────
+
+document.addEventListener('keydown', (e) => {
+  // Cmd+K: focus input and toggle mode
+  if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+    e.preventDefault();
+    const modes = ['routed', 'compare', 'raw'];
+    const idx = modes.indexOf(currentMode);
+    setMode(modes[(idx + 1) % modes.length]);
+  }
+  // Escape: abort streaming
+  if (e.key === 'Escape' && activeReader) {
+    activeReader.cancel();
+    activeReader = null;
+    isLoading = false;
+    document.getElementById('send-btn').disabled = false;
+  }
+});
 
 // ── Health Check & Init ──────────────────────────────────
 
@@ -1254,7 +1645,6 @@ async function checkHealth() {
   }
 }
 
-// Init
 loadSessions();
 checkHealth();
 setInterval(checkHealth, 10000);
