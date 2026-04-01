@@ -1139,7 +1139,7 @@ let stream = {
 function resetStream() {
   stream = {
     compassCard: null, compassBody: null, compassHeader: null,
-    compassText: '', currentSectionEl: null, currentSectionLabel: null, signal: null,
+    compassText: '', currentSectionEl: null, currentSectionLabel: null, sectionJustChanged: false, signal: null,
     thinkingBlock: null, thinkingContent: null, thinkingText: '',
     responseCard: null, responseBody: null, responseText: '',
     entropyData: [], entropyCanvas: null, entropyMeanEl: null, tpsEl: null, lastTps: 0,
@@ -1178,8 +1178,9 @@ function handleCompassToken(data) {
   stream.compassText += data.token;
 
   // Create new section element when section changes
-  if (data.section && data.section !== stream.currentSectionLabel) {
+  if (data.section && data.section_changed && data.section !== stream.currentSectionLabel) {
     stream.currentSectionLabel = data.section;
+    stream.sectionJustChanged = true;
     const isTranslation = ['framing', 'approach', 'threshold'].includes(data.section);
 
     if (isTranslation && stream.compassBody.children.length > 0) {
@@ -1196,6 +1197,18 @@ function handleCompassToken(data) {
     `;
     stream.compassBody.appendChild(section);
     stream.currentSectionEl = section.querySelector('.compass-text');
+    // Don't append this token — it contains the label text (e.g., ":" after "SHAPE")
+    scrollToBottom();
+    return;
+  }
+
+  // Skip tokens that are part of the section label (first few tokens after section change)
+  if (stream.sectionJustChanged) {
+    // The first real content token after a label typically starts with a space
+    const trimmed = data.token.replace(/^\s+/, '');
+    if (trimmed.length > 0) {
+      stream.sectionJustChanged = false;
+    }
   }
 
   // Append token to current section

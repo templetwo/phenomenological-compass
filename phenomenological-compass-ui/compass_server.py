@@ -169,11 +169,23 @@ class ThinkDetector:
 COMPASS_SECTIONS = ["SHAPE", "TONE", "SIGNAL", "FRAMING", "APPROACH", "THRESHOLD"]
 
 def detect_compass_section(accumulated_text):
-    """Return the current section label based on accumulated compass text."""
+    """Return the current section label based on accumulated compass text.
+    Uses rfind to find the LAST occurrence of each section header."""
     last_section = None
+    last_pos = -1
     for section in COMPASS_SECTIONS:
-        if f"{section}:" in accumulated_text:
-            last_section = section.lower()
+        # Match section headers at line start (or start of text)
+        for prefix in [f"\n{section}:", f"{section}:"]:
+            pos = accumulated_text.rfind(prefix)
+            if pos != -1:
+                # For "\n" prefix, the actual position is after the newline
+                if prefix.startswith("\n"):
+                    pos += 1
+                # Only match if it's at start of text or after newline
+                if pos == 0 or accumulated_text[pos - 1] == "\n":
+                    if pos > last_pos:
+                        last_pos = pos
+                        last_section = section.lower()
     return last_section
 
 
@@ -424,11 +436,18 @@ async def stream_infer(req: InferenceRequest):
             # Strip any remaining think tags
             import re as _re
             response_text = _re.sub(r"</?think>", "", response_text).strip()
-            # If response is duplicated (thinking leaked into response), take second half
-            lines = response_text.split("\n")
-            mid = len(lines) // 2
-            if mid > 3 and lines[:3] == lines[mid:mid+3]:
-                response_text = "\n".join(lines[mid:]).strip()
+            # If response is duplicated (thinking leaked into response), deduplicate
+            # Find if the response contains itself repeated
+            half = len(response_text) // 2
+            if half > 50:
+                # Try splitting at double-newline boundaries near the middle
+                for split_pos in range(half - 50, half + 50):
+                    if split_pos < len(response_text) - 1 and response_text[split_pos:split_pos+2] == "\n\n":
+                        first_half = response_text[:split_pos].strip()
+                        second_half = response_text[split_pos+2:].strip()
+                        if first_half == second_half:
+                            response_text = first_half
+                            break
 
             mean_entropy = round(sum(entropy_values) / len(entropy_values), 4) if entropy_values else None
 
