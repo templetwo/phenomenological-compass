@@ -31,6 +31,14 @@ import mlx.core as mx
 from mlx_lm.utils import load
 from mlx_lm.generate import generate as mlx_generate, stream_generate
 
+# Sovereign Stack — read-only chronicle context
+try:
+    from stack_reader import is_available as stack_available, get_context_for_question as stack_context
+    STACK_CONNECTED = stack_available()
+except ImportError:
+    STACK_CONNECTED = False
+    def stack_context(q, **kw): return ""
+
 # ── Models ────────────────────────────────────────────────────────────────────
 COMPASS_MODEL = "thinkscan/Ministral-3-3B-Instruct-MLX"
 COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v9")
@@ -216,14 +224,16 @@ class Pipeline:
         else:
             system = WITNESS_SYSTEM
 
-        # Build two-layer user message
+        # Build multi-layer user message: Stack context + Compass reading + Question
+        stack_ctx = stack_context(question, max_chars=600) if STACK_CONNECTED else ""
+
+        layers = []
+        if stack_ctx:
+            layers.append(stack_ctx)
         if compass_reading:
-            user_msg = (
-                f"COMPASS READING:\n{compass_reading}\n\n"
-                f"ORIGINAL QUESTION:\n{question}"
-            )
-        else:
-            user_msg = question
+            layers.append(f"COMPASS READING:\n{compass_reading}")
+        layers.append(f"ORIGINAL QUESTION:\n{question}")
+        user_msg = "\n\n".join(layers)
 
         t0 = time.time()
         response = generate(
