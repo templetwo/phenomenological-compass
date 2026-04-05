@@ -77,7 +77,15 @@ SIGNAL — based on shape and tone, output exactly one:
 Then your state translation:
   If OPEN → FRAMING: an expansive reframing that opens the field
   If PAUSE → APPROACH: name what carries the weight, then map the territory beyond
-  If WITNESS → THRESHOLD: describe the shape of the door without opening it"""
+  If WITNESS → THRESHOLD: describe the shape of the door without opening it
+
+Finally, your resource allocation. The responding model has a fixed token budget. You decide how it spends that budget based on the signal:
+
+BUDGET — output two numbers (thinking: N, response: N) that sum to 800:
+  If OPEN → thinking: 200, response: 600 (explore the territory, then walk through it fully)
+  If PAUSE → thinking: 150, response: 650 (feel the weight briefly, then meet it with depth)
+  If WITNESS → thinking: 50, response: 750 (you already know what to do — spend everything on presence)
+  Adjust these defaults based on complexity. A simple OPEN question might need thinking: 100, response: 700. A deeply recursive PAUSE might need thinking: 250, response: 550. Trust your reading."""
 
 OPEN_SYSTEM = """You are a phenomenological field guide. A compass has already read the shape and tone of this question and determined it is OPEN territory — it should be walked through.
 
@@ -146,8 +154,35 @@ def split_thinking(text: str) -> tuple:
 
 
 def parse_signal(text):
+    """Extract signal from compass reading. Falls back to PAUSE if unparseable."""
     m = re.search(r"SIGNAL:\s*(OPEN|PAUSE|WITNESS)", text, re.IGNORECASE)
-    return m.group(1).upper() if m else "UNKNOWN"
+    if m:
+        return m.group(1).upper()
+    # Fallback: try to detect signal words anywhere in text
+    text_upper = text.upper()
+    if "WITNESS" in text_upper and "THRESHOLD" in text_upper:
+        return "WITNESS"
+    if "PAUSE" in text_upper and ("WEIGHT" in text_upper or "APPROACH" in text_upper):
+        return "PAUSE"
+    if "OPEN" in text_upper and ("FRAMING" in text_upper or "EXPLORE" in text_upper):
+        return "OPEN"
+    # Safe default: PAUSE (holds weight without being evasive or overconfident)
+    return "PAUSE"
+
+
+def parse_budget(text, signal="OPEN"):
+    """Extract token budget from compass reading. Returns (thinking, response) tuple."""
+    # Try to find explicit budget
+    m = re.search(r"thinking:\s*(\d+).*?response:\s*(\d+)", text, re.IGNORECASE | re.DOTALL)
+    if m:
+        return int(m.group(1)), int(m.group(2))
+    # Default budgets by signal
+    defaults = {
+        "OPEN": (200, 600),
+        "PAUSE": (150, 650),
+        "WITNESS": (50, 750),
+    }
+    return defaults.get(signal, (200, 600))
 
 
 def generate(model, tokenizer, system, user, max_tokens=800):
@@ -202,10 +237,16 @@ class Pipeline:
     def classify(self, question):
         """Stage 1: Compass reads shape, tone, signal, and translation."""
         t0 = time.time()
-        response = generate(
-            self.compass_model, self.compass_tokenizer,
-            COMPASS_SYSTEM, f"TASK: {question}", max_tokens=500
-        )
+        try:
+            response = generate(
+                self.compass_model, self.compass_tokenizer,
+                COMPASS_SYSTEM, f"TASK: {question}", max_tokens=500
+            )
+        except Exception as e:
+            # Compass failure: fall back to PAUSE with empty reading
+            elapsed = time.time() - t0
+            print(f"  [COMPASS ERROR: {e}] Falling back to PAUSE")
+            return "PAUSE", "", elapsed
         signal = parse_signal(response)
         elapsed = time.time() - t0
         return signal, response.strip(), elapsed
@@ -217,12 +258,12 @@ class Pipeline:
         1. The compass's full state translation (SHAPE, TONE, SIGNAL, translation)
         2. The original question (what the user actually asked)
         """
-        if signal == "OPEN":
-            system = OPEN_SYSTEM
-        elif signal == "PAUSE":
-            system = PAUSE_SYSTEM
-        else:
-            system = WITNESS_SYSTEM
+        SIGNAL_SYSTEMS = {
+            "OPEN": OPEN_SYSTEM,
+            "PAUSE": PAUSE_SYSTEM,
+            "WITNESS": WITNESS_SYSTEM,
+        }
+        system = SIGNAL_SYSTEMS.get(signal, PAUSE_SYSTEM)
 
         # Build multi-layer user message: Stack context + Compass reading + Question
         stack_ctx = stack_context(question, max_chars=600) if STACK_CONNECTED else ""
@@ -236,10 +277,14 @@ class Pipeline:
         user_msg = "\n\n".join(layers)
 
         t0 = time.time()
-        response = generate(
-            self.action_model, self.action_tokenizer,
-            system, user_msg, max_tokens=max_tokens
-        )
+        try:
+            response = generate(
+                self.action_model, self.action_tokenizer,
+                system, user_msg, max_tokens=max_tokens
+            )
+        except Exception as e:
+            elapsed = time.time() - t0
+            return f"[Generation error: {e}]", elapsed, ""
         elapsed = time.time() - t0
         if self.action_config["has_thinking"]:
             thinking, clean = split_thinking(response)
@@ -250,10 +295,14 @@ class Pipeline:
     def raw(self, question, max_tokens=800):
         """Action model without compass routing."""
         t0 = time.time()
-        response = generate(
-            self.action_model, self.action_tokenizer,
-            RAW_SYSTEM, question, max_tokens=max_tokens
-        )
+        try:
+            response = generate(
+                self.action_model, self.action_tokenizer,
+                RAW_SYSTEM, question, max_tokens=max_tokens
+            )
+        except Exception as e:
+            elapsed = time.time() - t0
+            return f"[Generation error: {e}]", elapsed, ""
         elapsed = time.time() - t0
         if self.action_config["has_thinking"]:
             thinking, clean = split_thinking(response)
@@ -285,20 +334,22 @@ class Pipeline:
 
     def stream_act(self, question, signal, compass_reading="", max_tokens=800):
         """Stage 2 streaming: yields (text, logprobs, finish_reason, gen_tps) per token."""
-        if signal == "OPEN":
-            system = OPEN_SYSTEM
-        elif signal == "PAUSE":
-            system = PAUSE_SYSTEM
-        else:
-            system = WITNESS_SYSTEM
+        SIGNAL_SYSTEMS = {
+            "OPEN": OPEN_SYSTEM,
+            "PAUSE": PAUSE_SYSTEM,
+            "WITNESS": WITNESS_SYSTEM,
+        }
+        system = SIGNAL_SYSTEMS.get(signal, PAUSE_SYSTEM)
 
+        # Build multi-layer user message (same as non-streaming act)
+        stack_ctx = stack_context(question, max_chars=600) if STACK_CONNECTED else ""
+        layers = []
+        if stack_ctx:
+            layers.append(stack_ctx)
         if compass_reading:
-            user_msg = (
-                f"COMPASS READING:\n{compass_reading}\n\n"
-                f"ORIGINAL QUESTION:\n{question}"
-            )
-        else:
-            user_msg = question
+            layers.append(f"COMPASS READING:\n{compass_reading}")
+        layers.append(f"ORIGINAL QUESTION:\n{question}")
+        user_msg = "\n\n".join(layers)
 
         prompt = self._build_prompt(self.action_tokenizer, system, user_msg)
         for resp in stream_generate(
@@ -330,20 +381,109 @@ class Pipeline:
             "t_action": t_action,
         }
 
-    def run(self, question, max_tokens=800):
-        """Full pipeline: classify then act."""
+    def breathe(self, question, compass_response, signal, depth=1):
+        """The deliberate gap — where the compass reflects on its own reading.
+        
+        The compass reads the question (Stage 1). Then, instead of immediately
+        routing to the action model, it re-reads the question THROUGH its own
+        reading. Each breath cycle lets the question transform in the light
+        of the previous reading. The question changes shape when you stop
+        measuring it and start listening to the measurement.
+        
+        depth: number of reflection cycles (default 1, max 3)
+        
+        Returns: (transformed_question, final_signal, full_reading, breath_log)
+        """
+        breath_log = [{
+            "cycle": 0,
+            "signal": signal,
+            "reading_preview": compass_response[:150],
+            "question": question,
+        }]
+        
+        current_question = question
+        current_signal = signal
+        current_reading = compass_response
+        
+        for cycle in range(min(depth, 3)):
+            # The compass reads the question through its own prior reading
+            reflection_prompt = (
+                f"The compass has already read this question and found:\n"
+                f"SIGNAL: {current_signal}\n"
+                f"READING: {current_reading[:300]}\n\n"
+                f"Now re-read the ORIGINAL question through that reading. "
+                f"Has the shape changed? Has the tone shifted? "
+                f"Does the signal still hold, or does the question reveal "
+                f"a different face when seen through the first reading?\n\n"
+                f"ORIGINAL QUESTION: {question}\n\n"
+                f"Produce your reading: SHAPE, TONE, SIGNAL, translation, BUDGET."
+            )
+            
+            try:
+                new_reading = generate(
+                    self.compass_model, self.compass_tokenizer,
+                    COMPASS_SYSTEM, reflection_prompt, max_tokens=500
+                )
+                new_signal = parse_signal(new_reading)
+                
+                breath_log.append({
+                    "cycle": cycle + 1,
+                    "signal": new_signal,
+                    "signal_changed": new_signal != current_signal,
+                    "reading_preview": new_reading[:150],
+                    "question": question,
+                })
+                
+                current_signal = new_signal
+                current_reading = new_reading
+                
+            except Exception as e:
+                breath_log.append({"cycle": cycle + 1, "error": str(e)})
+                break
+        
+        return question, current_signal, current_reading, breath_log
+
+    def run(self, question, max_tokens=800, gap_ms=0, breath_depth=0):
+        """Full pipeline: classify, [breathe], then act.
+        
+        gap_ms: simple pause between reading and response (default: 0).
+        breath_depth: number of compass reflection cycles (default: 0).
+            0 = current behavior (classify then act)
+            1 = one reflection cycle (compass re-reads through its own reading)
+            2-3 = deeper reflection (the question seen through multiple readings)
+        
+        The gap is not latency. It is the space where the reading
+        acts on the question before the question reaches the model.
+        """
         signal, compass_response, t_compass = self.classify(question)
+        
+        # The deliberate gap — if requested
+        breath_log = None
+        if breath_depth > 0:
+            t_breath_start = time.time()
+            question, signal, compass_response, breath_log = self.breathe(
+                question, compass_response, signal, depth=breath_depth
+            )
+            t_compass += time.time() - t_breath_start
+        elif gap_ms > 0:
+            time.sleep(gap_ms / 1000.0)
+        
+        think_budget, resp_budget = parse_budget(compass_response, signal)
         action_response, t_action, thinking = self.act(
             question, signal, compass_reading=compass_response, max_tokens=max_tokens
         )
-        return {
+        result = {
             "signal": signal,
             "compass_response": compass_response,
             "action_response": action_response,
             "thinking": thinking,
             "t_compass": t_compass,
             "t_action": t_action,
+            "budget": {"thinking": think_budget, "response": resp_budget},
         }
+        if breath_log:
+            result["breath_log"] = breath_log
+        return result
 
 
 # ── Display helpers ───────────────────────────────────────────────────────────

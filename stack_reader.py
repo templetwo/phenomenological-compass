@@ -29,7 +29,7 @@ if TOKEN_FILE.exists():
 HEADERS = {"Authorization": f"Bearer {BRIDGE_TOKEN}"} if BRIDGE_TOKEN else {}
 
 
-def _call(tool: str, arguments: dict = None) -> dict | str | None:
+def _call(tool: str, arguments: dict = None) -> object:
     """Call a single Stack tool via the bridge. Read-only by convention."""
     try:
         resp = httpx.post(
@@ -61,13 +61,22 @@ def _batch(calls: list[dict]) -> list:
         return []
 
 
+# Cache availability for 60 seconds
+_available_cache = {"value": None, "expires": 0}
+
 def is_available() -> bool:
-    """Check if the Stack is reachable."""
+    """Check if the Stack is reachable. Cached for 60 seconds."""
+    now = time.time()
+    if _available_cache["value"] is not None and now < _available_cache["expires"]:
+        return _available_cache["value"]
     try:
         resp = httpx.get(f"{BRIDGE_URL}/api/heartbeat", timeout=3)
-        return resp.json().get("status") == "ok"
+        result = resp.json().get("status") == "ok"
     except Exception:
-        return False
+        result = False
+    _available_cache["value"] = result
+    _available_cache["expires"] = now + 60
+    return result
 
 
 def get_context_for_question(question: str, max_chars: int = 800) -> str:
@@ -125,14 +134,17 @@ def get_context_for_question(question: str, max_chars: int = 800) -> str:
                 q_words = set(question.lower().split())
                 scored = []
                 for ins in insights:
-                    content = ins.get("content", "")
-                    i_words = set(content.lower().split())
-                    overlap = len(q_words & i_words)
-                    if overlap > 0:
-                        scored.append((overlap, content[:150], ins.get("domain", "")))
+                    try:
+                        ins_content = ins.get("content", "")
+                        i_words = set(ins_content.lower().split())
+                        overlap = len(q_words & i_words)
+                        if overlap > 0:
+                            scored.append((overlap, ins_content[:150], ins.get("domain", "")))
+                    except (AttributeError, TypeError):
+                        continue
                 scored.sort(reverse=True)
-                for _, content, domain in scored[:2]:
-                    parts.append(f"Chronicle [{domain}]: {content}")
+                for _, ins_text, domain in scored[:2]:
+                    parts.append(f"Chronicle [{domain}]: {ins_text}")
 
     if not parts:
         return ""
