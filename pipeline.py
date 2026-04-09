@@ -185,7 +185,8 @@ def parse_budget(text, signal="OPEN"):
     return defaults.get(signal, (200, 600))
 
 
-def generate(model, tokenizer, system, user, max_tokens=800):
+def generate(model, tokenizer, system, user, max_tokens=2048):
+    """Generate with generous ceiling. Let EOS handle natural stopping."""
     messages = [
         {"role": "system", "content": system},
         {"role": "user", "content": user},
@@ -193,8 +194,9 @@ def generate(model, tokenizer, system, user, max_tokens=800):
     prompt = tokenizer.apply_chat_template(
         messages, tokenize=False, add_generation_prompt=True
     )
-    return mlx_generate(model, tokenizer, prompt=prompt,
-                        max_tokens=max_tokens, verbose=False)
+    result = mlx_generate(model, tokenizer, prompt=prompt,
+                          max_tokens=max_tokens, verbose=False)
+    return result
 
 
 # ── Pipeline class ────────────────────────────────────────────────────────────
@@ -240,7 +242,7 @@ class Pipeline:
         try:
             response = generate(
                 self.compass_model, self.compass_tokenizer,
-                COMPASS_SYSTEM, f"TASK: {question}", max_tokens=500
+                COMPASS_SYSTEM, f"TASK: {question}", max_tokens=800
             )
         except Exception as e:
             # Compass failure: fall back to PAUSE with empty reading
@@ -251,7 +253,7 @@ class Pipeline:
         elapsed = time.time() - t0
         return signal, response.strip(), elapsed
 
-    def act(self, question, signal, compass_reading="", max_tokens=800):
+    def act(self, question, signal, compass_reading="", max_tokens=2048):
         """Stage 2: Action model generates response conditioned on compass.
 
         Action model receives two layers:
@@ -292,7 +294,7 @@ class Pipeline:
             thinking, clean = "", response.strip()
         return clean, elapsed, thinking
 
-    def raw(self, question, max_tokens=800):
+    def raw(self, question, max_tokens=2048):
         """Action model without compass routing."""
         t0 = time.time()
         try:
@@ -328,11 +330,11 @@ class Pipeline:
         )
         for resp in stream_generate(
             self.compass_model, self.compass_tokenizer,
-            prompt=prompt, max_tokens=500
+            prompt=prompt, max_tokens=800
         ):
             yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
 
-    def stream_act(self, question, signal, compass_reading="", max_tokens=800):
+    def stream_act(self, question, signal, compass_reading="", max_tokens=2048):
         """Stage 2 streaming: yields (text, logprobs, finish_reason, gen_tps) per token."""
         SIGNAL_SYSTEMS = {
             "OPEN": OPEN_SYSTEM,
@@ -443,7 +445,7 @@ class Pipeline:
         
         return question, current_signal, current_reading, breath_log
 
-    def run(self, question, max_tokens=800, gap_ms=0, breath_depth=0):
+    def run(self, question, max_tokens=2048, gap_ms=0, breath_depth=0):
         """Full pipeline: classify, [breathe], then act.
         
         gap_ms: simple pause between reading and response (default: 0).
