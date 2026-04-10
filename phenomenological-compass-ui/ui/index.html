@@ -2,12 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="api-base" content="">
 <title>Phenomenological Compass</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@300;400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
+/* ── Design Tokens ────────────────────────────────────────── */
 :root {
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 40px;
+  --space-2xl: 64px;
+
+  /* Colors */
   --bg-deep: #0a0a0f;
   --bg-surface: #12121a;
   --bg-elevated: #1a1a26;
@@ -18,66 +29,107 @@
   --border: #2a2a3a;
   --border-subtle: #1e1e2e;
 
+  /* Signal: OPEN */
   --open-primary: #4a9e7a;
   --open-glow: #4a9e7a33;
   --open-bg: #4a9e7a0a;
   --open-border: #4a9e7a30;
 
+  /* Signal: PAUSE */
   --pause-primary: #c9a227;
   --pause-glow: #c9a22733;
   --pause-bg: #c9a2270a;
   --pause-border: #c9a22730;
 
+  /* Signal: WITNESS */
   --witness-primary: #8b6cc1;
   --witness-glow: #8b6cc133;
   --witness-bg: #8b6cc10a;
   --witness-border: #8b6cc130;
 
+  /* Utility */
   --think-bg: #0d0d14;
   --think-border: #1a1a2e;
   --think-text: #6a6578;
-
   --accent: #c9a227;
   --danger: #c44;
 
+  /* Typography */
   --font-display: 'Cormorant Garamond', Georgia, serif;
   --font-body: 'DM Sans', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 
+  /* Shape */
   --radius: 8px;
   --radius-lg: 12px;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+/* ── Reset ────────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
 html, body {
   height: 100%;
   background: var(--bg-deep);
   color: var(--text-primary);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
   overflow: hidden;
 }
 
-/* ── Layout ───────────────────────────────────────────── */
+/* ── Focus Visible ────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+/* ── Layout ───────────────────────────────────────────────── */
 .app {
   display: grid;
   grid-template-columns: 260px 1fr;
   height: 100vh;
 }
 
-/* ── Sidebar ──────────────────────────────────────────── */
-.sidebar {
+/* ── Mobile Toggle ────────────────────────────────────────── */
+.mobile-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  background: none;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: border-color 0.2s, color 0.2s;
+}
+.mobile-toggle:hover { border-color: var(--accent); color: var(--accent); }
+.mobile-toggle svg { width: 18px; height: 18px; }
+
+.sidebar-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  z-index: 99;
+}
+.sidebar-backdrop.visible { display: block; }
+
+/* ── Sidebar ──────────────────────────────────────────────── */
+nav.sidebar {
   background: var(--bg-surface);
   border-right: 1px solid var(--border-subtle);
   display: flex;
   flex-direction: column;
   overflow: hidden;
+  transition: left 0.3s ease;
 }
 
 .sidebar-header {
-  padding: 20px;
+  padding: var(--space-lg) var(--space-md);
   border-bottom: 1px solid var(--border-subtle);
 }
 
@@ -94,15 +146,16 @@ html, body {
   font-size: 10px;
   font-weight: 300;
   color: var(--text-dim);
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-top: 2px;
+  margin-top: var(--space-xs);
 }
 
 .new-session-btn {
   width: 100%;
-  margin-top: 14px;
-  padding: 10px;
+  min-height: 44px;
+  margin-top: var(--space-md);
+  padding: var(--space-sm) var(--space-md);
   background: transparent;
   border: 1px dashed var(--border);
   border-radius: var(--radius);
@@ -122,7 +175,7 @@ html, body {
 .sessions-list {
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
+  padding: var(--space-sm);
 }
 
 .sessions-list::-webkit-scrollbar { width: 4px; }
@@ -133,12 +186,21 @@ html, body {
   padding: 10px 12px;
   border-radius: var(--radius);
   cursor: pointer;
-  transition: all 0.15s;
+  transition: background 0.15s;
   margin-bottom: 2px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 }
 
 .session-item:hover { background: var(--bg-hover); }
 .session-item.active { background: var(--bg-elevated); border-left: 2px solid var(--accent); }
+
+.session-item-header {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
 
 .session-title {
   font-size: 13px;
@@ -146,6 +208,8 @@ html, body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  flex: 1;
+  min-width: 0;
 }
 
 .session-meta {
@@ -153,31 +217,43 @@ html, body {
   color: var(--text-dim);
   font-family: var(--font-mono);
   margin-top: 2px;
+  letter-spacing: 0.06em;
 }
 
-.session-delete {
-  float: right;
+.session-actions {
+  display: flex;
+  gap: var(--space-xs);
   opacity: 0;
+  transition: opacity 0.15s;
+  flex-shrink: 0;
+}
+
+.session-item:hover .session-actions { opacity: 1; }
+
+.session-action-btn {
   background: none;
   border: none;
-  color: var(--danger);
+  color: var(--text-dim);
   cursor: pointer;
   font-size: 12px;
-  padding: 2px 6px;
+  padding: 2px var(--space-sm);
   border-radius: 4px;
-  transition: opacity 0.15s;
+  min-height: 24px;
+  transition: color 0.15s, background 0.15s;
+  line-height: 1;
 }
 
-.session-item:hover .session-delete { opacity: 0.6; }
-.session-delete:hover { opacity: 1 !important; background: #c4442a; color: white; }
+.session-action-btn:hover { color: var(--text-secondary); background: var(--bg-hover); }
+.session-action-btn.delete:hover { color: white; background: #c44; }
 
 .sidebar-footer {
-  padding: 12px 16px;
+  padding: 12px var(--space-md);
   border-top: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
   text-align: center;
+  letter-spacing: 0.06em;
 }
 
 .status-dot {
@@ -185,25 +261,109 @@ html, body {
   width: 6px;
   height: 6px;
   border-radius: 50%;
-  margin-right: 4px;
+  margin-right: var(--space-xs);
   vertical-align: middle;
+  background: var(--text-dim);
 }
 .status-dot.ready { background: var(--open-primary); }
 .status-dot.loading { background: var(--pause-primary); animation: pulse 1.5s infinite; }
+.status-dot.offline { background: var(--danger); }
 
+/* ── Animations ───────────────────────────────────────────── */
 @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 
-/* ── Main Area ────────────────────────────────────────── */
-.main {
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+@keyframes dotPulse {
+  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
+  40%           { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes slowRotate {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+@keyframes signalPulse {
+  0%   { box-shadow: 0 0 0 0 var(--glow-color, #a78bfa33); }
+  25%  { box-shadow: 0 0 30px 8px var(--glow-color, #a78bfa33); }
+  50%  { box-shadow: 0 0 0 0 var(--glow-color, #a78bfa33); }
+  75%  { box-shadow: 0 0 20px 5px var(--glow-color, #a78bfa33); }
+  100% { box-shadow: 0 0 0 0 var(--glow-color, #a78bfa33); }
+}
+
+@keyframes colorWash {
+  0%   { opacity: 0; }
+  15%  { opacity: 0.07; }
+  45%  { opacity: 0; }
+  60%  { opacity: 0.04; }
+  100% { opacity: 0; }
+}
+
+@keyframes dotGrow {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.75); }
+  100% { transform: scale(1); }
+}
+
+/* ── Reduced Motion ───────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Main Area ────────────────────────────────────────────── */
+main.main {
   display: flex;
   flex-direction: column;
   overflow: hidden;
 }
 
+/* ── Chat Area with Scroll Shadows ───────────────────────── */
+.chat-area-wrapper {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.chat-area-wrapper::before,
+.chat-area-wrapper::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 28px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.chat-area-wrapper::before {
+  top: 0;
+  background: linear-gradient(to bottom, var(--bg-deep), transparent);
+}
+
+.chat-area-wrapper::after {
+  bottom: 0;
+  background: linear-gradient(to top, var(--bg-deep), transparent);
+}
+
 .chat-area {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 32px;
+  padding: var(--space-lg) var(--space-xl);
   scroll-behavior: smooth;
 }
 
@@ -211,64 +371,72 @@ html, body {
 .chat-area::-webkit-scrollbar-track { background: transparent; }
 .chat-area::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
 
-/* ── Empty State ──────────────────────────────────────── */
+/* ── Empty State ──────────────────────────────────────────── */
 .empty-state {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  min-height: 80%;
   text-align: center;
-  opacity: 0.7;
+  padding: var(--space-xl);
 }
 
-.compass-icon { font-size: 48px; margin-bottom: 16px; opacity: 0.4; }
+.compass-rose {
+  animation: slowRotate 60s linear infinite;
+  opacity: 0.5;
+  margin-bottom: var(--space-md);
+  color: var(--text-primary);
+}
 
 .empty-title {
   font-family: var(--font-display);
-  font-size: 28px;
+  font-size: 32px;
+  font-weight: 400;
   color: var(--text-primary);
-  margin-bottom: 8px;
+  margin-bottom: var(--space-sm);
+  letter-spacing: 0.01em;
 }
 
 .empty-sub {
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-dim);
   max-width: 400px;
-  line-height: 1.7;
+  line-height: 1.75;
 }
 
 .signal-legend {
   display: flex;
-  gap: 24px;
-  margin-top: 24px;
+  gap: var(--space-lg);
+  margin-top: var(--space-lg);
 }
 
 .legend-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-sm);
   font-family: var(--font-mono);
   font-size: 11px;
   color: var(--text-dim);
+  letter-spacing: 0.06em;
 }
 
-.legend-dot { width: 8px; height: 8px; border-radius: 50%; }
-.legend-dot.open { background: var(--open-primary); }
-.legend-dot.pause { background: var(--pause-primary); }
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.legend-dot.open    { background: var(--open-primary); }
+.legend-dot.pause   { background: var(--pause-primary); }
 .legend-dot.witness { background: var(--witness-primary); }
 
 .starter-questions {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 20px;
-  max-width: 520px;
+  gap: var(--space-sm);
+  margin-top: var(--space-lg);
+  max-width: 560px;
   justify-content: center;
 }
 
 .starter-chip {
-  padding: 8px 14px;
+  padding: var(--space-sm) 14px;
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: 20px;
@@ -277,7 +445,15 @@ html, body {
   cursor: pointer;
   transition: all 0.2s;
   line-height: 1.4;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
 }
+
+/* Signal-colored left border on starter chips */
+.starter-chip.signal-open    { border-left: 2px solid var(--open-primary); }
+.starter-chip.signal-pause   { border-left: 2px solid var(--pause-primary); }
+.starter-chip.signal-witness { border-left: 2px solid var(--witness-primary); }
 
 .starter-chip:hover {
   border-color: var(--accent);
@@ -286,13 +462,16 @@ html, body {
   transform: translateY(-1px);
 }
 
-/* ── Messages ─────────────────────────────────────────── */
+/* Keep left border color on hover for signal chips */
+.starter-chip.signal-open:hover    { border-left-color: var(--open-primary); }
+.starter-chip.signal-pause:hover   { border-left-color: var(--pause-primary); }
+.starter-chip.signal-witness:hover { border-left-color: var(--witness-primary); }
+
+/* ── Messages ─────────────────────────────────────────────── */
 .message {
-  margin-bottom: 24px;
+  margin-bottom: var(--space-lg);
   animation: fadeIn 0.3s ease;
 }
-
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
 .message-user {
   display: flex;
@@ -303,13 +482,45 @@ html, body {
   background: var(--bg-elevated);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg) var(--radius-lg) 4px var(--radius-lg);
-  padding: 12px 16px;
+  padding: 12px var(--space-md);
   max-width: 70%;
-  font-size: 14px;
+  font-size: 15px;
 }
 
-/* ── Compass Card ─────────────────────────────────────── */
-.message-compass { margin-bottom: 4px; }
+/* ── Error Message ────────────────────────────────────────── */
+.inline-error {
+  background: #1a0a0a;
+  border: 1px solid #c4442a44;
+  border-radius: var(--radius);
+  padding: var(--space-sm) var(--space-md);
+  color: #e07070;
+  font-size: 13px;
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  margin-bottom: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.inline-error button {
+  margin-left: auto;
+  padding: 4px 10px;
+  background: #c4442a22;
+  border: 1px solid #c4442a55;
+  border-radius: 4px;
+  color: #e07070;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  cursor: pointer;
+  min-height: 28px;
+  transition: background 0.15s;
+}
+
+.inline-error button:hover { background: #c4442a44; }
+
+/* ── Compass Card ─────────────────────────────────────────── */
+.message-compass { margin-bottom: var(--space-xs); }
 
 .compass-card {
   background: var(--bg-surface);
@@ -317,30 +528,37 @@ html, body {
   border-radius: var(--radius-lg);
   overflow: hidden;
   max-width: 85%;
-  transition: box-shadow 0.8s ease;
+  transition: box-shadow 0.8s ease, border-color 0.3s ease;
+}
+
+/* Hover: tint border toward signal color */
+.compass-card:hover { border-color: var(--border); }
+
+.compass-card.signal-locked {
+  animation: signalPulse 2s ease-out;
 }
 
 .compass-header {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
+  gap: var(--space-sm);
+  padding: 10px var(--space-md);
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
   user-select: none;
-  transition: all 0.3s;
+  transition: filter 0.3s, background 0.3s, border-color 0.3s;
 }
 
-.compass-header:hover { filter: brightness(1.1); }
+.compass-header:hover { filter: brightness(1.12); }
 
-.compass-header.signal-open { color: var(--open-primary); background: var(--open-bg); border-bottom: 1px solid var(--open-border); }
-.compass-header.signal-pause { color: var(--pause-primary); background: var(--pause-bg); border-bottom: 1px solid var(--pause-border); }
+.compass-header.signal-open    { color: var(--open-primary);    background: var(--open-bg);    border-bottom: 1px solid var(--open-border); }
+.compass-header.signal-pause   { color: var(--pause-primary);   background: var(--pause-bg);   border-bottom: 1px solid var(--pause-border); }
 .compass-header.signal-witness { color: var(--witness-primary); background: var(--witness-bg); border-bottom: 1px solid var(--witness-border); }
-.compass-header.signal-reading { color: var(--text-dim); background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
+.compass-header.signal-reading { color: var(--text-dim);        background: var(--bg-elevated); border-bottom: 1px solid var(--border-subtle); }
 
 .compass-header .chevron {
   margin-left: auto;
@@ -355,7 +573,7 @@ html, body {
   font-weight: 300;
   letter-spacing: 0.02em;
   text-transform: none;
-  margin-left: 4px;
+  margin-left: var(--space-xs);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -384,16 +602,21 @@ html, body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  transition: all 0.5s ease;
+  flex-shrink: 0;
+  transition: width 0.4s ease, height 0.4s ease, box-shadow 0.5s ease, background 0.5s ease;
+}
+
+.signal-indicator.locking {
+  animation: dotGrow 0.6s ease-out;
 }
 
 .signal-reading .signal-indicator { background: var(--text-dim); }
-.signal-open .signal-indicator { background: var(--open-primary); box-shadow: 0 0 8px var(--open-glow); }
-.signal-pause .signal-indicator { background: var(--pause-primary); box-shadow: 0 0 8px var(--pause-glow); }
+.signal-open    .signal-indicator { background: var(--open-primary);    box-shadow: 0 0 8px var(--open-glow); }
+.signal-pause   .signal-indicator { background: var(--pause-primary);   box-shadow: 0 0 8px var(--pause-glow); }
 .signal-witness .signal-indicator { background: var(--witness-primary); box-shadow: 0 0 8px var(--witness-glow); }
 
 .compass-body-inner {
-  padding: 14px 16px 12px;
+  padding: 14px var(--space-md) 12px;
 }
 
 .compass-section { margin-bottom: 12px; }
@@ -403,24 +626,33 @@ html, body {
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 400;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-xs);
 }
 
-.compass-label-shape { color: var(--text-dim); }
-.compass-label-tone { color: var(--text-dim); }
-.compass-label-signal { color: var(--text-dim); }
-.compass-label-framing { color: var(--open-primary); }
-.compass-label-approach { color: var(--pause-primary); }
+.compass-label-shape     { color: var(--text-dim); }
+.compass-label-tone      { color: var(--text-dim); }
+.compass-label-signal    { color: var(--text-dim); }
+.compass-label-framing   { color: var(--open-primary); }
+.compass-label-approach  { color: var(--pause-primary); }
 .compass-label-threshold { color: var(--witness-primary); }
 
+/* Literary feel for compass section text */
 .compass-text {
-  font-size: 13px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 14px;
   color: var(--text-secondary);
   line-height: 1.65;
   white-space: pre-wrap;
 }
+
+/* Allow rendered markdown within compass text */
+.compass-text p { margin-bottom: var(--space-sm); }
+.compass-text p:last-child { margin-bottom: 0; }
+.compass-text em { font-style: normal; }
+.compass-text strong { font-weight: 600; font-style: normal; color: var(--text-primary); }
 
 .compass-divider {
   height: 1px;
@@ -432,45 +664,25 @@ html, body {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
-  padding: 0 16px 10px;
+  padding: 0 var(--space-md) 10px;
   opacity: 0.7;
+  letter-spacing: 0.06em;
 }
 
-/* ── Signal Lock-In Animation ────────────────────────── */
-@keyframes signalPulse {
-  0% { box-shadow: 0 0 0 0 var(--glow-color, #a78bfa33); }
-  50% { box-shadow: 0 0 40px 12px var(--glow-color, #a78bfa33); }
-  100% { box-shadow: 0 0 0 0 var(--glow-color, #a78bfa33); }
-}
-
-.compass-card.signal-locked {
-  animation: signalPulse 1s ease-out;
-}
-
-@keyframes colorWash {
-  0% { opacity: 0; }
-  25% { opacity: 0.06; }
-  100% { opacity: 0; }
-}
-
+/* ── Signal Lock-In Wash ──────────────────────────────────── */
 .signal-wash {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 100;
-  animation: colorWash 1.5s ease-out forwards;
+  animation: colorWash 2s ease-out forwards;
 }
 
-.signal-wash.open { background: var(--open-primary); }
-.signal-wash.pause { background: var(--pause-primary); }
+.signal-wash.open    { background: var(--open-primary); }
+.signal-wash.pause   { background: var(--pause-primary); }
 .signal-wash.witness { background: var(--witness-primary); }
 
-/* ── Streaming Cursor ────────────────────────────────── */
-@keyframes blink {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0; }
-}
-
+/* ── Streaming Cursor ─────────────────────────────────────── */
 .streaming-cursor {
   display: inline-block;
   width: 2px;
@@ -481,27 +693,28 @@ html, body {
   margin-left: 1px;
 }
 
-/* ── Thinking Block ───────────────────────────────────── */
+/* ── Thinking Block ───────────────────────────────────────── */
 .thinking-block {
   max-width: 85%;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-xs);
 }
 
 .thinking-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: var(--space-sm);
+  padding: var(--space-sm) 14px;
   background: var(--think-bg);
   border: 1px solid var(--think-border);
   border-radius: var(--radius) var(--radius) 0 0;
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--think-text);
   cursor: pointer;
   user-select: none;
+  min-height: 44px;
   transition: background 0.15s;
 }
 
@@ -518,7 +731,7 @@ html, body {
 .thinking-header.collapsed { border-radius: var(--radius); }
 
 .thinking-content {
-  padding: 12px 16px;
+  padding: 12px var(--space-md);
   background: var(--think-bg);
   border: 1px solid var(--think-border);
   border-top: none;
@@ -535,7 +748,7 @@ html, body {
 
 .thinking-header.collapsed + .thinking-content {
   max-height: 0;
-  padding: 0 16px;
+  padding: 0 var(--space-md);
   opacity: 0;
   overflow: hidden;
   border-color: transparent;
@@ -545,7 +758,7 @@ html, body {
 .thinking-content::-webkit-scrollbar-track { background: transparent; }
 .thinking-content::-webkit-scrollbar-thumb { background: var(--think-border); border-radius: 2px; }
 
-/* ── Response Block ───────────────────────────────────── */
+/* ── Response Block ───────────────────────────────────────── */
 .message-assistant { max-width: 85%; }
 
 .response-card {
@@ -558,43 +771,53 @@ html, body {
 .response-header {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--text-dim);
   border-bottom: 1px solid var(--border-subtle);
+  min-height: 36px;
 }
 
 .response-tps {
   margin-left: auto;
   opacity: 0.5;
+  letter-spacing: 0.06em;
+}
+
+.turn-badge {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  border-radius: 10px;
+  padding: 1px var(--space-sm);
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
 }
 
 .response-body {
-  padding: 18px 20px;
-  font-size: 14px;
+  padding: 18px var(--space-lg);
+  font-size: 15px;
   line-height: 1.75;
   color: var(--text-primary);
 }
 
-.response-body.streaming {
-  white-space: pre-wrap;
-}
+.response-body.streaming { white-space: pre-wrap; }
 
-/* Rich text styles within response */
+/* ── Markdown inside response ─────────────────────────────── */
 .response-body h1, .response-body h2, .response-body h3, .response-body h4 {
   font-family: var(--font-display);
   color: var(--text-primary);
-  margin: 20px 0 8px 0;
+  margin: var(--space-lg) 0 var(--space-sm) 0;
 }
 
 .response-body h1 { font-size: 22px; }
 .response-body h2 { font-size: 18px; }
 .response-body h3 { font-size: 16px; }
-.response-body h4 { font-size: 14px; font-family: var(--font-body); font-weight: 500; }
+.response-body h4 { font-size: 15px; font-family: var(--font-body); font-weight: 500; }
 .response-body h1:first-child, .response-body h2:first-child, .response-body h3:first-child { margin-top: 0; }
 
 .response-body p { margin-bottom: 12px; }
@@ -607,14 +830,14 @@ html, body {
   font-family: var(--font-mono);
   font-size: 12px;
   background: var(--bg-elevated);
-  padding: 2px 6px;
+  padding: 2px var(--space-sm);
   border-radius: 4px;
   color: var(--accent);
 }
 
 .response-body blockquote {
   border-left: 3px solid var(--border);
-  padding: 8px 16px;
+  padding: var(--space-sm) var(--space-md);
   margin: 12px 0;
   color: var(--text-secondary);
   font-style: italic;
@@ -622,20 +845,20 @@ html, body {
   border-radius: 0 var(--radius) var(--radius) 0;
 }
 
-.response-body ul, .response-body ol { margin: 8px 0 12px 20px; }
-.response-body li { margin-bottom: 4px; line-height: 1.7; }
+.response-body ul, .response-body ol { margin: var(--space-sm) 0 12px var(--space-lg); }
+.response-body li { margin-bottom: var(--space-xs); line-height: 1.7; }
 .response-body li::marker { color: var(--text-dim); }
 
 .response-body hr {
   border: none;
   height: 1px;
   background: var(--border-subtle);
-  margin: 16px 0;
+  margin: var(--space-md) 0;
 }
 
-/* ── Entropy Sparkline ───────────────────────────────── */
+/* ── Entropy Sparkline ───────────────────────────────────── */
 .entropy-container {
-  padding: 6px 20px 12px;
+  padding: var(--space-sm) var(--space-lg) 12px;
   border-top: 1px solid var(--border-subtle);
 }
 
@@ -657,27 +880,28 @@ html, body {
   margin-top: 2px;
 }
 
-/* ── Response Timing Footer ──────────────────────────── */
+/* ── Response Timing Footer ───────────────────────────────── */
 .response-timing {
   font-family: var(--font-mono);
   font-size: 10px;
   color: var(--text-dim);
-  padding: 6px 16px 10px;
+  padding: var(--space-sm) var(--space-md) 10px;
   opacity: 0.7;
   display: flex;
   gap: 12px;
+  letter-spacing: 0.06em;
 }
 
-/* ── Compare Mode Divider ─────────────────────────────── */
+/* ── Compare Mode ─────────────────────────────────────────── */
 .compare-divider {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 0;
+  padding: var(--space-md) 0;
   color: var(--text-dim);
   font-family: var(--font-mono);
   font-size: 10px;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
@@ -688,15 +912,22 @@ html, body {
   background: var(--border-subtle);
 }
 
-/* ── Loading State ────────────────────────────────────── */
+.compare-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-md);
+}
+
+/* ── Loading State ────────────────────────────────────────── */
 .thinking-indicator {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
   padding: 12px 0;
   font-family: var(--font-mono);
   font-size: 12px;
   color: var(--text-dim);
+  letter-spacing: 0.06em;
 }
 
 .thinking-dots span {
@@ -711,16 +942,19 @@ html, body {
 .thinking-dots span:nth-child(2) { animation-delay: 0.2s; }
 .thinking-dots span:nth-child(3) { animation-delay: 0.4s; }
 
-@keyframes dotPulse {
-  0%, 80%, 100% { opacity: 0.2; transform: scale(0.8); }
-  40% { opacity: 1; transform: scale(1.2); }
-}
-
-/* ── Input Area ───────────────────────────────────────── */
+/* ── Input Area ───────────────────────────────────────────── */
 .input-area {
-  padding: 16px 32px 24px;
+  padding: var(--space-md) var(--space-xl) var(--space-lg);
+  padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
   border-top: 1px solid var(--border-subtle);
   background: var(--bg-deep);
+}
+
+.input-top-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-sm);
 }
 
 .input-container {
@@ -733,16 +967,16 @@ html, body {
 
 textarea {
   width: 100%;
-  padding: 14px 16px;
+  padding: 14px var(--space-md);
   background: var(--bg-surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   color: var(--text-primary);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   resize: none;
-  min-height: 48px;
+  min-height: 50px;
   max-height: 200px;
   transition: border-color 0.2s;
   outline: none;
@@ -752,7 +986,8 @@ textarea:focus { border-color: var(--accent); }
 textarea::placeholder { color: var(--text-dim); }
 
 .send-btn {
-  padding: 12px 20px;
+  padding: 12px var(--space-lg);
+  min-height: 50px;
   background: var(--accent);
   border: none;
   border-radius: var(--radius-lg);
@@ -760,27 +995,29 @@ textarea::placeholder { color: var(--text-dim); }
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: filter 0.2s, transform 0.15s;
   white-space: nowrap;
 }
 
 .send-btn:hover { filter: brightness(1.15); transform: translateY(-1px); }
-.send-btn:active { transform: translateY(0); }
+.send-btn:active { transform: scale(0.97); }
 .send-btn:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-.mode-toggle { display: flex; gap: 4px; margin-top: 8px; }
+.mode-toggle { display: flex; gap: var(--space-xs); }
 
 .mode-btn {
-  padding: 4px 10px;
+  padding: var(--space-xs) 10px;
+  min-height: 30px;
   background: transparent;
   border: 1px solid var(--border-subtle);
   border-radius: 4px;
   color: var(--text-dim);
   font-family: var(--font-mono);
   font-size: 10px;
+  letter-spacing: 0.06em;
   cursor: pointer;
   transition: all 0.15s;
 }
@@ -793,88 +1030,201 @@ textarea::placeholder { color: var(--text-dim); }
 
 .mode-btn:hover:not(.active) { border-color: var(--text-dim); color: var(--text-secondary); }
 
-/* ── Mobile ───────────────────────────────────────────── */
+.input-hint {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.06em;
+  margin-left: auto;
+  white-space: nowrap;
+}
+
+/* ── Session Export Button ────────────────────────────────── */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-sm);
+  background: transparent;
+  border: 1px solid var(--border-subtle);
+  border-radius: 4px;
+  color: var(--text-dim);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  cursor: pointer;
+  min-height: 28px;
+  transition: all 0.15s;
+}
+
+.export-btn:hover { border-color: var(--accent); color: var(--accent); background: var(--pause-bg); }
+
+/* ── Mobile Responsive ────────────────────────────────────── */
 @media (max-width: 768px) {
   .app { grid-template-columns: 1fr; }
-  .sidebar { display: none; }
-  .chat-area { padding: 16px; }
-  .input-area { padding: 12px 16px 16px; }
+
+  .mobile-toggle { display: flex; }
+
+  nav.sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+    width: 280px;
+    height: 100vh;
+    z-index: 100;
+  }
+
+  nav.sidebar.open { left: 0; }
+
+  .chat-area { padding: var(--space-md); }
+  .input-area { padding: 12px var(--space-md) var(--space-md); }
+  .input-area { padding-bottom: calc(var(--space-md) + env(safe-area-inset-bottom, 0px)); }
+
   .compass-card, .message-assistant, .thinking-block { max-width: 100%; }
-  .message-user .message-bubble { max-width: 85%; }
+  .message-user .message-bubble { max-width: 90%; }
+
+  .compare-layout { grid-template-columns: 1fr; }
+
+  .input-hint { display: none; }
 }
 </style>
 </head>
 <body>
 
+<!-- Mobile sidebar backdrop -->
+<div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+
 <div class="app" id="app">
+
   <!-- Sidebar -->
-  <div class="sidebar">
+  <nav class="sidebar" id="sidebar" aria-label="Sessions">
     <div class="sidebar-header">
       <div class="logo">Compass</div>
       <div class="logo-sub">Phenomenological Field Translator</div>
-      <button class="new-session-btn" onclick="newSession()">+ New Session</button>
+      <button class="new-session-btn" onclick="newSession()" aria-label="Start new session">
+        + New Session
+      </button>
     </div>
-    <div class="sessions-list" id="sessions-list"></div>
+    <div class="sessions-list" id="sessions-list" role="list"></div>
     <div class="sidebar-footer">
-      <span class="status-dot loading" id="status-dot"></span>
+      <span class="status-dot loading" id="status-dot" role="status" aria-label="Server status"></span>
       <span id="status-text">Connecting...</span>
     </div>
-  </div>
+  </nav>
 
   <!-- Main -->
-  <div class="main">
-    <div class="chat-area" id="chat-area"></div>
+  <main class="main" aria-label="Chat">
+    <div class="chat-area-wrapper">
+      <div class="chat-area" id="chat-area" role="log" aria-live="polite" aria-label="Conversation"></div>
+    </div>
+
     <div class="input-area">
+      <div class="input-top-row">
+        <!-- Mobile hamburger -->
+        <button class="mobile-toggle" onclick="openMobileSidebar()" aria-label="Open sessions panel" aria-expanded="false" id="mobile-toggle-btn">
+          <svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+            <line x1="2" y1="5" x2="16" y2="5"/>
+            <line x1="2" y1="9" x2="16" y2="9"/>
+            <line x1="2" y1="13" x2="16" y2="13"/>
+          </svg>
+        </button>
+
+        <div class="mode-toggle" role="group" aria-label="Response mode">
+          <button class="mode-btn active" data-mode="routed" onclick="setMode('routed')">Compass</button>
+          <button class="mode-btn" data-mode="compare" onclick="setMode('compare')">Compare</button>
+          <button class="mode-btn" data-mode="raw" onclick="setMode('raw')">Raw</button>
+        </div>
+
+        <span class="input-hint">&#8984;N new &middot; &#8984;K focus &middot; &#8984;E export &middot; Esc abort</span>
+      </div>
+
       <div class="input-container">
         <div class="input-wrapper">
-          <textarea id="input" placeholder="Ask a question..." rows="1"
-            onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
-          <div class="mode-toggle">
-            <button class="mode-btn active" data-mode="routed" onclick="setMode('routed')">Compass</button>
-            <button class="mode-btn" data-mode="compare" onclick="setMode('compare')">Compare</button>
-            <button class="mode-btn" data-mode="raw" onclick="setMode('raw')">Raw</button>
-          </div>
+          <textarea
+            id="input"
+            placeholder="Ask a question..."
+            rows="1"
+            onkeydown="handleKey(event)"
+            oninput="autoResize(this)"
+            aria-label="Your question"
+          ></textarea>
         </div>
-        <button class="send-btn" id="send-btn" onclick="send()">Send</button>
+        <button class="send-btn" id="send-btn" onclick="send()" aria-label="Send message">Send</button>
       </div>
     </div>
-  </div>
+  </main>
+
 </div>
 
 <script>
-const API = window.location.origin + '/api';
-let currentSession = null;
-let currentMode = 'routed';
-let isLoading = false;
-let activeReader = null;
+/* ── Config ───────────────────────────────────────────────── */
 
-// Signal color map
+/**
+ * Determine the API base URL from a meta tag, falling back to the current
+ * page origin. This allows the single-file UI to be served from a different
+ * host than the API by setting <meta name="api-base" content="http://...">
+ */
+const API_BASE = document.querySelector('meta[name="api-base"]')?.content || window.location.origin;
+const API = API_BASE + '/api';
+
+/* ── State ────────────────────────────────────────────────── */
+
+let currentSession = null;
+let currentMode    = 'routed';
+let isLoading      = false;
+let activeReader   = null;
+let lastText       = '';       // For retry logic
+let retryCount     = 0;
+const MAX_RETRIES  = 3;
+
+// Per-session message counts for turn counter
+const sessionMsgCounts = {};
+
+/** Resolved CSS color values for OPEN / PAUSE / WITNESS signals. */
 const SIGNAL_COLORS = {
-  OPEN: getComputedStyle(document.documentElement).getPropertyValue('--open-primary').trim(),
-  PAUSE: getComputedStyle(document.documentElement).getPropertyValue('--pause-primary').trim(),
+  OPEN:    getComputedStyle(document.documentElement).getPropertyValue('--open-primary').trim(),
+  PAUSE:   getComputedStyle(document.documentElement).getPropertyValue('--pause-primary').trim(),
   WITNESS: getComputedStyle(document.documentElement).getPropertyValue('--witness-primary').trim(),
 };
 
-// ── Markdown Renderer ──────────────────────────────────
+/* ── Markdown Renderer ────────────────────────────────────── */
 
+/**
+ * Converts a subset of Markdown to HTML.
+ * Handles: headings (h1-h4), bold, italic, bold-italic, inline code,
+ * blockquotes, unordered lists, horizontal rules, and paragraph wrapping.
+ *
+ * @param {string} text - Raw markdown text.
+ * @returns {string} HTML string safe for innerHTML assignment.
+ */
 function renderMarkdown(text) {
   if (!text) return '';
   let html = escapeHtml(text);
 
+  // Headings
   html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
-  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
-  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
-  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+  html = html.replace(/^### (.+)$/gm,  '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm,   '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm,    '<h1>$1</h1>');
+
+  // Horizontal rule
   html = html.replace(/^---+$/gm, '<hr>');
-  html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<strong><em>$1</em></strong>');
-  html = html.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-  html = html.replace(/\*(.+?)\*/g, '<em>$1</em>');
-  html = html.replace(/`([^`]+)`/g, '<code>$1</code>');
+
+  // Inline formatting
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g,  '<strong><em>$1</em></strong>');
+  html = html.replace(/\*\*(.+?)\*\*/g,      '<strong>$1</strong>');
+  html = html.replace(/\*(.+?)\*/g,          '<em>$1</em>');
+  html = html.replace(/`([^`]+)`/g,          '<code>$1</code>');
+
+  // Blockquotes
   html = html.replace(/^&gt; (.+)$/gm, '<blockquote>$1</blockquote>');
   html = html.replace(/<\/blockquote>\n<blockquote>/g, '\n');
+
+  // Unordered lists
   html = html.replace(/^- (.+)$/gm, '<li>$1</li>');
   html = html.replace(/((?:<li>.*<\/li>\n?)+)/g, '<ul>$1</ul>');
 
+  // Paragraph wrapping for remaining text blocks
   const blocks = html.split(/\n\n+/);
   html = blocks.map(block => {
     block = block.trim();
@@ -887,11 +1237,14 @@ function renderMarkdown(text) {
   return html;
 }
 
-// ── Session Management ──────────────────────────────────
+/* ── Session Management ───────────────────────────────────── */
 
+/**
+ * Fetches all sessions from the API and re-renders the sidebar list.
+ */
 async function loadSessions() {
   try {
-    const res = await fetch(`${API}/sessions`);
+    const res  = await fetch(`${API}/sessions`);
     const data = await res.json();
     renderSessions(data);
   } catch (e) {
@@ -899,37 +1252,68 @@ async function loadSessions() {
   }
 }
 
+/**
+ * Renders the session list in the sidebar.
+ * @param {Object} sessions - Map of session_id to session metadata.
+ */
 function renderSessions(sessions) {
   const list = document.getElementById('sessions-list');
   list.innerHTML = '';
+
   for (const [id, s] of Object.entries(sessions)) {
+    sessionMsgCounts[id] = s.message_count || 0;
+
     const item = document.createElement('div');
     item.className = `session-item${id === currentSession ? ' active' : ''}`;
+    item.setAttribute('role', 'listitem');
     item.onclick = () => selectSession(id);
+
     item.innerHTML = `
-      <button class="session-delete" onclick="event.stopPropagation(); deleteSession('${id}')">&times;</button>
-      <div class="session-title">${escapeHtml(s.title)}</div>
+      <div class="session-item-header">
+        <div class="session-title">${escapeHtml(s.title)}</div>
+        <div class="session-actions">
+          <button class="session-action-btn" title="Export session"
+            onclick="event.stopPropagation(); exportSession('${id}')"
+            aria-label="Export session">&#x21A7;</button>
+          <button class="session-action-btn delete" title="Delete session"
+            onclick="event.stopPropagation(); deleteSession('${id}')"
+            aria-label="Delete session">&times;</button>
+        </div>
+      </div>
       <div class="session-meta">${s.message_count} messages</div>
     `;
     list.appendChild(item);
   }
 }
 
+/**
+ * Creates a new session via the API and switches to it.
+ */
 async function newSession() {
-  const res = await fetch(`${API}/sessions`, { method: 'POST' });
+  const res  = await fetch(`${API}/sessions`, { method: 'POST' });
   const data = await res.json();
   currentSession = data.session_id;
   await loadSessions();
   clearChat();
   showEmpty();
+  document.getElementById('input').focus();
 }
 
+/**
+ * Switches to an existing session and loads its message history.
+ * @param {string} id - Session ID.
+ */
 async function selectSession(id) {
   currentSession = id;
+  closeMobileSidebar();
   await loadSessions();
   await loadMessages(id);
 }
 
+/**
+ * Deletes a session by ID. If it was the active session, returns to empty state.
+ * @param {string} id - Session ID.
+ */
 async function deleteSession(id) {
   await fetch(`${API}/sessions/${id}`, { method: 'DELETE' });
   if (currentSession === id) {
@@ -940,18 +1324,32 @@ async function deleteSession(id) {
   await loadSessions();
 }
 
+/**
+ * Opens the session export in a new tab.
+ * @param {string} sid - Session ID to export.
+ */
+function exportSession(sid) {
+  window.open(`${API}/sessions/${sid}/export`, '_blank');
+}
+
+/**
+ * Loads and replays the full message history for a session.
+ * @param {string} sessionId - Session ID to load.
+ */
 async function loadMessages(sessionId) {
-  const res = await fetch(`${API}/sessions/${sessionId}/messages`);
+  const res  = await fetch(`${API}/sessions/${sessionId}/messages`);
   const data = await res.json();
   clearChat();
+
   if (data.messages.length === 0) { showEmpty(); return; }
   hideEmpty();
+
   let i = 0;
   while (i < data.messages.length) {
     const msg = data.messages[i];
     if (msg.role === 'user') {
       addUserMessage(msg.content);
-      const compass = data.messages[i + 1];
+      const compass   = data.messages[i + 1];
       const assistant = data.messages[i + 2];
       if (compass && compass.role === 'compass') {
         addCompassMessageStatic(compass.content, compass.signal, compass.t_compass);
@@ -969,69 +1367,117 @@ async function loadMessages(sessionId) {
   scrollToBottom();
 }
 
-// ── Chat Rendering (Static — for history replay) ────────
+/* ── Chat Rendering (Static — for history replay) ─────────── */
 
+/**
+ * Removes all content from the chat area.
+ */
 function clearChat() {
   document.getElementById('chat-area').innerHTML = '';
 }
 
+/**
+ * Starter questions mapped to their signal type for visual grouping.
+ * Each entry: [signal_class, question_text]
+ */
 const STARTERS = [
-  'Does compression lose meaning or distill it?',
-  'Can a person truly change?',
-  'Am I wasting my life?',
-  'Is violence ever justified?',
-  'What happens to consciousness after death?',
-  'Did agriculture create hierarchy, or did hierarchy create agriculture?',
+  ['signal-open',    'Does compression lose meaning or distill it?'],
+  ['signal-open',    'Did agriculture create hierarchy?'],
+  ['signal-pause',   'Can a person truly change?'],
+  ['signal-pause',   'Am I wasting my life?'],
+  ['signal-witness', 'What happens to consciousness after death?'],
+  ['signal-witness', 'Is violence ever justified?'],
 ];
 
+/**
+ * Renders the empty state with compass rose SVG and starter question chips.
+ */
 function showEmpty() {
-  const chips = STARTERS.map(q =>
-    `<div class="starter-chip" onclick="useStarter(this)">${escapeHtml(q)}</div>`
+  const chips = STARTERS.map(([cls, q]) =>
+    `<div class="starter-chip ${cls}" onclick="useStarter(this)">${escapeHtml(q)}</div>`
   ).join('');
+
   document.getElementById('chat-area').innerHTML = `
     <div class="empty-state">
-      <div class="compass-icon">&#x1F9ED;</div>
+      <svg class="compass-rose" viewBox="0 0 120 120" width="80" height="80"
+           aria-hidden="true" focusable="false">
+        <circle cx="60" cy="60" r="56" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.2"/>
+        <circle cx="60" cy="60" r="40" fill="none" stroke="currentColor" stroke-width="0.5" opacity="0.15"/>
+        <line x1="60" y1="4"   x2="60"  y2="116" stroke="currentColor" stroke-width="0.5" opacity="0.15"/>
+        <line x1="4"  y1="60"  x2="116" y2="60"  stroke="currentColor" stroke-width="0.5" opacity="0.15"/>
+        <polygon points="60,8 64,50 60,44 56,50"      fill="var(--witness-primary)" opacity="0.6"/>
+        <polygon points="60,112 56,70 60,76 64,70"    fill="var(--text-dim)"        opacity="0.3"/>
+        <polygon points="8,60 50,56 44,60 50,64"      fill="var(--text-dim)"        opacity="0.3"/>
+        <polygon points="112,60 70,64 76,60 70,56"    fill="var(--text-dim)"        opacity="0.3"/>
+        <circle cx="60" cy="60" r="3" fill="var(--accent)" opacity="0.5"/>
+      </svg>
+
       <div class="empty-title">What would you like to explore?</div>
       <div class="empty-sub">
         The compass reads the shape and weight of your question before answering.
         Some doors are walked through. Some are held. Some are witnessed.
       </div>
-      <div class="signal-legend">
-        <div class="legend-item"><div class="legend-dot open"></div>OPEN</div>
-        <div class="legend-item"><div class="legend-dot pause"></div>PAUSE</div>
-        <div class="legend-item"><div class="legend-dot witness"></div>WITNESS</div>
+
+      <div class="signal-legend" aria-label="Signal types">
+        <div class="legend-item"><div class="legend-dot open"    aria-hidden="true"></div>OPEN</div>
+        <div class="legend-item"><div class="legend-dot pause"   aria-hidden="true"></div>PAUSE</div>
+        <div class="legend-item"><div class="legend-dot witness" aria-hidden="true"></div>WITNESS</div>
       </div>
-      <div class="starter-questions">${chips}</div>
+
+      <div class="starter-questions" role="list" aria-label="Suggested questions">
+        ${chips}
+      </div>
     </div>
   `;
 }
 
+/**
+ * Populates the textarea with a starter question text.
+ * @param {HTMLElement} el - The clicked starter chip element.
+ */
 function useStarter(el) {
-  document.getElementById('input').value = el.textContent;
-  document.getElementById('input').focus();
+  const input = document.getElementById('input');
+  input.value = el.textContent;
+  autoResize(input);
+  input.focus();
 }
 
+/**
+ * Removes the empty state element if present.
+ */
 function hideEmpty() {
   const el = document.querySelector('.empty-state');
   if (el) el.remove();
 }
 
+/**
+ * Appends a user message bubble to the chat.
+ * @param {string} text - Plain text content.
+ */
 function addUserMessage(text) {
   hideEmpty();
   const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
+  const div  = document.createElement('div');
   div.className = 'message message-user';
   div.innerHTML = `<div class="message-bubble">${escapeHtml(text)}</div>`;
   area.appendChild(div);
 }
 
+/**
+ * Parses a compass reading text block into labeled sections.
+ * Expected labels: SHAPE, TONE, SIGNAL, FRAMING, APPROACH, THRESHOLD.
+ *
+ * @param {string} text - Raw compass reading text.
+ * @returns {Array<{label: string, text: string}>} Ordered section array.
+ */
 function parseCompassReading(text) {
   const sections = [];
-  const labels = ['SHAPE', 'TONE', 'SIGNAL', 'FRAMING', 'APPROACH', 'THRESHOLD'];
-  let current = null;
+  const labels   = ['SHAPE', 'TONE', 'SIGNAL', 'FRAMING', 'APPROACH', 'THRESHOLD'];
+  let current    = null;
+
   for (const line of (text || '').split('\n')) {
     const trimmed = line.trim();
-    let matched = false;
+    let matched   = false;
     for (const label of labels) {
       if (trimmed.startsWith(label + ':')) {
         if (current) sections.push(current);
@@ -1048,33 +1494,43 @@ function parseCompassReading(text) {
   return sections;
 }
 
+/**
+ * Renders a fully-formed compass reading card (used for history replay).
+ * Uses renderMarkdown for compass section text to allow italic/bold emphasis.
+ *
+ * @param {string} text   - Raw compass reading text.
+ * @param {string} signal - Signal name: OPEN | PAUSE | WITNESS.
+ * @param {string} timing - Time taken (seconds) as a string.
+ */
 function addCompassMessageStatic(text, signal, timing) {
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message message-compass';
+  const area        = document.getElementById('chat-area');
+  const div         = document.createElement('div');
+  div.className     = 'message message-compass';
 
   const signalLower = (signal || 'open').toLowerCase();
   const signalClass = `signal-${signalLower}`;
-  const sections = parseCompassReading(text);
-  const translationLabels = ['framing', 'approach', 'threshold'];
+  const sections    = parseCompassReading(text);
+  const transLabels = ['framing', 'approach', 'threshold'];
 
   const sectionsHtml = sections.map((s, i) => {
-    const labelClass = `compass-label-${s.label.toLowerCase()}`;
-    const isTranslation = translationLabels.includes(s.label.toLowerCase());
-    const showDivider = isTranslation && i > 0;
+    const labelClass    = `compass-label-${s.label.toLowerCase()}`;
+    const isTranslation = transLabels.includes(s.label.toLowerCase());
+    const showDivider   = isTranslation && i > 0;
     return `
       ${showDivider ? '<div class="compass-divider"></div>' : ''}
       <div class="compass-section">
         <div class="compass-label ${labelClass}">${s.label}</div>
-        <div class="compass-text">${escapeHtml(s.text)}</div>
+        <div class="compass-text">${renderMarkdown(s.text)}</div>
       </div>
     `;
   }).join('');
 
   const translationSection = sections.find(s =>
-    ['framing', 'approach', 'threshold'].includes(s.label.toLowerCase())
+    transLabels.includes(s.label.toLowerCase())
   );
-  const summary = translationSection ? translationSection.text.split(/[.!?]/)[0].trim() : '';
+  const summary = translationSection
+    ? translationSection.text.split(/[.!?]/)[0].trim()
+    : '';
 
   div.innerHTML = `
     <div class="compass-card">
@@ -1093,15 +1549,22 @@ function addCompassMessageStatic(text, signal, timing) {
   area.appendChild(div);
 }
 
+/**
+ * Renders a completed assistant response card (used for history replay).
+ *
+ * @param {string}      text   - Markdown response text.
+ * @param {string|null} timing - Time taken (seconds).
+ * @param {string}      label  - Header label (default "Response").
+ */
 function addAssistantMessageStatic(text, timing, label) {
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message message-assistant';
+  const area        = document.getElementById('chat-area');
+  const div         = document.createElement('div');
+  div.className     = 'message message-assistant';
   const headerLabel = label || 'Response';
   div.innerHTML = `
     <div class="response-card">
       <div class="response-header">
-        <span>&#x270D;&#xFE0F;</span> ${headerLabel}
+        <span aria-hidden="true">&#x270D;&#xFE0F;</span> ${headerLabel}
         ${timing ? `<span class="response-tps">${timing}s</span>` : ''}
       </div>
       <div class="response-body">${renderMarkdown(text)}</div>
@@ -1110,48 +1573,83 @@ function addAssistantMessageStatic(text, timing, label) {
   area.appendChild(div);
 }
 
-// ── Streaming State ─────────────────────────────────────
+/* ── Streaming State ──────────────────────────────────────── */
 
+/**
+ * Mutable state for an in-progress SSE stream.
+ * Reset at the start of each send() call.
+ */
 let stream = {
-  compassCard: null,
-  compassBody: null,
-  compassHeader: null,
-  compassText: '',
-  currentSectionEl: null,
+  compassCard:        null,
+  compassBody:        null,
+  compassHeader:      null,
+  compassText:        '',
+  currentSectionEl:   null,
   currentSectionLabel: null,
-  signal: null,
+  sectionJustChanged: false,
+  signal:             null,
 
-  thinkingBlock: null,
-  thinkingContent: null,
-  thinkingText: '',
+  thinkingBlock:      null,
+  thinkingContent:    null,
+  thinkingText:       '',
 
-  responseCard: null,
-  responseBody: null,
-  responseText: '',
+  responseCard:       null,
+  responseBody:       null,
+  responseText:       '',
 
-  entropyData: [],
-  entropyCanvas: null,
-  entropyMeanEl: null,
-  tpsEl: null,
-  lastTps: 0,
+  entropyData:        [],
+  entropyCanvas:      null,
+  entropyMeanEl:      null,
+  tpsEl:              null,
+  lastTps:            0,
+
+  resizeObserver:     null,
+  renderTimer:        null,
+  turnNum:            1,
 };
 
+/**
+ * Resets streaming state to initial values for a new request.
+ */
 function resetStream() {
+  // Disconnect any previous resize observer
+  if (stream.resizeObserver) stream.resizeObserver.disconnect();
+  if (stream.renderTimer)    clearTimeout(stream.renderTimer);
+
   stream = {
     compassCard: null, compassBody: null, compassHeader: null,
-    compassText: '', currentSectionEl: null, currentSectionLabel: null, sectionJustChanged: false, signal: null,
+    compassText: '', currentSectionEl: null, currentSectionLabel: null,
+    sectionJustChanged: false, signal: null,
     thinkingBlock: null, thinkingContent: null, thinkingText: '',
     responseCard: null, responseBody: null, responseText: '',
-    entropyData: [], entropyCanvas: null, entropyMeanEl: null, tpsEl: null, lastTps: 0,
+    entropyData: [], entropyCanvas: null, entropyMeanEl: null,
+    tpsEl: null, lastTps: 0,
+    resizeObserver: null, renderTimer: null,
+    turnNum: computeTurnNumber(),
   };
 }
 
-// ── Streaming: Compass Card Builder ─────────────────────
+/**
+ * Computes the current turn number from session message count.
+ * Approximation: every 3 stored messages = 1 turn (user + compass + assistant).
+ *
+ * @returns {number} Turn number (1-indexed).
+ */
+function computeTurnNumber() {
+  const count = sessionMsgCounts[currentSession] || 0;
+  return Math.floor(count / 3) + 1;
+}
 
+/* ── Streaming: Compass Card Builder ──────────────────────── */
+
+/**
+ * Creates the streaming compass card DOM element if it doesn't exist yet.
+ * Appends it to the chat area.
+ */
 function ensureCompassCard() {
   if (stream.compassCard) return;
   const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
+  const div  = document.createElement('div');
   div.className = 'message message-compass';
   div.innerHTML = `
     <div class="compass-card" id="stream-compass-card">
@@ -1167,51 +1665,55 @@ function ensureCompassCard() {
     </div>
   `;
   area.appendChild(div);
-  stream.compassCard = div.querySelector('.compass-card');
+  stream.compassCard   = div.querySelector('.compass-card');
   stream.compassHeader = div.querySelector('.compass-header');
-  stream.compassBody = div.querySelector('#stream-compass-body');
+  stream.compassBody   = div.querySelector('#stream-compass-body');
   scrollToBottom();
 }
 
+/**
+ * Handles an incoming compass token from the SSE stream.
+ * Creates section elements when the section label changes.
+ *
+ * @param {Object} data - SSE event data with token, section, section_changed fields.
+ */
 function handleCompassToken(data) {
   ensureCompassCard();
   stream.compassText += data.token;
 
-  // Create new section element when section changes
+  // Create a new section element when section label changes
   if (data.section && data.section_changed && data.section !== stream.currentSectionLabel) {
-    stream.currentSectionLabel = data.section;
-    stream.sectionJustChanged = true;
-    const isTranslation = ['framing', 'approach', 'threshold'].includes(data.section);
+    stream.currentSectionLabel  = data.section;
+    stream.sectionJustChanged   = true;
+    const isTranslation         = ['framing', 'approach', 'threshold'].includes(data.section);
 
     if (isTranslation && stream.compassBody.children.length > 0) {
-      const divider = document.createElement('div');
-      divider.className = 'compass-divider';
+      const divider         = document.createElement('div');
+      divider.className     = 'compass-divider';
       stream.compassBody.appendChild(divider);
     }
 
-    const section = document.createElement('div');
-    section.className = 'compass-section';
-    section.innerHTML = `
+    const section         = document.createElement('div');
+    section.className     = 'compass-section';
+    section.innerHTML     = `
       <div class="compass-label compass-label-${data.section}">${data.section.toUpperCase()}</div>
       <div class="compass-text"></div>
     `;
     stream.compassBody.appendChild(section);
     stream.currentSectionEl = section.querySelector('.compass-text');
-    // Don't append this token — it contains the label text (e.g., ":" after "SHAPE")
+
+    // Don't append this token — it contains the label itself
     scrollToBottom();
     return;
   }
 
-  // Skip tokens that are part of the section label (first few tokens after section change)
+  // Skip whitespace-only tokens immediately after a label change
   if (stream.sectionJustChanged) {
-    // The first real content token after a label typically starts with a space
     const trimmed = data.token.replace(/^\s+/, '');
-    if (trimmed.length > 0) {
-      stream.sectionJustChanged = false;
-    }
+    if (trimmed.length > 0) stream.sectionJustChanged = false;
   }
 
-  // Append token to current section
+  // Append token to the current section
   if (stream.currentSectionEl) {
     stream.currentSectionEl.textContent += data.token;
   }
@@ -1219,48 +1721,68 @@ function handleCompassToken(data) {
   scrollToBottom();
 }
 
+/**
+ * Handles the signal_lock SSE event.
+ * Updates compass card header color, triggers glow pulse and viewport wash.
+ *
+ * @param {Object} data - SSE event data with signal field (OPEN|PAUSE|WITNESS).
+ */
 function handleSignalLock(data) {
-  stream.signal = data.signal;
-  const signalLower = data.signal.toLowerCase();
-  const signalClass = `signal-${signalLower}`;
+  stream.signal            = data.signal;
+  const signalLower        = data.signal.toLowerCase();
+  const signalClass        = `signal-${signalLower}`;
 
-  // Update compass header
+  // Update compass header class
   if (stream.compassHeader) {
-    stream.compassHeader.className = `compass-header ${signalClass}`;
-    stream.compassHeader.onclick = function() { toggleCollapse(this); };
+    stream.compassHeader.className     = `compass-header ${signalClass}`;
+    stream.compassHeader.onclick       = function() { toggleCollapse(this); };
     document.getElementById('stream-compass-label').innerHTML =
       `Compass &mdash; ${data.signal}`;
+
+    // Animate the signal indicator dot growing briefly
+    const dot = stream.compassHeader.querySelector('.signal-indicator');
+    if (dot) {
+      dot.classList.add('locking');
+      setTimeout(() => dot.classList.remove('locking'), 700);
+    }
   }
 
-  // Glow pulse on card
+  // Glow pulse on compass card (2 pulses over 2s)
   if (stream.compassCard) {
     const glowColor = SIGNAL_COLORS[data.signal] + '44';
     stream.compassCard.style.setProperty('--glow-color', glowColor);
     stream.compassCard.classList.add('signal-locked');
-    setTimeout(() => stream.compassCard.classList.remove('signal-locked'), 1000);
+    setTimeout(() => stream.compassCard.classList.remove('signal-locked'), 2100);
   }
 
-  // Full-viewport color wash
-  const wash = document.createElement('div');
-  wash.className = `signal-wash ${signalLower}`;
+  // Full-viewport color wash (2 pulses via CSS animation)
+  const wash       = document.createElement('div');
+  wash.className   = `signal-wash ${signalLower}`;
   document.body.appendChild(wash);
-  setTimeout(() => wash.remove(), 1600);
+  setTimeout(() => wash.remove(), 2100);
 }
 
+/**
+ * Handles the compass_done SSE event.
+ * Collapses the compass card and sets the collapsed summary text.
+ *
+ * @param {Object} data - SSE event data with text and t_compass fields.
+ */
 function handleCompassDone(data) {
-  // Collapse the compass card
   if (stream.compassHeader) {
     stream.compassHeader.classList.add('collapsed');
-    // Set summary
-    const summary = stream.compassHeader.querySelector('.compass-summary');
+
+    // Set collapsed summary to first sentence of translation section
+    const summary  = stream.compassHeader.querySelector('.compass-summary');
     const sections = parseCompassReading(data.text);
-    const translationSection = sections.find(s =>
+    const tsec     = sections.find(s =>
       ['framing', 'approach', 'threshold'].includes(s.label.toLowerCase())
     );
-    if (summary && translationSection) {
-      summary.textContent = '— ' + translationSection.text.split(/[.!?]/)[0].trim();
+    if (summary && tsec) {
+      summary.textContent = '\u2014 ' + tsec.text.split(/[.!?]/)[0].trim();
     }
-    // Add timing
+
+    // Append timing
     const label = document.getElementById('stream-compass-label');
     if (label && data.t_compass) {
       label.innerHTML += ` <span style="opacity:0.5; font-size:10px; margin-left:8px;">${data.t_compass}s</span>`;
@@ -1268,38 +1790,49 @@ function handleCompassDone(data) {
   }
 }
 
-// ── Streaming: Thinking Block Builder ───────────────────
+/* ── Streaming: Thinking Block Builder ────────────────────── */
 
+/**
+ * Creates the thinking block DOM element if it doesn't exist yet.
+ */
 function ensureThinkingBlock() {
   if (stream.thinkingBlock) return;
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message thinking-block';
-  div.innerHTML = `
+  const area      = document.getElementById('chat-area');
+  const div       = document.createElement('div');
+  div.className   = 'message thinking-block';
+  div.innerHTML   = `
     <div class="thinking-header" onclick="toggleCollapse(this)">
-      <span>&#x1F4AD;</span> Reasoning
+      <span aria-hidden="true">&#x1F4AD;</span> Reasoning
       <span class="chevron">&#9662;</span>
     </div>
     <div class="thinking-content" id="stream-thinking-content"></div>
   `;
   area.appendChild(div);
-  stream.thinkingBlock = div;
+  stream.thinkingBlock   = div;
   stream.thinkingContent = div.querySelector('#stream-thinking-content');
 }
 
+/**
+ * Handles an incoming thinking token from the SSE stream.
+ * @param {Object} data - SSE event data with token field.
+ */
 function handleThinkingToken(data) {
   ensureThinkingBlock();
-  stream.thinkingText += data.token;
-  stream.thinkingContent.textContent = stream.thinkingText;
+  stream.thinkingText                += data.token;
+  stream.thinkingContent.textContent  = stream.thinkingText;
   scrollToBottom();
 }
 
-// ── Streaming: Response Block Builder ───────────────────
+/* ── Streaming: Response Block Builder ────────────────────── */
 
+/**
+ * Creates the response card DOM element if it doesn't exist yet.
+ * Collapses the thinking block and sets up a ResizeObserver for the canvas.
+ */
 function ensureResponseCard() {
   if (stream.responseCard) return;
 
-  // Collapse thinking block if it exists
+  // Collapse thinking block
   if (stream.thinkingBlock) {
     const header = stream.thinkingBlock.querySelector('.thinking-header');
     if (header && !header.classList.contains('collapsed')) {
@@ -1307,13 +1840,20 @@ function ensureResponseCard() {
     }
   }
 
-  const area = document.getElementById('chat-area');
-  const div = document.createElement('div');
-  div.className = 'message message-assistant';
+  const area      = document.getElementById('chat-area');
+  const div       = document.createElement('div');
+  div.className   = 'message message-assistant';
+
+  // Show turn badge when beyond the first turn
+  const turnBadge = stream.turnNum > 1
+    ? `<span class="turn-badge">Turn ${stream.turnNum}</span>`
+    : '';
+
   div.innerHTML = `
     <div class="response-card" id="stream-response-card">
       <div class="response-header">
-        <span>&#x270D;&#xFE0F;</span> Response
+        <span aria-hidden="true">&#x270D;&#xFE0F;</span> Response
+        ${turnBadge}
         <span class="response-tps" id="stream-tps"></span>
       </div>
       <div class="response-body streaming" id="stream-response-body"></div>
@@ -1327,81 +1867,116 @@ function ensureResponseCard() {
     </div>
   `;
   area.appendChild(div);
-  stream.responseCard = div;
-  stream.responseBody = div.querySelector('#stream-response-body');
+
+  stream.responseCard  = div;
+  stream.responseBody  = div.querySelector('#stream-response-body');
   stream.entropyCanvas = div.querySelector('#stream-entropy-canvas');
   stream.entropyMeanEl = div.querySelector('#stream-entropy-mean');
-  stream.tpsEl = div.querySelector('#stream-tps');
+  stream.tpsEl         = div.querySelector('#stream-tps');
 
-  // Size canvas to container
+  // Use ResizeObserver to size canvas, avoiding rAF race conditions
   const container = div.querySelector('.entropy-container');
-  requestAnimationFrame(() => {
-    const w = container.clientWidth - 40;
-    stream.entropyCanvas.width = w * 2;  // 2x for retina
-    stream.entropyCanvas.height = 72;
-    stream.entropyCanvas.style.width = w + 'px';
-    stream.entropyCanvas.style.height = '36px';
+  stream.resizeObserver = new ResizeObserver(entries => {
+    const w = entries[0].contentRect.width - 40;
+    if (w > 0 && stream.entropyCanvas) {
+      stream.entropyCanvas.width        = w * 2; // 2x for retina
+      stream.entropyCanvas.height       = 72;
+      stream.entropyCanvas.style.width  = w + 'px';
+      stream.entropyCanvas.style.height = '36px';
+      if (stream.entropyData.length > 0) drawEntropySparkline();
+    }
   });
+  stream.resizeObserver.observe(container);
 }
 
+/**
+ * Schedules a debounced markdown re-render during streaming.
+ * Fires at most once every 150ms to avoid thrashing.
+ * On `done`, the final render is called directly without debouncing.
+ *
+ * @param {HTMLElement} element - The response body element.
+ * @param {string}      text    - Current accumulated response text.
+ */
+function scheduleMidStreamRender(element, text) {
+  // During streaming, we display plain text for performance.
+  // This function exists as a hook for future enhancement.
+}
+
+/**
+ * Handles an incoming action (response) token from the SSE stream.
+ * Manages streaming cursor, entropy sparkline, and TPS display.
+ *
+ * @param {Object} data - SSE event data with token, entropy, tps fields.
+ */
 function handleActionToken(data) {
   ensureResponseCard();
   stream.responseText += data.token;
   stream.responseBody.textContent = stream.responseText;
 
-  // Append cursor
+  // Streaming cursor
   let cursor = stream.responseBody.querySelector('.streaming-cursor');
   if (!cursor) {
-    cursor = document.createElement('span');
+    cursor           = document.createElement('span');
     cursor.className = 'streaming-cursor';
     stream.responseBody.appendChild(cursor);
   }
 
-  // Entropy
+  // Entropy sparkline update
   if (data.entropy !== null && data.entropy !== undefined) {
     stream.entropyData.push(data.entropy);
     drawEntropySparkline();
-
     const mean = stream.entropyData.reduce((a, b) => a + b, 0) / stream.entropyData.length;
     if (stream.entropyMeanEl) {
       stream.entropyMeanEl.textContent = `H = ${mean.toFixed(3)} nats`;
     }
   }
 
-  // TPS
+  // TPS display
   if (data.tps && stream.tpsEl) {
-    stream.lastTps = data.tps;
-    stream.tpsEl.textContent = `${data.tps} tok/s`;
+    stream.lastTps              = data.tps;
+    stream.tpsEl.textContent   = `${data.tps} tok/s`;
   }
 
   scrollToBottom();
 }
 
-// ── Streaming: Finalize ─────────────────────────────────
+/* ── Streaming: Finalize ──────────────────────────────────── */
 
+/**
+ * Handles the done SSE event.
+ * Performs final markdown render, adds timing footer, and updates session list.
+ *
+ * @param {Object} data - Final SSE event data with timing and response_text.
+ */
 function handleDone(data) {
   // Remove streaming cursor
   const cursor = stream.responseBody?.querySelector('.streaming-cursor');
   if (cursor) cursor.remove();
 
-  // Replace plain text with rendered markdown
+  // Clear debounce timer if any
+  if (stream.renderTimer) {
+    clearTimeout(stream.renderTimer);
+    stream.renderTimer = null;
+  }
+
+  // Final markdown render (replaces plain text)
   if (stream.responseBody && stream.responseText) {
     stream.responseBody.classList.remove('streaming');
     stream.responseBody.innerHTML = renderMarkdown(data.response_text || stream.responseText);
   }
 
-  // Render thinking block properly
+  // Render thinking block with markdown
   if (stream.thinkingContent && stream.thinkingText) {
     stream.thinkingContent.innerHTML = renderMarkdown(stream.thinkingText);
   }
 
-  // Add timing footer
+  // Timing footer appended inside the response-card element
   if (stream.responseCard) {
     const card = stream.responseCard.querySelector('.response-card');
     if (card) {
-      const timing = document.createElement('div');
+      const timing   = document.createElement('div');
       timing.className = 'response-timing';
-      const parts = [];
+      const parts    = [];
       if (data.t_compass) parts.push(`compass ${data.t_compass}s`);
       parts.push(`action ${data.t_action}s`);
       parts.push(`total ${data.t_total}s`);
@@ -1411,34 +1986,44 @@ function handleDone(data) {
     }
   }
 
-  // Update session
+  // Disconnect resize observer
+  if (stream.resizeObserver) stream.resizeObserver.disconnect();
+
+  // Update session state
   if (data.session_id) {
     currentSession = data.session_id;
+    if (sessionMsgCounts[currentSession] !== undefined) {
+      sessionMsgCounts[currentSession] += 3; // user + compass + assistant
+    }
     loadSessions();
   }
 
-  // Final sparkline draw
+  // Final sparkline draw with complete data
   drawEntropySparkline();
 }
 
-// ── Entropy Sparkline ───────────────────────────────────
+/* ── Entropy Sparkline ────────────────────────────────────── */
 
+/**
+ * Draws the entropy sparkline on the canvas using the accumulated entropy data.
+ * Uses the current signal color for stroke and fill.
+ */
 function drawEntropySparkline() {
   const canvas = stream.entropyCanvas;
   if (!canvas || stream.entropyData.length < 2) return;
 
-  const ctx = canvas.getContext('2d');
-  const w = canvas.width;
-  const h = canvas.height;
-  const data = stream.entropyData;
+  const ctx         = canvas.getContext('2d');
+  const w           = canvas.width;
+  const h           = canvas.height;
+  const data        = stream.entropyData;
   const signalColor = SIGNAL_COLORS[stream.signal] || '#a78bfa';
 
   ctx.clearRect(0, 0, w, h);
 
   const maxEntropy = Math.max(Math.max(...data) * 1.1, 2.5);
-  const xStep = w / Math.max(data.length - 1, 1);
+  const xStep      = w / Math.max(data.length - 1, 1);
 
-  // Filled area
+  // Filled area under the line
   ctx.beginPath();
   ctx.moveTo(0, h);
   data.forEach((e, i) => {
@@ -1449,7 +2034,7 @@ function drawEntropySparkline() {
   ctx.fillStyle = signalColor + '12';
   ctx.fill();
 
-  // Line
+  // Entropy line with glow
   ctx.beginPath();
   data.forEach((e, i) => {
     const x = i * xStep;
@@ -1457,13 +2042,13 @@ function drawEntropySparkline() {
     i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
   });
   ctx.strokeStyle = signalColor;
-  ctx.lineWidth = 2;
+  ctx.lineWidth   = 2;
   ctx.shadowColor = signalColor;
-  ctx.shadowBlur = 6;
+  ctx.shadowBlur  = 6;
   ctx.stroke();
-  ctx.shadowBlur = 0;
+  ctx.shadowBlur  = 0;
 
-  // Current point glow
+  // Current point glow dot
   if (data.length > 0) {
     const lastX = (data.length - 1) * xStep;
     const lastY = h - (data[data.length - 1] / maxEntropy) * h * 0.85;
@@ -1478,44 +2063,134 @@ function drawEntropySparkline() {
   }
 }
 
-// ── SSE Stream Consumer ─────────────────────────────────
+/* ── Error Handling ───────────────────────────────────────── */
 
+/**
+ * Shows an inline error message in the chat area with an optional retry button.
+ * @param {string}   message    - Error text to display.
+ * @param {boolean}  showRetry  - Whether to show a Retry button.
+ */
+function showInlineError(message, showRetry = false) {
+  const area  = document.getElementById('chat-area');
+  const div   = document.createElement('div');
+  div.className = 'inline-error';
+  div.setAttribute('role', 'alert');
+  div.innerHTML = `<span>${escapeHtml(message)}</span>
+    ${showRetry ? '<button onclick="retrySend()">Retry</button>' : ''}`;
+  area.appendChild(div);
+  scrollToBottom();
+}
+
+/**
+ * Retries the last failed send() call.
+ */
+function retrySend() {
+  // Remove all inline error messages
+  document.querySelectorAll('.inline-error').forEach(el => el.remove());
+  if (lastText) {
+    document.getElementById('input').value = lastText;
+    send();
+  }
+}
+
+/**
+ * Handles stream error with exponential backoff retry logic.
+ * @param {Error} error - The error that occurred.
+ */
+function handleStreamError(error) {
+  console.error('Stream error:', error);
+  isLoading = false;
+  document.getElementById('send-btn').disabled = false;
+
+  if (retryCount < MAX_RETRIES) {
+    retryCount++;
+    const delay = Math.min(1000 * Math.pow(2, retryCount), 8000);
+    showInlineError(`Connection lost. Retrying in ${delay / 1000}s\u2026 (${retryCount}/${MAX_RETRIES})`, false);
+    setTimeout(() => {
+      document.querySelectorAll('.inline-error').forEach(el => el.remove());
+      if (lastText) {
+        isLoading = true;
+        document.getElementById('send-btn').disabled = true;
+        resetStream();
+        doStream(lastText);
+      }
+    }, delay);
+  } else {
+    retryCount = 0;
+    showInlineError(`Connection failed after ${MAX_RETRIES} attempts. Is compass_server.py running?`, true);
+  }
+}
+
+/**
+ * Aborts the active stream reader if one is in progress.
+ */
+function abortStream() {
+  if (activeReader) {
+    activeReader.cancel();
+    activeReader = null;
+  }
+  isLoading = false;
+  document.getElementById('send-btn').disabled = false;
+  retryCount = 0;
+}
+
+/* ── SSE Stream Consumer ──────────────────────────────────── */
+
+/**
+ * Entry point: validates input, creates a session if needed, and starts streaming.
+ */
 async function send() {
   const input = document.getElementById('input');
-  const text = input.value.trim();
+  const text  = input.value.trim();
   if (!text || isLoading) return;
 
   if (!currentSession) {
-    const res = await fetch(`${API}/sessions`, { method: 'POST' });
-    const data = await res.json();
-    currentSession = data.session_id;
+    try {
+      const res  = await fetch(`${API}/sessions`, { method: 'POST' });
+      const data = await res.json();
+      currentSession = data.session_id;
+      sessionMsgCounts[currentSession] = 0;
+    } catch (e) {
+      showInlineError('Could not create session. Is the server running?', true);
+      return;
+    }
   }
 
   input.value = '';
   autoResize(input);
-  isLoading = true;
+  lastText   = text;
+  retryCount = 0;
+  isLoading  = true;
   document.getElementById('send-btn').disabled = true;
   resetStream();
   addUserMessage(text);
   scrollToBottom();
 
+  doStream(text);
+}
+
+/**
+ * Opens the SSE fetch stream and routes events to handler functions.
+ * @param {string} text - The question text to send.
+ */
+async function doStream(text) {
   try {
     const response = await fetch(`${API}/stream`, {
-      method: 'POST',
+      method:  'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        question: text,
+      body:    JSON.stringify({
+        question:   text,
         session_id: currentSession,
-        mode: currentMode,
+        mode:       currentMode,
       }),
     });
 
     if (!response.ok) throw new Error(`Server error: ${response.status}`);
 
-    const reader = response.body.getReader();
+    const reader  = response.body.getReader();
     const decoder = new TextDecoder();
-    activeReader = reader;
-    let buffer = '';
+    activeReader  = reader;
+    let buffer    = '';
 
     while (true) {
       const { done, value } = await reader.read();
@@ -1523,15 +2198,13 @@ async function send() {
 
       buffer += decoder.decode(value, { stream: true });
 
-      // Parse SSE events
+      // Parse SSE double-newline delimited events
       const parts = buffer.split('\n\n');
-      buffer = parts.pop();
+      buffer = parts.pop(); // Keep incomplete trailing chunk
 
       for (const part of parts) {
         const trimmed = part.trim();
         if (!trimmed) continue;
-
-        // Extract data from SSE format
         for (const line of trimmed.split('\n')) {
           if (line.startsWith('data: ')) {
             try {
@@ -1545,62 +2218,67 @@ async function send() {
       }
     }
 
+    // Stream completed successfully
+    retryCount = 0;
   } catch (err) {
-    console.error('Stream error:', err);
-    addAssistantMessageStatic(`Error: ${err.message}. Is compass_server.py running on port 8420?`, null, 'Error');
+    handleStreamError(err);
+    return;
   }
 
   activeReader = null;
-  isLoading = false;
+  isLoading    = false;
   document.getElementById('send-btn').disabled = false;
   scrollToBottom();
 }
 
+/**
+ * Routes an incoming SSE event to the correct handler by stage name.
+ * Preserved SSE event names: compass, signal_lock, compass_done, thinking, action, done.
+ *
+ * @param {Object} data - Parsed SSE event payload.
+ */
 function handleStreamEvent(data) {
   switch (data.stage) {
-    case 'compass':
-      handleCompassToken(data);
-      break;
-    case 'signal_lock':
-      handleSignalLock(data);
-      break;
-    case 'compass_done':
-      handleCompassDone(data);
-      break;
-    case 'thinking':
-      handleThinkingToken(data);
-      break;
-    case 'action':
-      handleActionToken(data);
-      break;
-    case 'done':
-      handleDone(data);
-      break;
+    case 'compass':      handleCompassToken(data);   break;
+    case 'signal_lock':  handleSignalLock(data);     break;
+    case 'compass_done': handleCompassDone(data);    break;
+    case 'thinking':     handleThinkingToken(data);  break;
+    case 'action':       handleActionToken(data);    break;
+    case 'done':         handleDone(data);           break;
     case 'error':
-      addAssistantMessageStatic(`Error: ${data.message}`, null, 'Error');
+      showInlineError(`Error: ${data.message}`, true);
       break;
   }
 }
 
-// ── Utilities ────────────────────────────────────────────
+/* ── Utilities ────────────────────────────────────────────── */
 
+/**
+ * Handles keydown events in the textarea.
+ * Enter (without Shift) submits. Cmd/Ctrl+N creates a new session.
+ *
+ * @param {KeyboardEvent} e
+ */
 function handleKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) {
     e.preventDefault();
     send();
   }
-  // Cmd+N for new session
-  if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
-    e.preventDefault();
-    newSession();
-  }
 }
 
+/**
+ * Auto-resizes the textarea to fit its content up to a max height.
+ * @param {HTMLTextAreaElement} el
+ */
 function autoResize(el) {
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 200) + 'px';
 }
 
+/**
+ * Sets the active response mode and updates mode button visual state.
+ * @param {string} mode - One of 'routed', 'compare', 'raw'.
+ */
 function setMode(mode) {
   currentMode = mode;
   document.querySelectorAll('.mode-btn').forEach(b => {
@@ -1608,56 +2286,130 @@ function setMode(mode) {
   });
 }
 
+/**
+ * Toggles the collapsed state of a collapsible header element.
+ * Works for both compass headers and thinking headers.
+ *
+ * @param {HTMLElement} header - The header element to toggle.
+ */
 function toggleCollapse(header) {
   header.classList.toggle('collapsed');
 }
 
+/**
+ * Smoothly scrolls the chat area to the bottom.
+ */
 function scrollToBottom() {
   const area = document.getElementById('chat-area');
-  requestAnimationFrame(() => area.scrollTop = area.scrollHeight);
+  requestAnimationFrame(() => { area.scrollTop = area.scrollHeight; });
 }
 
+/**
+ * Escapes HTML special characters to prevent XSS when inserting user text.
+ * @param {string} text - Raw input text.
+ * @returns {string} HTML-safe string.
+ */
 function escapeHtml(text) {
-  const div = document.createElement('div');
+  const div       = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
 }
 
-// ── Keyboard Shortcuts ──────────────────────────────────
+/* ── Mobile Sidebar ───────────────────────────────────────── */
 
-document.addEventListener('keydown', (e) => {
-  // Cmd+K: focus input and toggle mode
+/**
+ * Opens the mobile sidebar panel and shows the backdrop.
+ */
+function openMobileSidebar() {
+  document.getElementById('sidebar').classList.add('open');
+  document.getElementById('sidebar-backdrop').classList.add('visible');
+  document.getElementById('mobile-toggle-btn').setAttribute('aria-expanded', 'true');
+}
+
+/**
+ * Closes the mobile sidebar panel and hides the backdrop.
+ */
+function closeMobileSidebar() {
+  document.getElementById('sidebar').classList.remove('open');
+  document.getElementById('sidebar-backdrop').classList.remove('visible');
+  document.getElementById('mobile-toggle-btn').setAttribute('aria-expanded', 'false');
+}
+
+/* ── Keyboard Shortcuts ───────────────────────────────────── */
+
+/**
+ * Global keyboard shortcuts:
+ * - Cmd/Ctrl + N: new session
+ * - Cmd/Ctrl + K: focus input
+ * - Cmd/Ctrl + E: export current session
+ * - Escape: abort stream or close mobile sidebar
+ */
+document.addEventListener('keydown', e => {
+  // Cmd/Ctrl + N: new session
+  if ((e.metaKey || e.ctrlKey) && e.key === 'n') {
+    e.preventDefault();
+    newSession();
+    return;
+  }
+
+  // Cmd/Ctrl + K: focus input
   if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
     e.preventDefault();
-    const modes = ['routed', 'compare', 'raw'];
-    const idx = modes.indexOf(currentMode);
-    setMode(modes[(idx + 1) % modes.length]);
+    document.getElementById('input').focus();
+    return;
   }
-  // Escape: abort streaming
-  if (e.key === 'Escape' && activeReader) {
-    activeReader.cancel();
-    activeReader = null;
-    isLoading = false;
-    document.getElementById('send-btn').disabled = false;
+
+  // Cmd/Ctrl + E: export current session
+  if ((e.metaKey || e.ctrlKey) && e.key === 'e') {
+    e.preventDefault();
+    if (currentSession) exportSession(currentSession);
+    return;
+  }
+
+  // Escape: abort stream or close mobile sidebar
+  if (e.key === 'Escape') {
+    if (isLoading) abortStream();
+    closeMobileSidebar();
+    return;
   }
 });
 
-// ── Health Check & Init ──────────────────────────────────
+/* ── Health Check & Init ──────────────────────────────────── */
 
+/**
+ * Sets the status indicator dot and label text.
+ * @param {'ready'|'loading'|'offline'} status
+ */
+function setStatus(status) {
+  const dot = document.getElementById('status-dot');
+  const txt = document.getElementById('status-text');
+
+  dot.className = `status-dot ${status}`;
+
+  const labels = {
+    ready:   'Pipeline ready',
+    loading: 'Loading models\u2026',
+    proxy:   'Pipeline ready',
+    offline: 'Server offline',
+  };
+  txt.textContent = labels[status] || status;
+}
+
+/**
+ * Polls the /api/health endpoint and updates the status indicator.
+ */
 async function checkHealth() {
   try {
-    const res = await fetch(`${API}/health`);
+    const res  = await fetch(`${API}/health`);
     const data = await res.json();
-    const dot = document.getElementById('status-dot');
-    const txt = document.getElementById('status-text');
-    dot.className = `status-dot ${data.status === 'ready' ? 'ready' : 'loading'}`;
-    txt.textContent = data.status === 'ready' ? 'Pipeline ready' : 'Loading models...';
+    const s    = data.status;
+    setStatus(s === 'ready' || s === 'proxy' ? 'ready' : 'loading');
   } catch {
-    document.getElementById('status-dot').className = 'status-dot';
-    document.getElementById('status-text').textContent = 'Server offline';
+    setStatus('offline');
   }
 }
 
+/* ── Bootstrap ────────────────────────────────────────────── */
 loadSessions();
 checkHealth();
 setInterval(checkHealth, 10000);
