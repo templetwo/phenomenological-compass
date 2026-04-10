@@ -1,0 +1,57 @@
+# Phenomenological Compass — Dual License
+
+## Research & Education (Free)
+
+This work is licensed under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License (CC BY-NC-SA 4.0).
+
+You are free to:
+- Share — copy and redistribute the material in any medium or format
+- Adapt — remix, transform, and build upon the material
+
+Under the following terms:
+- Attribution — You must give appropriate credit to Anthony J. Vasquez Sr. / Temple of Two
+- NonCommercial — You may not use the material for commercial purposes
+- ShareAlike — If you remix, transform, or build upon the material, you must distribute under the same license
+
+Full license: https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+## Commercial Use
+
+For commercial licensing, enterprise deployment, or integration into products or services:
+Contact: Anthony J. Vasquez Sr. / AV Family Enterprise LLC
+Email: templetwo@proton.me
+GitHub: https://github.com/templetwo
+
+Commercial license includes:
+- Full pipeline deployment rights
+- LoRA adapter weights for commercial use
+- Integration support
+- Custom training on proprietary data
+
+## What This Covers
+
+- The Phenomenological Compass pipeline architecture
+- All LoRA adapter weights (v1-v10)
+- Training data and methodology
+- The breathe() recursive self-evaluation method
+- Token budgeting allocation system
+- The epistemic breathing layer
+- Integration with the Sovereign Stack
+
+## What This Does NOT Cover
+
+- Base models (Qwen, Gemma, Ministral) — covered by their own licenses
+- The Sovereign Stack MCP server — separate license at templetwo/sovereign-stack
+- Research papers — covered by their respective DOIs
+
+## Attribution
+
+If you use this work in research, please cite:
+
+Vasquez, A. (2026). The Phenomenological Compass.
+Zenodo. https://doi.org/10.5281/zenodo.19377144
+
+---
+
+Copyright (c) 2025-2026 Anthony J. Vasquez Sr. / AV Family Enterprise LLC
+All rights reserved for commercial use.

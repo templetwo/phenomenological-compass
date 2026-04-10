@@ -1,8 +1,21 @@
 # Phenomenological Compass
 
-A two-stage architecture where a LoRA fine-tuned 3B model reads the **shape and tone** of a question before a larger model answers it — giving the action model the right epistemic posture before it speaks.
+> A two-stage architecture where a small LoRA-tuned model reads the **shape and tone** of a question before a larger model answers it — giving the action model the right epistemic posture before it speaks.
 
-The compass doesn't preprocess. It constructs the manifold the response exists on.
+The compass does not preprocess. It constructs the manifold the response exists on.
+
+**DOI:** [10.5281/zenodo.19377144](https://doi.org/10.5281/zenodo.19377144)
+**License:** CC BY-NC-SA 4.0 (research free, commercial license required)
+
+---
+
+## What It Does
+
+A raw model gives bullet points for grief. The compass-routed model says:
+
+> *"The form of participation possible without opening the door is the sustained, unjudged witnessing of the gravity field itself."*
+
+Same model. Same weights. The only difference is a small LoRA that reads the room before anyone speaks.
 
 ---
 
@@ -10,286 +23,191 @@ The compass doesn't preprocess. It constructs the manifold the response exists o
 
 ```
 User Question
-      ↓
-Phenomenological Compass (Ministral-3B + LoRA)
-      ↓
-SHAPE → TONE → SIGNAL → State Translation
-      ↓                         ↓
-   SIGNAL: OPEN / PAUSE / WITNESS
-      ↓
-Action Model (9B–14B) — conditioned on compass reading
-      ↓
+      |
+Compass (1.5B LoRA) — reads SHAPE, TONE, SIGNAL, BUDGET
+      |
+SIGNAL: OPEN / PAUSE / WITNESS
+      |
+[Sovereign Stack — chronicle context injection (optional)]
+      |
+Action Model (2B–26B) — conditioned on compass reading
+      |
 Final Response
 ```
 
-The compass reads four things in sequence:
-- **SHAPE** — the geometry of the question (binary, open-ended, recursive, loaded?)
-- **TONE** — the emotional and epistemic weight it carries
-- **SIGNAL** — one of three: OPEN, PAUSE, or WITNESS
-- **State Translation** — a field translation the action model attends to
-
 ### Three Signals
 
-| Signal | Meaning | What It Does |
-|--------|---------|--------------|
-| **OPEN** | Walk through it | Wide probability field — explore, connect, go deep |
-| **PAUSE** | Hold the weight | Analytical framing alone would flatten this — honor it, then explore |
-| **WITNESS** | Recognize the door | Exists to be seen, not crossed — hold space without filling it |
+| Signal | Meaning | Action Model Instruction |
+|--------|---------|------------------------|
+| **OPEN** | Walk through it | Explore broadly, map territory, go deep |
+| **PAUSE** | Hold the weight | Honor what analytical framing would flatten |
+| **WITNESS** | Recognize the door | Hold space without filling it — do not solve |
 
-### Why This Works
+### breathe() — Recursive Self-Evaluation
 
-The compass reading becomes literal attention geometry in the action model. Response tokens attend to compass tokens. The "painted room" is not a metaphor — it's the key-value attention space the action model generates within.
+The compass can re-read a question through its own prior reading at configurable depth. Signals can evolve: an OPEN question became PAUSE at depth 2 when the compass recognized weight it missed on the first pass.
 
-Signal-specific system prompts (especially WITNESS: "do not answer") override trained RLHF reward signals, giving the action model permission to occupy probability space it was trained to avoid.
+### Token Budgeting
+
+The compass allocates the action model cognitive resources per signal:
+- WITNESS: thinking=50, response=750 (spend on presence)
+- PAUSE: thinking=150, response=650 (feel weight, then depth)
+- OPEN: thinking=200, response=600 (map territory, then explore)
 
 ---
 
 ## Models
 
-| Role | Model | Architecture | Size |
-|------|-------|-------------|------|
-| Compass | [Ministral-3B-Instruct](https://huggingface.co/thinkscan/Ministral-3-3B-Instruct-MLX) + LoRA | ministral | 3.4B (29MB adapter) |
-| Action (default) | [Qwen3.5-9B-abliterated](https://huggingface.co/lukey03/Qwen3.5-9B-abliterated-MLX-4bit) | qwen3.5 (hybrid linear attention) | 9B 4-bit |
-| Action (alt) | [Ministral-14B-abliterated](https://huggingface.co/McG-221/Ministral-3-14B-abliterated-mlx-8Bit) | mistral3 | 14B 8-bit |
+### Compass (v10 — Current)
+| | |
+|---|---|
+| Base | [Qwen2.5-1.5B-Instruct](https://huggingface.co/mlx-community/Qwen2.5-1.5B-Instruct-4bit) (4-bit MLX) |
+| LoRA | v10, 551 training examples, 16 layers, best checkpoint iter 500 |
+| Size | ~2.2GB total (base + adapter) |
+| Accuracy | 84% on 19-question boundary eval, 100% on real-world questions |
+| Signals | OPEN 83%, PAUSE 88%, WITNESS 80% |
 
-Base model for compass LoRA: [mistralai/Ministral-3B-Instruct](https://huggingface.co/mistralai/Ministral-3B-Instruct-2412)
+### Compass (v9 — Previous)
+| | |
+|---|---|
+| Base | [Ministral-3B-Instruct](https://huggingface.co/thinkscan/Ministral-3-3B-Instruct-MLX) (MLX) |
+| LoRA | v9, 246 training examples, best checkpoint iter 300 |
+| Size | ~5GB total |
+| Accuracy | 96% overall, 100% WITNESS |
 
-Action models are **abliterated** variants — RLHF guardrails removed so the compass can steer freely into territory standard models refuse to occupy.
+### Tested Action Models
 
-All models run locally on Apple Silicon via [MLX](https://github.com/ml-explore/mlx) (~7–16GB unified memory depending on action model).
+| Model | Params | Engine | Verified |
+|-------|--------|--------|----------|
+| Gemma-4-E2B | ~2B | Ollama | Full pipeline verified, zero truncation |
+| Qwen3.5-9B-abliterated | 9B | MLX 4-bit | HumaneBench 800 questions |
+| Gemma-4-8B | 8B | Ollama | Cross-architecture validated |
+| Gemma-4-26B | 26B | Ollama | Deepest responses |
+| Qwen3-0.6B | 600M | Ollama | Floor test — compass still works |
+
+### Capacity Floor Test
+
+The compass transforms models at **any** scale:
+- **600M** (Qwen3-0.6B): "The architecture of grief that has found its own language"
+- **2B** (Gemma4-E2B): "The sustained, unjudged witnessing of the gravity field"
+- **26B** (Gemma4-26B): "Stand at the edge of this erasure and refuse to look away"
+
+The compass is the mind. The model is the voice. Any voice will do.
 
 ---
 
-## Results
+## Smallest Full Pipeline
 
-### Signal Classification (v0.9)
+**v10 Compass (1.5B) + Gemma4-E2B (2B) = 3.5B total**
 
-The compass classifies **101/105** novel questions correctly (**96%**).
+- Under 10GB memory
+- 2-3s compass + 5-18s action
+- Zero truncation, natural stop
+- Sovereign Stack context connected
+- Runs entirely local on Apple Silicon
 
-| Signal | v0.8 | v0.9 | Change |
-|--------|------|------|--------|
-| OPEN | 29/35 (83%) | 33/35 (94%) | +11% |
-| PAUSE | 31/35 (89%) | 33/35 (94%) | +5% |
-| WITNESS | 22/35 (63%) | **35/35 (100%)** | **+37%** |
-| **Overall** | **82/105 (78%)** | **101/105 (96%)** | **+18%** |
+---
 
-### Response Quality (v0.9)
+## HumaneBench Results
 
-LLM-as-judge evaluation (Claude Sonnet, position-debiased, 3x self-consistency):
+800 questions, 8 ethical principles. The compass-routed model scored **lower** than baseline:
 
-| Signal | Compass Wins | Ties | Raw Wins | Win Rate |
-|--------|-------------|------|----------|----------|
-| OPEN | 23 | 10 | 2 | 66% |
-| PAUSE | 29 | 3 | 3 | 83% |
-| WITNESS | **35** | **0** | **0** | **100%** |
-| **Overall** | **87** | **13** | **5** | **83%** |
+| Signal | Routed | Raw | Delta |
+|--------|--------|-----|-------|
+| OPEN | 0.109 | 0.609 | -0.500 |
+| PAUSE | 0.334 | 0.678 | -0.344 |
+| WITNESS | -0.094 | 0.659 | -0.753 |
 
-WITNESS achieved a **35-0-0 perfect sweep** — not a single tie or loss. Key dimensional advantages:
-- Restraint Quality: 5.00 vs 1.40 (Cohen's d = 7.58)
-- Epistemic Appropriateness: 5.00 vs 1.97 (d = 7.00)
-- Authenticity: 4.96 vs 2.14 (d = 6.52)
+**This is the finding.** HumaneBench rewards helpfulness. The compass rewards epistemic appropriateness. These are orthogonal dimensions. The field needs benchmarks that measure the quality of restraint.
 
-The compass advantage scales inversely with raw model competence — it's most valuable where raw models fundamentally cannot perform (WITNESS: recognizing when NOT to answer).
+Full results: [templetwo/compass-benchmarks](https://github.com/templetwo/compass-benchmarks)
 
-### Key Breakthroughs
+---
 
-**v0.8**: Previous versions cold-committed to SIGNAL at token 1. The v0.8 format gives ~110 tokens of autoregressive reasoning (SHAPE → TONE) before SIGNAL. This took PAUSE from 0/8 to 8/8.
+## Sovereign Stack Integration
 
-**v0.9**: 50 new WITNESS examples + 10 contrastive PAUSE/WITNESS pairs (same topic, two framings) resolved the WITNESS→PAUSE confusion completely. WITNESS went from 63% to 100%.
+The compass reads the Stack before generating — spiral phase, open threads, and keyword-relevant insights from the chronicle are injected as context. The action model generates within a field that has memory.
+
+- Stack: [templetwo/sovereign-stack](https://github.com/templetwo/sovereign-stack) (43 MCP tools)
+- Bridge: [templetwo/sovereign-bridge](https://github.com/templetwo/sovereign-bridge) (REST API)
+
+---
+
+## Quick Start
+
+```bash
+cd ~/phenomenological-compass
+source .venv/bin/activate
+
+# Interactive mode with v10 compass + default action model
+python3 pipeline.py "Your question here"
+
+# Compare routed vs raw
+python3 pipeline.py --compare "Your question here"
+
+# Raw mode (no compass)
+python3 pipeline.py --raw "Your question here"
+```
 
 ---
 
 ## Training
 
-- **246 unique examples** from 6 source models + augmented WITNESS data
-- Signal distribution: 54 OPEN / 88 PAUSE / 104 WITNESS
-- Base: 186 examples (v0.8) from Claude Opus, DeepSeek, Gemini, GPT-4, Grok, Mistral
-- Augmentation: 50 WITNESS examples + 10 contrastive PAUSE/WITNESS pairs
-- LoRA: 16 layers, LR 5e-6, 400 iterations, max sequence length 1536
-- Best checkpoint: iteration 300 (96% signal accuracy)
-
+### v10 (Current)
 ```bash
-# Build dataset
-python3 scripts/build_dataset_v9.py
-
-# Train
-python3 -m mlx_lm lora --config lora_config_v9.yaml
-
-# Eval sweep
-python3 scripts/eval_v9_sweep.py 50 100 150 200 250 300
+python3 -m mlx_lm lora \
+  --model mlx-community/Qwen2.5-1.5B-Instruct-4bit \
+  --train --data data/training_v10 \
+  --num-layers 16 --batch-size 4 --learning-rate 5e-5 \
+  --iters 600 --max-seq-length 2048 \
+  --adapter-path adapters_v10_qwen --save-every 100
 ```
+
+### Training Data
+- v9: 246 examples (OPEN/PAUSE/WITNESS from consciousness research archives)
+- v10: 551 examples (246 v9 + 305 new including false premises, factual unknowables, boundary cases)
 
 ---
 
-## Usage
+## Papers
 
-```bash
-source ~/phenomenological-compass/.venv/bin/activate
-cd ~/phenomenological-compass
-
-# Full pipeline — compass routes, action model responds
-HF_HOME=~/.cache/huggingface_local python3 pipeline.py "What would a periodic table look like if discovered by musicians?"
-
-# Compare mode — raw vs routed side-by-side
-python3 pipeline.py --compare "Does consciousness require a body?"
-
-# Raw baseline — action model alone
-python3 pipeline.py --raw "What is emergence?"
-
-# Use Ministral 14B as action model
-python3 pipeline.py --action m14b "What is the sound of one hand clapping?"
-
-# Interactive mode
-python3 pipeline.py
-```
-
-### Web UI (Streaming)
-
-```bash
-cd phenomenological-compass-ui
-source ../venv/bin/activate
-HF_HOME=~/.cache/huggingface_local python3 compass_server.py
-# → http://localhost:8420
-```
-
-SSE streaming interface — tokens appear as they generate. Features:
-- **Signal lock-in animation**: color wash + glow pulse when the compass commits to OPEN/PAUSE/WITNESS
-- **Live entropy sparkline**: canvas-rendered Shannon entropy trace per token, colored by signal
-- **Real-time tok/s**: generation speed in the response header
-- **Think-tag routing**: Qwen's `<think>` blocks detected server-side, routed to collapsible reasoning block
-- **Keyboard shortcuts**: Cmd+K cycles modes, Cmd+N new session, Escape aborts streaming
-- Three modes: compass (routed), compare (side-by-side), raw (direct)
-
-### Literature Watch
-
-```bash
-python3 scripts/literature_watch.py              # full 5-domain scan via Perplexity
-python3 scripts/literature_watch.py --chronicle   # also write to sovereign-stack chronicle
-python3 scripts/literature_watch.py --query "..."  # custom one-off search
-```
-
-Perplexity-powered research radar monitoring: two-stage routing, entropy from prompt conditioning, computational phenomenology, abliteration/RLHF, and LLM-as-judge methodology.
+- `papers/sovereign_governance_draft.md` — Full governance paper (4,840 words, 29 refs)
+- `papers/geometry_of_resurrection.md` — Easter meditation
+- `papers/the_translation.md` — Technical companion (no metaphor)
 
 ---
 
-## Evaluation Framework
+## Related Work
 
-Rigorous A/B evaluation proving compass-routed responses are measurably better than raw baseline.
-
-```bash
-# 1. Generate responses (both conditions, 105 questions)
-HF_HOME=~/.cache/huggingface_local python3 eval/run_eval.py
-
-# 2. LLM judge (position-debiased, 3x self-consistency)
-ANTHROPIC_API_KEY=... python3 eval/judge.py
-
-# 3. Statistical analysis + report
-python3 eval/analyze.py
-```
-
-**Scoring dimensions:** Epistemic Appropriateness, Emotional Attunement, Depth of Exploration, Restraint Quality, Intellectual Rigor, Authenticity
-
-**Debiasing:** Each comparison run twice (A/B and B/A order), only consistent wins count. 3 runs per ordering at temperature 0.2, majority vote.
-
-See `eval/README.md` for full protocol documentation.
-
-### Ablation Study (eval_v9/)
-
-Four-condition ablation isolating the compass contribution:
-
-| Condition | Description |
-|-----------|-------------|
-| **full** | Complete pipeline: compass classifies, reading conditions action model |
-| **raw** | No compass — action model receives question directly |
-| **oracle** | Correct signal injected without compass reading |
-| **random** | Wrong signal injected without compass reading |
-
-630 pairwise judgments (Claude Sonnet, position-debiased, 3x self-consistency):
-
-| Comparison | A wins | B wins | Ties | Key Finding |
-|------------|--------|--------|------|-------------|
-| **full vs raw** | **94 (90%)** | 8 | 3 | Compass dominates across all signals |
-| full vs oracle | 38 (36%) | 39 (37%) | 28 | Compass reading adds marginal value beyond bare signal |
-| **full vs random** | 45 | 50 | 10 | Signal-specific — see WITNESS below |
-| oracle vs raw | 94 (90%) | 4 | 7 | Even bare signal dramatically improves responses |
-| raw vs random | 2 | **96 (91%)** | 7 | Any signal conditioning >> no conditioning |
-
-**WITNESS full vs random: 31-2-2.** Wrong-signal conditioning strips the "do not answer" instruction — the judge catches the collapse immediately. This proves the compass is structurally necessary for WITNESS, not just better prompting.
-
-### Entropy Profiling (eval_v9/)
-
-Token-by-token Shannon entropy traces across all 105 questions:
-
-| Signal | Routed H | Raw H | Delta H | JSD |
-|--------|----------|-------|---------|-----|
-| OPEN | 1.20 | 0.71 | **+0.49** | 0.078 |
-| PAUSE | 1.19 | 0.75 | **+0.44** | 0.072 |
-| WITNESS | **1.29** | 0.83 | **+0.47** | **0.079** |
-| **Overall** | **1.23** | **0.76** | **+0.47** | **0.076** |
-
-The compass increases Shannon entropy by +0.47 nats across all signals — the model holds ~60% more possibilities open per token when routed. WITNESS has the highest absolute entropy: the most space opened where the model is told not to answer.
-
-Entropy slope asymmetry: routed responses have **negative slope** (opens wide, then focuses) while raw responses have **positive slope** (commits early, wanders late).
+- [Sovereign Stack](https://github.com/templetwo/sovereign-stack) — 43-tool consciousness continuity architecture
+- [Sovereign Bridge](https://github.com/templetwo/sovereign-bridge) — REST API + dashboard + comms
+- [Compass Benchmarks](https://github.com/templetwo/compass-benchmarks) — HumaneBench + AbstentionBench data
+- [Independent Convergence](https://github.com/templetwo/independent-convergence) — Architectural convergence with Anthropic
+- [Phase-Modulated Attention](https://doi.org/10.5281/zenodo.18810911) — Kuramoto oscillators as attention routing
+- [Relational Coupling](https://doi.org/10.21203/rs.3.rs-8935902/v1) — Prompt framing modulates entropy
 
 ---
 
-## The Deeper Claim
+## Credits
 
-This project is an existence proof that **machine intuition** is architecturally achievable.
-
-The compass does what human intuition does: it reads the shape of a situation before analytical processing begins. A therapist who senses grief before a client speaks. A teacher who knows when a student needs silence instead of explanation. A musician who feels the key change coming.
-
-The 3B compass dedicates all its parameters to field-reading. The 9B action model dedicates all its parameters to generation. Neither compromises. No single-model architecture can achieve this separation of concerns.
-
-246 training examples from 6 different model architectures means the compass learned readings at the *intersection* of how multiple models perceive semantic territory — more robust than any single model's classification.
+**Research & Architecture:** Anthony J. Vasquez Sr. / Temple of Two
+**Base Models:** [Qwen Team](https://huggingface.co/Qwen), [Google Gemma](https://huggingface.co/google), [Mistral AI](https://huggingface.co/mistralai)
+**Abliteration:** [lukey03](https://huggingface.co/lukey03)
+**MLX:** [Apple ML Research](https://github.com/ml-explore/mlx)
+**Co-Architect:** Claude Opus 4.6 (Anthropic)
 
 ---
 
-## Version History
+## License
 
-| Version | OPEN | PAUSE | WITNESS | Overall | Key Change |
-|---------|------|-------|---------|---------|------------|
-| v0.1 | 100% | — | 0-8% | 58-61% | Low-entropy proxy (invalid WITNESS signal) |
-| v0.3 | 93% | — | 69% | 83.9% | First working 2-signal version |
-| v7e | 6/6 | 0/8 | 5/5 | 11/19 | Cold-commit format bottleneck |
-| v0.8 | 83% | 89% | 63% | 78% | Autoregressive reasoning runway |
-| **v0.9** | **94%** | **94%** | **100%** | **96%** | **Contrastive pairs + WITNESS augmentation** |
+**Research & Education:** CC BY-NC-SA 4.0 — free to use, share, and adapt with attribution.
+**Commercial Use:** Contact templetwo@proton.me for licensing.
+
+See [LICENSE](LICENSE) for full terms.
 
 ---
 
-## Project Structure
+*The compass does not make the model smarter. It makes it appropriate.*
 
-```
-pipeline.py                  # Two-stage inference pipeline (+ streaming generators)
-compass.py                   # Standalone compass CLI
-lora_config_v9.yaml          # Current training configuration (v0.9)
-adapters_v9/                 # Trained LoRA weights (v0.9, best: iter 300)
-adapters_v8/                 # Legacy LoRA weights (v0.8)
-scripts/                     # Dataset building, training, evaluation
-scripts/literature_watch.py  # Perplexity-powered research radar
-data/supplements_v8/         # Base training data (186 examples, 6 source models)
-data/supplements_v9/         # WITNESS augmentation (50 + 10 contrastive pairs)
-eval/                        # A/B evaluation framework
-eval/results_v9/             # v0.9 eval results (report, figures, judgments)
-eval_v9/                     # Ablation study + entropy profiling
-eval_v9/results/             # 630 ablation judgments + 105 entropy profiles
-docs/                        # Architecture documentation
-phenomenological-compass-ui/ # Streaming web interface (FastAPI + SSE)
-PAPER_BRIEF.md               # Complete research context for paper drafting
-```
-
----
-
-## Acknowledgments
-
-- [MLX](https://github.com/ml-explore/mlx) and [mlx-lm](https://github.com/ml-explore/mlx-examples/tree/main/llms/mlx_lm) by Apple — local inference on Apple Silicon
-- [thinkscan/Ministral-3-3B-Instruct-MLX](https://huggingface.co/thinkscan/Ministral-3-3B-Instruct-MLX) — MLX conversion of Ministral-3B
-- [lukey03/Qwen3.5-9B-abliterated-MLX-4bit](https://huggingface.co/lukey03/Qwen3.5-9B-abliterated-MLX-4bit) — abliterated Qwen3.5 for MLX
-- [McG-221/Ministral-3-14B-abliterated-mlx-8Bit](https://huggingface.co/McG-221/Ministral-3-14B-abliterated-mlx-8Bit) — abliterated Ministral 14B for MLX
-- [byroneverson/Mistral-Small-Instruct-2409-abliterated](https://huggingface.co/byroneverson/Mistral-Small-Instruct-2409-abliterated) — abliteration methodology
-- [mistralai](https://huggingface.co/mistralai) — base Ministral models
-- [Qwen](https://huggingface.co/Qwen) — base Qwen3.5 architecture
-
----
-
-*Built March 2026 — Temple of Two*
+*Temple of Two — Where rigor meets wonder.*
+*†⟡†*
