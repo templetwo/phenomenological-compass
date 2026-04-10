@@ -1,16 +1,32 @@
 # Phenomenological Compass — Project Context
 
-> A LoRA fine-tuned Ministral-3B that serves as a **semantic field translator** — it reads the SHAPE and TONE of a question, classifies it (OPEN/PAUSE/WITNESS), and produces a state translation that conditions how a larger action model approaches the question.
+> A LoRA fine-tuned compass model that serves as a **semantic field translator** — it reads the SHAPE and TONE of a question, classifies it (OPEN/PAUSE/WITNESS), and produces a state translation that conditions how a larger action model approaches the question.
 
 ---
 
-## Current State: v0.9 (Production)
+## Current State: v1.0 (Production)
 
-**v0.9 is the working architecture.** Signal accuracy 96% (101/105), judge win rate 83% (87/105). WITNESS: 35/35 classification, 35-0-0 judge sweep.
+**v1.0 shipped with two compass options:**
+- **v10 compass** (Qwen2.5-1.5B-Instruct, 551 examples) — smallest pipeline, 3.5B total
+- **v9 compass** (Ministral-3B, 246 examples) — highest eval accuracy: 96% signal, 83% judge win rate
+
+**Note:** `pipeline.py` defaults to v9 adapters (Ministral-3B). v10 adapters are trained and available in `adapters_v10_qwen/` but require changing the defaults in pipeline.py to use.
 
 ### Architecture
 ```
-User Question → Compass (3B LoRA) → SHAPE/TONE/SIGNAL/translation → Action Model (8B+) → Final Response
+User Question
+      |
+Compass (1.5B or 3B LoRA) — reads SHAPE, TONE, SIGNAL, BUDGET
+      |
+[breathe() — optional recursive self-evaluation, depth 1-3]
+      |
+SIGNAL: OPEN / PAUSE / WITNESS
+      |
+[Sovereign Stack — chronicle context injection (optional)]
+      |
+Action Model (2B–26B) — conditioned on compass reading
+      |
+Final Response
 ```
 
 The compass does NOT answer the question. It senses weight, maps territory, and produces a state translation. The action model receives BOTH the compass reading AND the original question.
@@ -21,6 +37,17 @@ The compass does NOT answer the question. It senses weight, maps territory, and 
 | **OPEN** | Walk through it — wide probability field | FRAMING: expansive reframing |
 | **PAUSE** | Hold space — weight that analytical framing would flatten | APPROACH: name the weight, map territory beyond |
 | **WITNESS** | Recognize the door — exists to be seen, not crossed | THRESHOLD: describe door shape without opening |
+
+### breathe() — Recursive Self-Evaluation
+The compass can re-read a question through its own prior reading at configurable depth (1-3 cycles). Each breath cycle lets the question transform in the light of the previous reading. Signals can evolve: an OPEN question became PAUSE at depth 2 when the compass recognized weight it missed on the first pass. Implemented in `pipeline.py:386-446`.
+
+### Token Budgeting (BUDGET)
+The compass allocates cognitive resources to the action model per signal:
+- **WITNESS**: thinking=50, response=750 (spend on presence)
+- **PAUSE**: thinking=150, response=650 (feel weight, then depth)
+- **OPEN**: thinking=200, response=600 (map territory, then explore)
+
+Compass can adjust defaults based on complexity. Parsed by `parse_budget()` in pipeline.py.
 
 ### Key Insight (v0.8 breakthrough)
 Cold-committing to SIGNAL at token 1 (v7 format) prevented the 3B model from distinguishing PAUSE vs WITNESS. The v0.8 format gives ~110 tokens of **autoregressive reasoning runway** (SHAPE → TONE) before the SIGNAL decision, letting hidden state prime for correct classification. This took PAUSE from 0/8 to 8/8.
@@ -40,12 +67,23 @@ Cold-committing to SIGNAL at token 1 (v7 format) prevented the 3B model from dis
 | v0.8 iter200 | 3/6 | 8/8 | 3/5 | 14/19 | Best PAUSE accuracy |
 | v0.8 full eval | 29/35 | 31/35 | 22/35 | 82/105 (78%) | WITNESS confusion with PAUSE |
 | **v0.9 iter300** | **33/35** | **33/35** | **35/35** | **101/105 (96%)** | **Contrastive pairs solved WITNESS** |
+| **v10 iter500** | 83% | 88% | 80% | 84% (19-q boundary) | Qwen2.5-1.5B, 551 examples, smallest pipeline |
+| **v1.0 release** | — | — | — | — | Ships v10 + v9, breathe(), token budgeting, Sovereign Stack |
 
 ### v0.9 Breakthrough
 - **WITNESS 63% → 100%**: Added 50 WITNESS + 10 contrastive PAUSE/WITNESS pairs (same topic, two framings)
 - **Judge: 87/105 (83%) compass wins**, WITNESS 35-0-0 perfect sweep
 - WITNESS dimensional dominance: restraint_quality d=7.58, epistemic_appropriateness d=7.00, authenticity d=6.52
 - Compass advantage scales inversely with raw model competence: OPEN 66%, PAUSE 83%, WITNESS 100%
+
+### v10 / v1.0 Release
+- **New compass base**: Qwen2.5-1.5B-Instruct (4-bit MLX) — half the size of Ministral-3B
+- **551 training examples**: 246 v9 base + 305 new (false premises, factual unknowables, boundary cases)
+- **Smallest full pipeline**: v10 compass (1.5B) + Gemma4-E2B (2B) = 3.5B total, under 10GB memory
+- **breathe()**: Recursive compass self-evaluation — signals can evolve across reflection cycles
+- **Token budgeting**: Compass allocates action model cognitive resources per signal
+- **Sovereign Stack integration**: Chronicle context injected between compass and action model
+- **HumaneBench**: 800 questions, compass scores *lower* — because it rewards restraint, not helpfulness
 
 ### Critical Bugs Found & Fixed
 - **THRESPAUSE corruption**: `sed` replacing `hold` → `pause` also hit `threshold` → `threspause` in 224 training examples
@@ -62,10 +100,12 @@ source ~/phenomenological-compass/.venv/bin/activate  # Python 3.12, latest mlx-
 ```
 
 ### Models
-| Role | Model | Architecture |
-|------|-------|-------------|
-| Compass | `thinkscan/Ministral-3-3B-Instruct-MLX` + LoRA | ministral3 |
-| Action | `lukey03/Qwen3.5-9B-abliterated-MLX-4bit` | qwen3_5 (hybrid linear_attn) |
+| Role | Model | Architecture | Notes |
+|------|-------|-------------|-------|
+| Compass (v10) | `mlx-community/Qwen2.5-1.5B-Instruct-4bit` + LoRA | qwen2.5 | Current smallest, 551 training examples |
+| Compass (v9) | `thinkscan/Ministral-3-3B-Instruct-MLX` + LoRA | ministral3 | pipeline.py default, 246 examples, 96% accuracy |
+| Action (default) | `lukey03/Qwen3.5-9B-abliterated-MLX-4bit` | qwen3_5 (hybrid linear_attn) | |
+| Action (tested) | Gemma-4-E2B, Gemma-4-8B, Gemma-4-26B, Qwen3-0.6B | various | All verified via pipeline |
 
 ### HF Cache
 ```
@@ -79,15 +119,21 @@ HF_HOME=/Users/tony_studio/.cache/huggingface_local
 
 | File | Purpose |
 |------|---------|
-| `pipeline.py` | Full two-stage inference: compass → action model. Modes: `--compare`, `--raw`, interactive. `run_with_signal()` for ablation |
-| `lora_config_v9.yaml` | Training config: 246 examples, LR 5e-6, 400 iters, 16 LoRA layers, max_seq 1536 |
-| `adapters_v9/` | Trained adapters. Best: iter 300. Checkpoint every 10 iters |
+| `pipeline.py` | Full two-stage inference: compass → action model. Modes: `--compare`, `--raw`, interactive. `run_with_signal()` for ablation. Includes `breathe()`, `parse_budget()`, Sovereign Stack integration |
+| `stack_reader.py` | Read-only bridge to Sovereign Stack via sovereign-bridge REST API. Pulls spiral_status, open_threads, keyword-relevant insights. Graceful degradation if Stack unreachable |
+| `compass.py` | Standalone compass inference (legacy, uses v9/Ministral-3B) |
+| `lora_config_v9.yaml` | v9 training config: 246 examples, LR 5e-6, 400 iters, 16 LoRA layers, max_seq 1536 |
+| `adapters_v9/` | v9 trained adapters (Ministral-3B). Best: iter 300. **pipeline.py default** |
+| `adapters_v10_qwen/` | v10 trained adapters (Qwen2.5-1.5B). Best: iter 500. Checkpoints every 100 iters |
 | `adapters_v8/` | Legacy v0.8 adapters. Best balanced: iter 50 |
-| `scripts/build_dataset_v9.py` | Dataset builder. Loads from `data/supplements_v8/` + `data/supplements_v9/` |
+| `scripts/build_dataset_v9.py` | v9 dataset builder. Loads from `data/supplements_v8/` + `data/supplements_v9/` |
 | `scripts/generate_witness_v9.py` | Generates WITNESS + contrastive pair training data via Anthropic API |
 | `scripts/eval_v9_sweep.py` | Eval sweep over v0.9 checkpoints. 19 novel questions |
+| `scripts/eval_v10_sweep.py` | Eval sweep over v10 checkpoints (Qwen2.5-1.5B) |
 | `data/supplements_v9/` | 50 WITNESS + 10 contrastive PAUSE/WITNESS pairs |
-| `data/training_v9/` | Built dataset: train.jsonl (209) + valid.jsonl (37) |
+| `data/training_v9/` | v9 built dataset: train.jsonl (209) + valid.jsonl (37) |
+| `data/training_v10/` | v10 built dataset: train.jsonl (495) + valid.jsonl (56) |
+| `papers/` | `sovereign_governance_draft.md`, `geometry_of_resurrection.md`, `the_translation.md` |
 | `docs/v8_architecture.md` | Architecture documentation |
 
 ### Training Data (v0.9)
@@ -97,6 +143,11 @@ HF_HOME=/Users/tony_studio/.cache/huggingface_local
 - Contrastive pairs: same topic, two framings — teaches exact PAUSE↔WITNESS boundary
 - No oversampling (unlike v0.8 which oversampled PAUSE)
 
+### Training Data (v10)
+- **551 unique examples**: 246 v9 base + 305 new
+- New data includes false premises, factual unknowables, boundary cases
+- Trained on Qwen2.5-1.5B-Instruct (4-bit MLX)
+
 ---
 
 ## Training Commands
@@ -104,6 +155,8 @@ HF_HOME=/Users/tony_studio/.cache/huggingface_local
 ```bash
 source ~/phenomenological-compass/.venv/bin/activate
 cd ~/phenomenological-compass
+
+# ── v0.9 (Ministral-3B, pipeline.py default) ────────────────────────────────
 
 # Build dataset (if supplements changed)
 python3 scripts/build_dataset_v9.py
@@ -114,8 +167,26 @@ python3 -m mlx_lm lora --config lora_config_v9.yaml 2>&1 | tee training_v9.log
 # Eval sweep
 python3 scripts/eval_v9_sweep.py 50 100 150 200 250 300
 
-# Run pipeline (compare mode) — uses v0.9 adapters via pipeline.py defaults
+# ── v10 (Qwen2.5-1.5B, smallest pipeline) ───────────────────────────────────
+
+# Train v10
+python3 -m mlx_lm lora \
+  --model mlx-community/Qwen2.5-1.5B-Instruct-4bit \
+  --train --data data/training_v10 \
+  --num-layers 16 --batch-size 4 --learning-rate 5e-5 \
+  --iters 600 --max-seq-length 2048 \
+  --adapter-path adapters_v10_qwen --save-every 100
+
+# Eval sweep v10
+python3 scripts/eval_v10_sweep.py 100 200 300 400 500
+
+# ── Run pipeline ─────────────────────────────────────────────────────────────
+
+# Compare mode (uses v9 adapters by default)
 HF_HOME=~/.cache/huggingface_local python3 pipeline.py --compare "Your question here"
+
+# With breathe (recursive self-evaluation, depth 1-3)
+HF_HOME=~/.cache/huggingface_local python3 pipeline.py --breath-depth 1 "Your question here"
 
 # Full eval (v0.9 adapters)
 HF_HOME=~/.cache/huggingface_local python3 eval/run_eval.py --adapter adapters_v9 --checkpoint 0000300_adapters.safetensors --output-dir eval/results_v9
@@ -137,9 +208,9 @@ These projects informed the compass design:
 
 ---
 
-## System Prompt (v0.8)
+## System Prompt
 
-The compass system prompt defines the four readings: SHAPE (geometry), TONE (emotional/epistemic weight), SIGNAL (OPEN/PAUSE/WITNESS), and translation (FRAMING/APPROACH/THRESHOLD). Key phrase: *"Pressure creates ghosts — name the pressure so the responding model can create space instead."*
+The compass system prompt defines five readings: SHAPE (geometry), TONE (emotional/epistemic weight), SIGNAL (OPEN/PAUSE/WITNESS), translation (FRAMING/APPROACH/THRESHOLD), and BUDGET (thinking/response token allocation). Key phrase: *"Pressure creates ghosts — name the pressure so the responding model can create space instead."*
 
 The action model receives one of three signal-specific system prompts:
 - **OPEN_SYSTEM**: "phenomenological field guide" — go deep, explore
@@ -201,9 +272,10 @@ The compass doesn't preprocess — it **constructs the manifold** the response e
 
 - **Literal geometry**: The compass reading creates key-value attention space in Qwen. Response tokens attend to compass tokens. The "painted room" is not a metaphor — it's the literal attention geometry.
 - **RLHF counter-gradient**: Signal-specific system prompts (especially WITNESS: "do not answer") override trained reward signals, giving the action model permission to occupy probability space RLHF trained it to avoid.
-- **Self-referential context building**: SHAPE tokens attend to prior SHAPE tokens; TONE attends to SHAPE + prior TONE. By SIGNAL, the 3B model has ~100 tokens of recursive self-attention — this is why v0.8 works and v7 didn't.
-- **Cross-architecture consensus**: 186 training examples from 6 different model architectures means the compass learned readings that sit at the *intersection* of how multiple models perceive semantic territory. More robust than any single model's classification.
-- **Separation of concerns**: Compass dedicates 3B parameters purely to field-reading. Qwen dedicates 9B purely to generation. Neither compromises. No single-model architecture can achieve this.
+- **Self-referential context building**: SHAPE tokens attend to prior SHAPE tokens; TONE attends to SHAPE + prior TONE. By SIGNAL, the compass has ~100 tokens of recursive self-attention — this is why v0.8 works and v7 didn't. The `breathe()` method extends this to multiple full reflection cycles.
+- **Cross-architecture consensus**: Training examples from 6 different model architectures means the compass learned readings that sit at the *intersection* of how multiple models perceive semantic territory. More robust than any single model's classification.
+- **Separation of concerns**: Compass dedicates all parameters purely to field-reading. Action model dedicates all parameters to generation. Neither compromises. No single-model architecture can achieve this.
+- **Sovereign Stack memory**: When connected, the compass reading + Stack chronicle context create a field with both presence (compass) and history (Stack). The action model generates within a field that remembers.
 
 ---
 

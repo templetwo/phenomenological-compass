@@ -58,7 +58,7 @@ The compass allocates the action model cognitive resources per signal:
 
 ## Models
 
-### Compass (v10 — Current)
+### Compass (v10 — Smallest)
 | | |
 |---|---|
 | Base | [Qwen2.5-1.5B-Instruct](https://huggingface.co/mlx-community/Qwen2.5-1.5B-Instruct-4bit) (4-bit MLX) |
@@ -66,14 +66,18 @@ The compass allocates the action model cognitive resources per signal:
 | Size | ~2.2GB total (base + adapter) |
 | Accuracy | 84% on 19-question boundary eval, 100% on real-world questions |
 | Signals | OPEN 83%, PAUSE 88%, WITNESS 80% |
+| Adapters | `adapters_v10_qwen/` |
 
-### Compass (v9 — Previous)
+### Compass (v9 — Highest Eval Accuracy, pipeline.py default)
 | | |
 |---|---|
 | Base | [Ministral-3B-Instruct](https://huggingface.co/thinkscan/Ministral-3-3B-Instruct-MLX) (MLX) |
 | LoRA | v9, 246 training examples, best checkpoint iter 300 |
 | Size | ~5GB total |
 | Accuracy | 96% overall, 100% WITNESS |
+| Adapters | `adapters_v9/` — **default in pipeline.py** |
+
+> **Note:** `pipeline.py` defaults to v9 adapters (Ministral-3B). To use v10, update `COMPASS_MODEL` and `COMPASS_ADAPTER` in pipeline.py.
 
 ### Tested Action Models
 
