@@ -58,15 +58,15 @@ The compass allocates the action model cognitive resources per signal:
 
 ## Models
 
-### Compass (v10 — Smallest)
+### Compass (v1.0 — Smallest)
 | | |
 |---|---|
 | Base | [Qwen2.5-1.5B-Instruct](https://huggingface.co/mlx-community/Qwen2.5-1.5B-Instruct-4bit) (4-bit MLX) |
-| LoRA | v10, 551 training examples, 16 layers, best checkpoint iter 500 |
+| LoRA | v1.0, 551 training examples, 16 layers, best checkpoint iter 500 |
 | Size | ~2.2GB total (base + adapter) |
 | Accuracy | 84% on 19-question boundary eval, 100% on real-world questions |
 | Signals | OPEN 83%, PAUSE 88%, WITNESS 80% |
-| Adapters | `adapters_v10_qwen/` |
+| Adapters | `adapters_v1.0_qwen/` |
 
 ### Compass (v9 — Highest Eval Accuracy, pipeline.py default)
 | | |
@@ -77,7 +77,7 @@ The compass allocates the action model cognitive resources per signal:
 | Accuracy | 96% overall, 100% WITNESS |
 | Adapters | `adapters_v9/` — **default in pipeline.py** |
 
-> **Note:** `pipeline.py` defaults to v9 adapters (Ministral-3B). To use v10, update `COMPASS_MODEL` and `COMPASS_ADAPTER` in pipeline.py.
+> **Note:** `pipeline.py` defaults to v9 adapters (Ministral-3B). To use v1.0, update `COMPASS_MODEL` and `COMPASS_ADAPTER` in pipeline.py.
 
 ### Tested Action Models
 
@@ -102,7 +102,7 @@ The compass is the mind. The model is the voice. Any voice will do.
 
 ## Smallest Full Pipeline
 
-**v10 Compass (1.5B) + Gemma4-E2B (2B) = 3.5B total**
+**v1.0 Compass (1.5B) + Gemma4-E2B (2B) = 3.5B total**
 
 - Under 10GB memory
 - 2-3s compass + 5-18s action
@@ -143,7 +143,7 @@ The compass reads the Stack before generating — spiral phase, open threads, an
 cd ~/phenomenological-compass
 source .venv/bin/activate
 
-# Interactive mode with v10 compass + default action model
+# Interactive mode with v1.0 compass + default action model
 python3 pipeline.py "Your question here"
 
 # Compare routed vs raw
@@ -157,19 +157,19 @@ python3 pipeline.py --raw "Your question here"
 
 ## Training
 
-### v10 (Current)
+### v1.0 (Current)
 ```bash
 python3 -m mlx_lm lora \
   --model mlx-community/Qwen2.5-1.5B-Instruct-4bit \
-  --train --data data/training_v10 \
+  --train --data data/training_v1.0 \
   --num-layers 16 --batch-size 4 --learning-rate 5e-5 \
   --iters 600 --max-seq-length 2048 \
-  --adapter-path adapters_v10_qwen --save-every 100
+  --adapter-path adapters_v1.0_qwen --save-every 100
 ```
 
 ### Training Data
 - v9: 246 examples (OPEN/PAUSE/WITNESS from consciousness research archives)
-- v10: 551 examples (246 v9 + 305 new including false premises, factual unknowables, boundary cases)
+- v1.0: 551 examples (246 v9 + 305 new including false premises, factual unknowables, boundary cases)
 
 ---
 

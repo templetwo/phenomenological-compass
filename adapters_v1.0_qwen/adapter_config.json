@@ -1,9 +1,9 @@
 {
-    "adapter_path": "adapters_v10_qwen",
+    "adapter_path": "adapters_v1.0_qwen",
     "batch_size": 4,
     "clear_cache_threshold": 0,
     "config": null,
-    "data": "data/training_v10",
+    "data": "data/training_v1.0",
     "fine_tune_type": "lora",
     "grad_accumulation_steps": 1,
     "grad_checkpoint": false,

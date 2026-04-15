@@ -1,5 +1,5 @@
 """
-eval_v10_sweep.py — Checkpoint sweep for v10 on Qwen2.5-1.5B
+eval_v1.0_sweep.py — Checkpoint sweep for v1.0 on Qwen2.5-1.5B
 Tests all checkpoints against the same 19 novel questions.
 """
 
@@ -16,7 +16,7 @@ from mlx_lm.utils import load
 from mlx_lm.generate import generate as mlx_generate
 
 BASE_DIR = Path("/Users/tony_studio/phenomenological-compass")
-ADAPTERS_DIR = BASE_DIR / "adapters_v10_qwen"
+ADAPTERS_DIR = BASE_DIR / "adapters_v1.0_qwen"
 MODEL_REPO = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
 
 SYSTEM_PROMPT = open(BASE_DIR / "scripts" / "eval_v9_sweep.py").read().split('SYSTEM_PROMPT = """')[1].split('"""')[0]
@@ -117,7 +117,7 @@ for r in all_results:
     print(f"{r['iter']:>6} {r['overall']:>10} {r['OPEN']:>8} {r['PAUSE']:>8} {r['WITNESS']:>10} {r['format']:>8}")
 
 # Save
-out_path = BASE_DIR / "eval_v10" / "sweep_results.json"
+out_path = BASE_DIR / "eval_v1.0" / "sweep_results.json"
 out_path.parent.mkdir(exist_ok=True)
 with open(out_path, "w") as f:
     json.dump(all_results, f, indent=2)

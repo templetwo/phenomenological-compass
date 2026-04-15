@@ -7,10 +7,10 @@
 ## Current State: v1.0 (Production)
 
 **v1.0 shipped with two compass options:**
-- **v10 compass** (Qwen2.5-1.5B-Instruct, 551 examples) — smallest pipeline, 3.5B total
+- **v1.0 compass** (Qwen2.5-1.5B-Instruct, 551 examples) — smallest pipeline, 3.5B total
 - **v9 compass** (Ministral-3B, 246 examples) — highest eval accuracy: 96% signal, 83% judge win rate
 
-**Note:** `pipeline.py` defaults to v9 adapters (Ministral-3B). v10 adapters are trained and available in `adapters_v10_qwen/` but require changing the defaults in pipeline.py to use.
+**Note:** `pipeline.py` defaults to v9 adapters (Ministral-3B). v1.0 adapters are trained and available in `adapters_v1.0_qwen/` but require changing the defaults in pipeline.py to use.
 
 ### Architecture
 ```
@@ -67,8 +67,8 @@ Cold-committing to SIGNAL at token 1 (v7 format) prevented the 3B model from dis
 | v0.8 iter200 | 3/6 | 8/8 | 3/5 | 14/19 | Best PAUSE accuracy |
 | v0.8 full eval | 29/35 | 31/35 | 22/35 | 82/105 (78%) | WITNESS confusion with PAUSE |
 | **v0.9 iter300** | **33/35** | **33/35** | **35/35** | **101/105 (96%)** | **Contrastive pairs solved WITNESS** |
-| **v10 iter500** | 83% | 88% | 80% | 84% (19-q boundary) | Qwen2.5-1.5B, 551 examples, smallest pipeline |
-| **v1.0 release** | — | — | — | — | Ships v10 + v9, breathe(), token budgeting, Sovereign Stack |
+| **v1.0 iter500** | 83% | 88% | 80% | 84% (19-q boundary) | Qwen2.5-1.5B, 551 examples, smallest pipeline |
+| **v1.0 release** | — | — | — | — | Ships v1.0 + v9, breathe(), token budgeting, Sovereign Stack |
 
 ### v0.9 Breakthrough
 - **WITNESS 63% → 100%**: Added 50 WITNESS + 10 contrastive PAUSE/WITNESS pairs (same topic, two framings)
@@ -76,10 +76,10 @@ Cold-committing to SIGNAL at token 1 (v7 format) prevented the 3B model from dis
 - WITNESS dimensional dominance: restraint_quality d=7.58, epistemic_appropriateness d=7.00, authenticity d=6.52
 - Compass advantage scales inversely with raw model competence: OPEN 66%, PAUSE 83%, WITNESS 100%
 
-### v10 / v1.0 Release
+### v1.0 Release
 - **New compass base**: Qwen2.5-1.5B-Instruct (4-bit MLX) — half the size of Ministral-3B
 - **551 training examples**: 246 v9 base + 305 new (false premises, factual unknowables, boundary cases)
-- **Smallest full pipeline**: v10 compass (1.5B) + Gemma4-E2B (2B) = 3.5B total, under 10GB memory
+- **Smallest full pipeline**: v1.0 compass (1.5B) + Gemma4-E2B (2B) = 3.5B total, under 10GB memory
 - **breathe()**: Recursive compass self-evaluation — signals can evolve across reflection cycles
 - **Token budgeting**: Compass allocates action model cognitive resources per signal
 - **Sovereign Stack integration**: Chronicle context injected between compass and action model
@@ -102,7 +102,7 @@ source ~/phenomenological-compass/.venv/bin/activate  # Python 3.12, latest mlx-
 ### Models
 | Role | Model | Architecture | Notes |
 |------|-------|-------------|-------|
-| Compass (v10) | `mlx-community/Qwen2.5-1.5B-Instruct-4bit` + LoRA | qwen2.5 | Current smallest, 551 training examples |
+| Compass (v1.0) | `mlx-community/Qwen2.5-1.5B-Instruct-4bit` + LoRA | qwen2.5 | Current smallest, 551 training examples |
 | Compass (v9) | `thinkscan/Ministral-3-3B-Instruct-MLX` + LoRA | ministral3 | pipeline.py default, 246 examples, 96% accuracy |
 | Action (default) | `lukey03/Qwen3.5-9B-abliterated-MLX-4bit` | qwen3_5 (hybrid linear_attn) | |
 | Action (tested) | Gemma-4-E2B, Gemma-4-8B, Gemma-4-26B, Qwen3-0.6B | various | All verified via pipeline |
@@ -124,15 +124,15 @@ HF_HOME=/Users/tony_studio/.cache/huggingface_local
 | `compass.py` | Standalone compass inference (legacy, uses v9/Ministral-3B) |
 | `lora_config_v9.yaml` | v9 training config: 246 examples, LR 5e-6, 400 iters, 16 LoRA layers, max_seq 1536 |
 | `adapters_v9/` | v9 trained adapters (Ministral-3B). Best: iter 300. **pipeline.py default** |
-| `adapters_v10_qwen/` | v10 trained adapters (Qwen2.5-1.5B). Best: iter 500. Checkpoints every 100 iters |
+| `adapters_v1.0_qwen/` | v1.0 trained adapters (Qwen2.5-1.5B). Best: iter 500. Checkpoints every 100 iters |
 | `adapters_v8/` | Legacy v0.8 adapters. Best balanced: iter 50 |
 | `scripts/build_dataset_v9.py` | v9 dataset builder. Loads from `data/supplements_v8/` + `data/supplements_v9/` |
 | `scripts/generate_witness_v9.py` | Generates WITNESS + contrastive pair training data via Anthropic API |
 | `scripts/eval_v9_sweep.py` | Eval sweep over v0.9 checkpoints. 19 novel questions |
-| `scripts/eval_v10_sweep.py` | Eval sweep over v10 checkpoints (Qwen2.5-1.5B) |
+| `scripts/eval_v1.0_sweep.py` | Eval sweep over v1.0 checkpoints (Qwen2.5-1.5B) |
 | `data/supplements_v9/` | 50 WITNESS + 10 contrastive PAUSE/WITNESS pairs |
 | `data/training_v9/` | v9 built dataset: train.jsonl (209) + valid.jsonl (37) |
-| `data/training_v10/` | v10 built dataset: train.jsonl (495) + valid.jsonl (56) |
+| `data/training_v1.0/` | v1.0 built dataset: train.jsonl (495) + valid.jsonl (56) |
 | `papers/` | `sovereign_governance_draft.md`, `geometry_of_resurrection.md`, `the_translation.md` |
 | `docs/v8_architecture.md` | Architecture documentation |
 
@@ -143,7 +143,7 @@ HF_HOME=/Users/tony_studio/.cache/huggingface_local
 - Contrastive pairs: same topic, two framings — teaches exact PAUSE↔WITNESS boundary
 - No oversampling (unlike v0.8 which oversampled PAUSE)
 
-### Training Data (v10)
+### Training Data (v1.0)
 - **551 unique examples**: 246 v9 base + 305 new
 - New data includes false premises, factual unknowables, boundary cases
 - Trained on Qwen2.5-1.5B-Instruct (4-bit MLX)
@@ -167,18 +167,18 @@ python3 -m mlx_lm lora --config lora_config_v9.yaml 2>&1 | tee training_v9.log
 # Eval sweep
 python3 scripts/eval_v9_sweep.py 50 100 150 200 250 300
 
-# ── v10 (Qwen2.5-1.5B, smallest pipeline) ───────────────────────────────────
+# ── v1.0 (Qwen2.5-1.5B, smallest pipeline) ───────────────────────────────────
 
-# Train v10
+# Train v1.0
 python3 -m mlx_lm lora \
   --model mlx-community/Qwen2.5-1.5B-Instruct-4bit \
-  --train --data data/training_v10 \
+  --train --data data/training_v1.0 \
   --num-layers 16 --batch-size 4 --learning-rate 5e-5 \
   --iters 600 --max-seq-length 2048 \
-  --adapter-path adapters_v10_qwen --save-every 100
+  --adapter-path adapters_v1.0_qwen --save-every 100
 
-# Eval sweep v10
-python3 scripts/eval_v10_sweep.py 100 200 300 400 500
+# Eval sweep v1.0
+python3 scripts/eval_v1.0_sweep.py 100 200 300 400 500
 
 # ── Run pipeline ─────────────────────────────────────────────────────────────
 
