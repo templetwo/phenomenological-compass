@@ -921,19 +921,17 @@ async def stream_infer(req: InferenceRequest):
             # Strip any remaining think tags
             import re as _re
             response_text = _re.sub(r"</?think>", "", response_text).strip()
-            # If response is duplicated (thinking leaked into response), deduplicate
-            half = len(response_text) // 2
-            if half > 50:
-                for split_pos in range(half - 50, half + 50):
-                    if (
-                        split_pos < len(response_text) - 1
-                        and response_text[split_pos : split_pos + 2] == "\n\n"
-                    ):
-                        first_half = response_text[:split_pos].strip()
-                        second_half = response_text[split_pos + 2 :].strip()
-                        if first_half == second_half:
-                            response_text = first_half
-                            break
+            # If response is duplicated (thinking leaked or model repeated itself),
+            # check every paragraph boundary for an exact-half split.
+            if len(response_text) > 100:
+                parts = response_text.split("\n\n")
+                for i in range(1, len(parts)):
+                    first = "\n\n".join(parts[:i]).strip()
+                    second = "\n\n".join(parts[i:]).strip()
+                    if first == second:
+                        response_text = first
+                        log.info("Dedup: removed exact duplicate (%d chars)", len(first))
+                        break
 
             mean_entropy = (
                 round(sum(entropy_values) / len(entropy_values), 4)
