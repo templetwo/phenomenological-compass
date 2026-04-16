@@ -41,7 +41,7 @@ except ImportError:
 
 # ── Models ────────────────────────────────────────────────────────────────────
 COMPASS_MODEL = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
-COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v10_qwen")
+COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v1.0_qwen")
 COMPASS_CHECKPOINT = "0000500_adapters.safetensors"  # iter 500: 84% boundary, 100% real-world
 
 ACTION_MODELS = {

@@ -1,0 +1,32 @@
+#!/bin/bash
+# Phenomenological Compass — macOS App Launcher
+# Runs the entire 3.5B pipeline locally. No server visible. Just a window.
+
+APP_DIR="$(cd "$(dirname "$0")/../../.." && pwd)"
+UI_DIR="$APP_DIR/phenomenological-compass-ui"
+VENV_DIR="$UI_DIR/.venv"
+LOG_FILE="/tmp/compass-app.log"
+
+# Ensure venv exists with all dependencies
+if [ ! -d "$VENV_DIR" ]; then
+    /usr/bin/python3 -m venv "$VENV_DIR"
+    source "$VENV_DIR/bin/activate"
+    pip install --quiet fastapi uvicorn pywebview mlx mlx-lm requests httpx
+else
+    source "$VENV_DIR/bin/activate"
+fi
+
+# Ensure Ollama is running
+if ! curl -s http://127.0.0.1:11434/api/tags > /dev/null 2>&1; then
+    open -a Ollama
+    sleep 3
+fi
+
+cd "$UI_DIR"
+
+# Kill any existing compass on port 8420
+lsof -ti:8420 | xargs kill 2>/dev/null || true
+sleep 1
+
+# Launch the app
+exec python3 compass_app.py >> "$LOG_FILE" 2>&1

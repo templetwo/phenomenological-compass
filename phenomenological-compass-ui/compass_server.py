@@ -186,18 +186,7 @@ def get_pipeline():
     if pipeline_instance is None:
         log.info("Loading compass pipeline (this takes ~30s on first load)...")
         from pipeline import Pipeline
-        adapter_dir, adapter_cp = detect_adapter()
-        try:
-            pipeline_instance = Pipeline(
-                adapter_path=adapter_dir,
-                adapter_checkpoint=adapter_cp,
-            )
-        except TypeError:
-            # Pipeline does not yet accept adapter kwargs — fall back gracefully
-            log.warning(
-                "Pipeline() does not accept adapter kwargs; loading without adapter"
-            )
-            pipeline_instance = Pipeline()
+        pipeline_instance = Pipeline()
         log.info("Pipeline ready.")
     return pipeline_instance
 
