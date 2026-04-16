@@ -1986,6 +1986,12 @@ function handleDone(data) {
     }
   }
 
+  // Hide entropy container if no entropy data (Ollama models do not return logprobs)
+  if (stream.entropyData.length === 0) {
+    const ec = stream.responseCard?.querySelector(".entropy-container");
+    if (ec) ec.style.display = "none";
+  }
+
   // Disconnect resize observer
   if (stream.resizeObserver) stream.resizeObserver.disconnect();
 

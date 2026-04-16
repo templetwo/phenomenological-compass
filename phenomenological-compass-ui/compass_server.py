@@ -506,6 +506,48 @@ async def proxy_infer(req: InferenceRequest):
         raise HTTPException(502, f"Upstream returned {exc.response.status_code}")
 
 
+# ── Proxy Session Forwarding ─────────────────────────────────────────────────
+
+async def proxy_get(path: str):
+    """Forward a GET request to the upstream server."""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.get(f"{UPSTREAM_URL}{path}")
+        resp.raise_for_status()
+        return resp.json()
+
+
+async def proxy_post(path: str, body: dict = None):
+    """Forward a POST request to the upstream server."""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.post(f"{UPSTREAM_URL}{path}", json=body)
+        resp.raise_for_status()
+        return resp.json()
+
+
+async def proxy_delete(path: str):
+    """Forward a DELETE request to the upstream server."""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.delete(f"{UPSTREAM_URL}{path}")
+        resp.raise_for_status()
+        return resp.json()
+
+
+async def proxy_patch(path: str, body: dict):
+    """Forward a PATCH request to the upstream server."""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.patch(f"{UPSTREAM_URL}{path}", json=body)
+        resp.raise_for_status()
+        return resp.json()
+
+
+async def proxy_get_text(path: str):
+    """Forward a GET request and return raw text (for export)."""
+    async with httpx.AsyncClient(timeout=30) as client:
+        resp = await client.get(f"{UPSTREAM_URL}{path}")
+        resp.raise_for_status()
+        return resp.text
+
+
 # ── API Routes ───────────────────────────────────────────────────────────────
 
 @app.on_event("startup")
@@ -559,6 +601,8 @@ async def health():
 @app.get("/api/sessions")
 async def list_sessions():
     """Return a summary of all sessions sorted newest-first."""
+    if UPSTREAM_URL:
+        return await proxy_get("/api/sessions")
     return {
         sid: {
             "title": s["title"],
@@ -577,12 +621,16 @@ async def list_sessions():
 @app.post("/api/sessions")
 async def create_session():
     """Create a new empty session and return its ID."""
+    if UPSTREAM_URL:
+        return await proxy_post("/api/sessions")
     sid = get_or_create_session()
     return {"session_id": sid}
 
 
 @app.patch("/api/sessions/{session_id}")
 async def rename_session(session_id: str, req: SessionRenameRequest):
+    if UPSTREAM_URL:
+        return await proxy_patch(f"/api/sessions/{session_id}", {"title": req.title})
     """Rename a session title.
 
     Args:
@@ -602,14 +650,9 @@ async def rename_session(session_id: str, req: SessionRenameRequest):
 
 @app.delete("/api/sessions/{session_id}")
 async def delete_session(session_id: str):
-    """Delete a session and its persisted file.
-
-    Args:
-        session_id: The session to delete.
-
-    Raises:
-        HTTPException: 404 if the session does not exist.
-    """
+    """Delete a session and its persisted file."""
+    if UPSTREAM_URL:
+        return await proxy_delete(f"/api/sessions/{session_id}")
     if session_id not in sessions:
         raise HTTPException(404, "Session not found")
     del sessions[session_id]
@@ -621,6 +664,8 @@ async def delete_session(session_id: str):
 
 @app.get("/api/sessions/{session_id}/messages")
 async def get_messages(session_id: str):
+    if UPSTREAM_URL:
+        return await proxy_get(f"/api/sessions/{session_id}/messages")
     """Return the full message list for a session.
 
     Raises:
