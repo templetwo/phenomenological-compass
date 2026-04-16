@@ -75,6 +75,25 @@ ACTION_MODELS = {
         "engine": "mlx",
         "has_thinking": False,
     },
+    # ── Anthropic API (Pro) ──────────────────────────────
+    "claude-sonnet": {
+        "model_id": "claude-sonnet-4-6",
+        "name": "Claude Sonnet 4.6",
+        "engine": "anthropic",
+        "has_thinking": False,
+    },
+    "claude-haiku": {
+        "model_id": "claude-haiku-4-5-20251001",
+        "name": "Claude Haiku 4.5",
+        "engine": "anthropic",
+        "has_thinking": False,
+    },
+    "claude-opus": {
+        "model_id": "claude-opus-4-6",
+        "name": "Claude Opus 4.6",
+        "engine": "anthropic",
+        "has_thinking": False,
+    },
 }
 DEFAULT_ACTION = "gemma-e2b"
 
@@ -284,6 +303,86 @@ def ollama_stream(model_name, system, user, max_tokens=2048):
             break
 
 
+# ── Anthropic API Generation ────────────────────────────────────────────────
+
+ANTHROPIC_API_KEY = os.environ.get("ANTHROPIC_API_KEY")
+
+
+def anthropic_generate(model_id, system, user, max_tokens=2048, history=None):
+    """Generate via Anthropic Messages API. Returns response text.
+
+    history: list of prior messages [{"role": "user"|"assistant", "content": "..."}]
+             for multi-turn session continuity with Claude.
+    """
+    if not ANTHROPIC_API_KEY:
+        return "[Error: ANTHROPIC_API_KEY not set. Export it or add to .env]"
+    messages = list(history or [])
+    messages.append({"role": "user", "content": user})
+    resp = _requests.post("https://api.anthropic.com/v1/messages", headers={
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    }, json={
+        "model": model_id,
+        "max_tokens": max_tokens,
+        "system": system,
+        "messages": messages,
+    }, timeout=120)
+    resp.raise_for_status()
+    blocks = resp.json().get("content", [])
+    return "".join(b["text"] for b in blocks if b["type"] == "text")
+
+
+def anthropic_stream(model_id, system, user, max_tokens=2048, history=None):
+    """Stream via Anthropic Messages API. Yields (text, None, finish_reason, tps).
+
+    history: list of prior messages for multi-turn session continuity.
+    """
+    if not ANTHROPIC_API_KEY:
+        yield "[Error: ANTHROPIC_API_KEY not set]", None, "stop", 0
+        return
+    messages = list(history or [])
+    messages.append({"role": "user", "content": user})
+    resp = _requests.post("https://api.anthropic.com/v1/messages", headers={
+        "x-api-key": ANTHROPIC_API_KEY,
+        "anthropic-version": "2023-06-01",
+        "content-type": "application/json",
+    }, json={
+        "model": model_id,
+        "max_tokens": max_tokens,
+        "stream": True,
+        "system": system,
+        "messages": messages,
+    }, timeout=120, stream=True)
+    resp.raise_for_status()
+    total_tokens = 0
+    t0 = time.time()
+    for line in resp.iter_lines():
+        if not line:
+            continue
+        decoded = line.decode("utf-8") if isinstance(line, bytes) else line
+        if not decoded.startswith("data: "):
+            continue
+        payload = decoded[6:]
+        if payload.strip() == "[DONE]":
+            break
+        try:
+            data = _json.loads(payload)
+        except _json.JSONDecodeError:
+            continue
+        event_type = data.get("type", "")
+        if event_type == "content_block_delta":
+            delta = data.get("delta", {})
+            text = delta.get("text", "")
+            if text:
+                total_tokens += 1
+                elapsed = time.time() - t0
+                tps = total_tokens / elapsed if elapsed > 0 else 0
+                yield text, None, None, round(tps, 1)
+        elif event_type == "message_stop":
+            break
+
+
 # ── Pipeline class ────────────────────────────────────────────────────────────
 class Pipeline:
     def __init__(self, load_compass=True, load_action=True, action_key=None,
@@ -320,6 +419,13 @@ class Pipeline:
                 self.action_engine = "ollama"
                 self.ollama_model = self.action_config["ollama"]
                 print(f"  Action model: {name} via Ollama ({self.ollama_model})")
+            elif engine == "anthropic":
+                self.action_engine = "anthropic"
+                self.anthropic_model = self.action_config["model_id"]
+                if not ANTHROPIC_API_KEY:
+                    print(f"  WARNING: {name} selected but ANTHROPIC_API_KEY not set")
+                else:
+                    print(f"  Action model: {name} via Anthropic API")
             else:
                 self.action_engine = "mlx"
                 print(f"Loading action model ({name})...")
@@ -345,7 +451,7 @@ class Pipeline:
         elapsed = time.time() - t0
         return signal, response.strip(), elapsed
 
-    def act(self, question, signal, compass_reading="", max_tokens=2048):
+    def act(self, question, signal, compass_reading="", max_tokens=2048, session_history=None):
         """Stage 2: Action model generates response conditioned on compass.
 
         Action model receives two layers:
@@ -372,8 +478,11 @@ class Pipeline:
 
         t0 = time.time()
         try:
-            if getattr(self, "action_engine", "mlx") == "ollama":
+            engine = getattr(self, "action_engine", "mlx")
+            if engine == "ollama":
                 response = ollama_generate(self.ollama_model, system, user_msg, max_tokens)
+            elif engine == "anthropic":
+                response = anthropic_generate(self.anthropic_model, system, user_msg, max_tokens, history=session_history)
             else:
                 response = generate(
                     self.action_model, self.action_tokenizer,
@@ -393,8 +502,11 @@ class Pipeline:
         """Action model without compass routing."""
         t0 = time.time()
         try:
-            if getattr(self, "action_engine", "mlx") == "ollama":
+            engine = getattr(self, "action_engine", "mlx")
+            if engine == "ollama":
                 response = ollama_generate(self.ollama_model, RAW_SYSTEM, question, max_tokens)
+            elif engine == "anthropic":
+                response = anthropic_generate(self.anthropic_model, RAW_SYSTEM, question, max_tokens)
             else:
                 response = generate(
                     self.action_model, self.action_tokenizer,
@@ -432,7 +544,7 @@ class Pipeline:
         ):
             yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
 
-    def stream_act(self, question, signal, compass_reading="", max_tokens=2048):
+    def stream_act(self, question, signal, compass_reading="", max_tokens=2048, session_history=None):
         """Stage 2 streaming: yields (text, logprobs, finish_reason, gen_tps) per token."""
         SIGNAL_SYSTEMS = {
             "OPEN": OPEN_SYSTEM,
@@ -451,8 +563,12 @@ class Pipeline:
         layers.append(f"ORIGINAL QUESTION:\n{question}")
         user_msg = "\n\n".join(layers)
 
-        if getattr(self, "action_engine", "mlx") == "ollama":
+        engine = getattr(self, "action_engine", "mlx")
+        if engine == "ollama":
             for item in ollama_stream(self.ollama_model, system, user_msg, max_tokens):
+                yield item
+        elif engine == "anthropic":
+            for item in anthropic_stream(self.anthropic_model, system, user_msg, max_tokens, history=session_history):
                 yield item
         else:
             prompt = self._build_prompt(self.action_tokenizer, system, user_msg)
@@ -462,10 +578,14 @@ class Pipeline:
             ):
                 yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
 
-    def stream_raw(self, question, max_tokens=800):
+    def stream_raw(self, question, max_tokens=800, session_history=None):
         """Raw streaming (no compass): yields (text, logprobs, finish_reason, gen_tps)."""
-        if getattr(self, "action_engine", "mlx") == "ollama":
+        engine = getattr(self, "action_engine", "mlx")
+        if engine == "ollama":
             for item in ollama_stream(self.ollama_model, RAW_SYSTEM, question, max_tokens):
+                yield item
+        elif engine == "anthropic":
+            for item in anthropic_stream(self.anthropic_model, RAW_SYSTEM, question, max_tokens, history=session_history):
                 yield item
         else:
             prompt = self._build_prompt(self.action_tokenizer, RAW_SYSTEM, question)
