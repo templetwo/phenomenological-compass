@@ -40,23 +40,43 @@ except ImportError:
     def stack_context(q, **kw): return ""
 
 # ── Models ────────────────────────────────────────────────────────────────────
-COMPASS_MODEL = "thinkscan/Ministral-3-3B-Instruct-MLX"
-COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v9")
-COMPASS_CHECKPOINT = "0000300_adapters.safetensors"  # iter 300: 96% accuracy
+COMPASS_MODEL = "mlx-community/Qwen2.5-1.5B-Instruct-4bit"
+COMPASS_ADAPTER = os.path.join(os.path.dirname(__file__), "adapters_v10_qwen")
+COMPASS_CHECKPOINT = "0000500_adapters.safetensors"  # iter 500: 84% boundary, 100% real-world
 
 ACTION_MODELS = {
+    "gemma-e2b": {
+        "ollama": "gemma4:e2b",
+        "name": "Gemma4-E2B",
+        "engine": "ollama",
+        "has_thinking": False,
+    },
+    "gemma-8b": {
+        "ollama": "gemma4:latest",
+        "name": "Gemma4-8B",
+        "engine": "ollama",
+        "has_thinking": False,
+    },
+    "gemma-26b": {
+        "ollama": "gemma4:26b",
+        "name": "Gemma4-26B",
+        "engine": "ollama",
+        "has_thinking": False,
+    },
     "qwen": {
         "repo": "lukey03/Qwen3.5-9B-abliterated-MLX-4bit",
         "name": "Qwen3.5-9B-abliterated",
-        "has_thinking": True,   # outputs <think>...</think> blocks
+        "engine": "mlx",
+        "has_thinking": True,
     },
     "m14b": {
         "repo": "McG-221/Ministral-3-14B-abliterated-mlx-8Bit",
         "name": "Ministral-14B-abliterated",
-        "has_thinking": False,  # standard instruct format
+        "engine": "mlx",
+        "has_thinking": False,
     },
 }
-DEFAULT_ACTION = "qwen"
+DEFAULT_ACTION = "gemma-e2b"
 
 # ── Prompts ───────────────────────────────────────────────────────────────────
 COMPASS_SYSTEM = """You are a phenomenological compass — a semantic field translator that reads the shape and tone of a question before it is answered.
@@ -199,6 +219,71 @@ def generate(model, tokenizer, system, user, max_tokens=2048):
     return result
 
 
+# ── Ollama Generation ────────────────────────────────────────────────────────
+import requests as _requests
+import json as _json
+
+OLLAMA_URL = os.environ.get("OLLAMA_URL", "http://127.0.0.1:11434")
+
+
+def ollama_generate(model_name, system, user, max_tokens=2048):
+    """Generate via Ollama API. Returns response text."""
+    resp = _requests.post(f"{OLLAMA_URL}/api/chat", json={
+        "model": model_name,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "options": {
+            "num_predict": max_tokens,
+            "num_ctx": 8192,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "repeat_penalty": 1.0,
+        },
+        "stream": False,
+    }, timeout=300)
+    resp.raise_for_status()
+    return resp.json()["message"]["content"]
+
+
+def ollama_stream(model_name, system, user, max_tokens=2048):
+    """Stream via Ollama API. Yields (text, None, finish_reason, tps) per chunk."""
+    resp = _requests.post(f"{OLLAMA_URL}/api/chat", json={
+        "model": model_name,
+        "messages": [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ],
+        "options": {
+            "num_predict": max_tokens,
+            "num_ctx": 8192,
+            "temperature": 0.7,
+            "top_p": 0.9,
+            "repeat_penalty": 1.0,
+        },
+        "stream": True,
+    }, timeout=300, stream=True)
+    resp.raise_for_status()
+    total_tokens = 0
+    t0 = time.time()
+    for line in resp.iter_lines():
+        if not line:
+            continue
+        data = _json.loads(line)
+        msg = data.get("message", {})
+        text = msg.get("content", "")
+        done = data.get("done", False)
+        if text:
+            total_tokens += 1
+            elapsed = time.time() - t0
+            tps = total_tokens / elapsed if elapsed > 0 else 0
+            finish = "stop" if done else None
+            yield text, None, finish, round(tps, 1)
+        if done:
+            break
+
+
 # ── Pipeline class ────────────────────────────────────────────────────────────
 class Pipeline:
     def __init__(self, load_compass=True, load_action=True, action_key=None,
@@ -230,9 +315,16 @@ class Pipeline:
 
         if load_action:
             name = self.action_config["name"]
-            print(f"Loading action model ({name})...")
-            self.action_model, self.action_tokenizer = load(self.action_config["repo"])
-            print(f"  Action model ready ({name}).")
+            engine = self.action_config.get("engine", "mlx")
+            if engine == "ollama":
+                self.action_engine = "ollama"
+                self.ollama_model = self.action_config["ollama"]
+                print(f"  Action model: {name} via Ollama ({self.ollama_model})")
+            else:
+                self.action_engine = "mlx"
+                print(f"Loading action model ({name})...")
+                self.action_model, self.action_tokenizer = load(self.action_config["repo"])
+                print(f"  Action model ready ({name}).")
 
         print()
 
@@ -280,10 +372,13 @@ class Pipeline:
 
         t0 = time.time()
         try:
-            response = generate(
-                self.action_model, self.action_tokenizer,
-                system, user_msg, max_tokens=max_tokens
-            )
+            if getattr(self, "action_engine", "mlx") == "ollama":
+                response = ollama_generate(self.ollama_model, system, user_msg, max_tokens)
+            else:
+                response = generate(
+                    self.action_model, self.action_tokenizer,
+                    system, user_msg, max_tokens=max_tokens
+                )
         except Exception as e:
             elapsed = time.time() - t0
             return f"[Generation error: {e}]", elapsed, ""
@@ -298,10 +393,13 @@ class Pipeline:
         """Action model without compass routing."""
         t0 = time.time()
         try:
-            response = generate(
-                self.action_model, self.action_tokenizer,
-                RAW_SYSTEM, question, max_tokens=max_tokens
-            )
+            if getattr(self, "action_engine", "mlx") == "ollama":
+                response = ollama_generate(self.ollama_model, RAW_SYSTEM, question, max_tokens)
+            else:
+                response = generate(
+                    self.action_model, self.action_tokenizer,
+                    RAW_SYSTEM, question, max_tokens=max_tokens
+                )
         except Exception as e:
             elapsed = time.time() - t0
             return f"[Generation error: {e}]", elapsed, ""
@@ -353,21 +451,29 @@ class Pipeline:
         layers.append(f"ORIGINAL QUESTION:\n{question}")
         user_msg = "\n\n".join(layers)
 
-        prompt = self._build_prompt(self.action_tokenizer, system, user_msg)
-        for resp in stream_generate(
-            self.action_model, self.action_tokenizer,
-            prompt=prompt, max_tokens=max_tokens
-        ):
-            yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
+        if getattr(self, "action_engine", "mlx") == "ollama":
+            for item in ollama_stream(self.ollama_model, system, user_msg, max_tokens):
+                yield item
+        else:
+            prompt = self._build_prompt(self.action_tokenizer, system, user_msg)
+            for resp in stream_generate(
+                self.action_model, self.action_tokenizer,
+                prompt=prompt, max_tokens=max_tokens
+            ):
+                yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
 
     def stream_raw(self, question, max_tokens=800):
         """Raw streaming (no compass): yields (text, logprobs, finish_reason, gen_tps)."""
-        prompt = self._build_prompt(self.action_tokenizer, RAW_SYSTEM, question)
-        for resp in stream_generate(
-            self.action_model, self.action_tokenizer,
-            prompt=prompt, max_tokens=max_tokens
-        ):
-            yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
+        if getattr(self, "action_engine", "mlx") == "ollama":
+            for item in ollama_stream(self.ollama_model, RAW_SYSTEM, question, max_tokens):
+                yield item
+        else:
+            prompt = self._build_prompt(self.action_tokenizer, RAW_SYSTEM, question)
+            for resp in stream_generate(
+                self.action_model, self.action_tokenizer,
+                prompt=prompt, max_tokens=max_tokens
+            ):
+                yield resp.text, resp.logprobs, resp.finish_reason, resp.generation_tps
 
     def run_with_signal(self, question, forced_signal, max_tokens=800):
         """Bypass compass. Inject forced signal directly into action model conditioning."""
