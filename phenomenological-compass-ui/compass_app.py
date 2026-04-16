@@ -60,8 +60,33 @@ def main():
     parser = argparse.ArgumentParser(description="Phenomenological Compass App")
     parser.add_argument("--port", type=int, default=8420)
     parser.add_argument("--action", default=None,
-                        help="Action model key (gemma-e2b, qwen, etc.)")
+                        help="Action model key (gemma-e2b, claude-sonnet, etc.)")
+    parser.add_argument("--api-key", default=None,
+                        help="Anthropic API key (or set ANTHROPIC_API_KEY env var)")
     args = parser.parse_args()
+
+    # API key: CLI arg > env var > prompt at boot
+    if args.api_key:
+        os.environ["ANTHROPIC_API_KEY"] = args.api_key
+    elif not os.environ.get("ANTHROPIC_API_KEY"):
+        # Check for key in ~/.config/anthropic.env or .env
+        for env_file in [
+            os.path.expanduser("~/.config/anthropic.env"),
+            os.path.join(APP_DIR, ".env"),
+            os.path.join(PROJECT_ROOT, ".env"),
+        ]:
+            if os.path.exists(env_file):
+                with open(env_file) as f:
+                    for line in f:
+                        line = line.strip()
+                        if line.startswith("ANTHROPIC_API_KEY="):
+                            os.environ["ANTHROPIC_API_KEY"] = line.split("=", 1)[1].strip().strip('"').strip("'")
+                            print(f"  API key loaded from {env_file}")
+                            break
+                if os.environ.get("ANTHROPIC_API_KEY"):
+                    break
+
+    has_key = bool(os.environ.get("ANTHROPIC_API_KEY"))
 
     # If action model override, set it before importing compass_server
     if args.action:
@@ -69,12 +94,25 @@ def main():
 
     port = args.port
 
+    # Boot summary
+    print()
+    print("  Phenomenological Compass")
+    print("  ────────────────────────")
+    if has_key:
+        action = args.action or "claude-sonnet"
+        print(f"  Action model: {action} (Anthropic API)")
+    else:
+        action = args.action or "gemma-e2b"
+        print(f"  Action model: {action} (local Ollama)")
+        print(f"  Tip: pass --api-key or set ANTHROPIC_API_KEY for Claude")
+    print(f"  Port: {port}")
+    print()
+
     # Start server in background thread
     server_thread = threading.Thread(target=start_server, args=(port,), daemon=True)
     server_thread.start()
 
-    print("Starting Phenomenological Compass...")
-    print(f"  Loading models (this takes ~15-30s on first launch)...")
+    print("  Loading models (this takes ~15-30s on first launch)...")
 
     # Wait for server to be ready
     if not wait_for_server(port, timeout=120):

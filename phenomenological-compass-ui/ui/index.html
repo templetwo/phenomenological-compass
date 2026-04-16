@@ -1129,11 +1129,7 @@ textarea::placeholder { color: var(--text-dim); }
           </svg>
         </button>
 
-        <div class="mode-toggle" role="group" aria-label="Response mode">
-          <button class="mode-btn active" data-mode="routed" onclick="setMode('routed')">Compass</button>
-          <button class="mode-btn" data-mode="compare" onclick="setMode('compare')">Compare</button>
-          <button class="mode-btn" data-mode="raw" onclick="setMode('raw')">Raw</button>
-        </div>
+        <!-- Compass-only mode. Compare/Raw removed in v1.0.2 -->
 
         <span class="input-hint">&#8984;N new &middot; &#8984;K focus &middot; &#8984;E export &middot; Esc abort</span>
       </div>
@@ -1857,7 +1853,7 @@ function ensureResponseCard() {
         <span class="response-tps" id="stream-tps"></span>
       </div>
       <div class="response-body streaming" id="stream-response-body"></div>
-      <div class="entropy-container" id="stream-entropy-container">
+      <div class="entropy-container" id="stream-entropy-container" style="display:none">
         <canvas class="entropy-canvas" id="stream-entropy-canvas"></canvas>
         <div class="entropy-label">
           <span>entropy trace</span>
@@ -1921,8 +1917,10 @@ function handleActionToken(data) {
     stream.responseBody.appendChild(cursor);
   }
 
-  // Entropy sparkline update
+  // Entropy sparkline update — only show container when real data arrives
   if (data.entropy !== null && data.entropy !== undefined) {
+    const ec = document.getElementById('stream-entropy-container');
+    if (ec && ec.style.display === 'none') ec.style.display = '';
     stream.entropyData.push(data.entropy);
     drawEntropySparkline();
     const mean = stream.entropyData.reduce((a, b) => a + b, 0) / stream.entropyData.length;
