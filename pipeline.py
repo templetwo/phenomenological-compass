@@ -95,7 +95,8 @@ ACTION_MODELS = {
         "has_thinking": False,
     },
 }
-DEFAULT_ACTION = "gemma-e2b"
+# Default: Claude Sonnet if API key is set, otherwise Gemma-E2B (free, local)
+DEFAULT_ACTION = "claude-sonnet" if os.environ.get("ANTHROPIC_API_KEY") else "gemma-e2b"
 
 # ── Prompts ───────────────────────────────────────────────────────────────────
 COMPASS_SYSTEM = """You are a phenomenological compass — a semantic field translator that reads the shape and tone of a question before it is answered.
