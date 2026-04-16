@@ -587,6 +587,41 @@ async def health():
     }
 
 
+class ConfigRequest(BaseModel):
+    action_model: Optional[str] = None
+    api_key: Optional[str] = None
+
+
+@app.post("/api/config")
+async def update_config(req: ConfigRequest):
+    """Update pipeline configuration at runtime.
+
+    Accepts an action model key and/or Anthropic API key.
+    Resets the pipeline so the next inference uses the new config.
+    """
+    global pipeline_instance
+    import pipeline as _pipeline
+
+    if req.api_key:
+        os.environ["ANTHROPIC_API_KEY"] = req.api_key
+        _pipeline.ANTHROPIC_API_KEY = req.api_key
+        log.info("API key updated")
+
+    if req.action_model:
+        if req.action_model not in _pipeline.ACTION_MODELS:
+            raise HTTPException(422, f"Unknown action model: {req.action_model}")
+        _pipeline.DEFAULT_ACTION = req.action_model
+        log.info("Default action model set to %s", req.action_model)
+
+    # Reset pipeline so next request reloads with new config
+    pipeline_instance = None
+    log.info("Pipeline reset — will reload on next inference")
+
+    # Determine what will be used
+    effective = req.action_model or _pipeline.DEFAULT_ACTION
+    return {"ok": True, "action_model": effective, "has_api_key": bool(os.environ.get("ANTHROPIC_API_KEY"))}
+
+
 @app.get("/api/sessions")
 async def list_sessions():
     """Return a summary of all sessions sorted newest-first."""

@@ -1,19 +1,37 @@
 # Python build artifacts
 __pycache__/
 *.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
 .venv/
 
 # OS
 .DS_Store
+Thumbs.db
 
-# Secrets
+# Secrets — NEVER commit
 .env
+*.env
+!.env.example
+anthropic.env
+api_keys*
+*.key
+*.pem
 
 # Claude Code worktrees and config
 .claude/
 
-# Session data (user-specific)
+# Session data (user-specific, contains conversation history)
 phenomenological-compass-ui/sessions/
+
+# App logs
+*.log
+/tmp/
+
+# HuggingFace cache (large model files)
+.cache/
 
 # Legacy adapter versions (pre-v0.8, no longer relevant)
 adapters/

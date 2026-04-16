@@ -1008,6 +1008,46 @@ textarea::placeholder { color: var(--text-dim); }
 
 .mode-toggle { display: flex; gap: var(--space-xs); }
 
+/* ── Settings Panel ──────────────────────────────────── */
+.settings-gear {
+  background: none; border: none; color: var(--text-dim); cursor: pointer;
+  font-size: 14px; padding: 2px 6px; margin-left: auto; transition: color 0.2s;
+}
+.settings-gear:hover { color: var(--accent); }
+
+.sidebar-settings {
+  padding: var(--space-md);
+  border-top: 1px solid var(--border-subtle);
+  background: var(--bg-elevated);
+}
+.settings-panel { display: flex; flex-direction: column; gap: var(--space-xs); }
+.settings-title {
+  font-family: var(--font-mono); font-size: 10px; font-weight: 400;
+  letter-spacing: 0.08em; text-transform: uppercase; color: var(--text-dim);
+  margin-bottom: var(--space-xs);
+}
+.settings-label {
+  font-family: var(--font-mono); font-size: 10px; color: var(--text-secondary);
+  letter-spacing: 0.04em;
+}
+.settings-select, .settings-input {
+  width: 100%; padding: 8px 10px; background: var(--bg-surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  color: var(--text-primary); font-family: var(--font-mono); font-size: 12px;
+  outline: none; transition: border-color 0.2s;
+}
+.settings-select:focus, .settings-input:focus { border-color: var(--accent); }
+.settings-hint {
+  font-size: 10px; color: var(--text-dim); font-style: italic;
+}
+.settings-save-btn {
+  margin-top: var(--space-sm); padding: 8px; background: var(--accent);
+  border: none; border-radius: var(--radius); color: var(--bg-deep);
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.04em; cursor: pointer; transition: filter 0.2s;
+}
+.settings-save-btn:hover { filter: brightness(1.15); }
+
 .mode-btn {
   padding: var(--space-xs) 10px;
   min-height: 30px;
@@ -1106,9 +1146,30 @@ textarea::placeholder { color: var(--text-dim); }
       </button>
     </div>
     <div class="sessions-list" id="sessions-list" role="list"></div>
+    <div class="sidebar-settings" id="sidebar-settings" style="display:none;">
+      <div class="settings-panel">
+        <div class="settings-title">Settings</div>
+        <label class="settings-label">Action Model</label>
+        <select id="settings-model" class="settings-select" onchange="saveSettings()">
+          <option value="">Auto (Claude if key set, else Gemma)</option>
+          <option value="claude-sonnet">Claude Sonnet 4.6</option>
+          <option value="claude-haiku">Claude Haiku 4.5</option>
+          <option value="claude-opus">Claude Opus 4.6</option>
+          <option value="gemma-e2b">Gemma4-E2B (local)</option>
+          <option value="gemma-8b">Gemma4-8B (local)</option>
+          <option value="gemma-26b">Gemma4-26B (local)</option>
+          <option value="qwen">Qwen3.5-9B (local MLX)</option>
+        </select>
+        <label class="settings-label" style="margin-top:12px;">Anthropic API Key</label>
+        <input id="settings-apikey" type="password" class="settings-input" placeholder="sk-ant-..." onchange="saveSettings()"/>
+        <div class="settings-hint">Stored locally. Never sent to our servers.</div>
+        <button class="settings-save-btn" onclick="applySettings()">Apply &amp; Restart Pipeline</button>
+      </div>
+    </div>
     <div class="sidebar-footer">
       <span class="status-dot loading" id="status-dot" role="status" aria-label="Server status"></span>
       <span id="status-text">Connecting...</span>
+      <button class="settings-gear" onclick="toggleSettings()" aria-label="Settings">&#9881;</button>
     </div>
   </nav>
 
@@ -2410,6 +2471,50 @@ async function checkHealth() {
     setStatus(s === 'ready' || s === 'proxy' ? 'ready' : 'loading');
   } catch {
     setStatus('offline');
+  }
+}
+
+/* ── Settings ─────────────────────────────────────────────── */
+
+function toggleSettings() {
+  const panel = document.getElementById('sidebar-settings');
+  const visible = panel.style.display !== 'none';
+  panel.style.display = visible ? 'none' : '';
+  // Load current values
+  if (!visible) {
+    const saved = JSON.parse(localStorage.getItem('compass-settings') || '{}');
+    document.getElementById('settings-model').value = saved.action || '';
+    document.getElementById('settings-apikey').value = saved.apiKey || '';
+  }
+}
+
+function saveSettings() {
+  const action = document.getElementById('settings-model').value;
+  const apiKey = document.getElementById('settings-apikey').value;
+  localStorage.setItem('compass-settings', JSON.stringify({ action, apiKey }));
+}
+
+async function applySettings() {
+  saveSettings();
+  const settings = JSON.parse(localStorage.getItem('compass-settings') || '{}');
+  try {
+    const resp = await fetch(`${API}/config`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action_model: settings.action || null,
+        api_key: settings.apiKey || null,
+      }),
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      alert(`Pipeline restarting with ${data.action_model || 'auto'}. First question may take ~30s.`);
+      toggleSettings();
+    } else {
+      alert('Failed to apply settings: ' + (await resp.text()));
+    }
+  } catch (e) {
+    alert('Error: ' + e.message);
   }
 }
 
